@@ -1,0 +1,52 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "backend is the ultimate backend solution",
+    "main": "src/server.js",
+    "scripts": {
+        "setup": "npm install && npm update",
+        "tsc": "tsc",
+        "build": "npm run tsc",
+        "start": "ts-node-dev --transpileOnly ./src/server.ts",
+        "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules ./src/server.ts",
+        "prod": "tsc && node ./build/src/server.js",
+        "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
+        "typeorm-ts": "ts-node ./node_modules/typeorm/cli.js"
+    },
+    "keywords": [
+        "express",
+        "backend",
+        "backend"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "@types/express": "^4.17.1",
+        "cookie-parser": "^1.4.4",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "express-custom-error": "^1.8.4",
+        "has-keys": "^0.1.0",
+        "helmet": "^3.21.2",
+        "http-status": "^1.3.2",
+        "mandatoryenv": "^1.1.1",
+        "module-alias": "^2.2.2",
+        "morgan": "^1.9.1",
+        "mysqlm": "^2.0.3",
+        "reflect-metadata": "^0.1.13",
+        "rotating-file-stream": "^1.4.6",
+        "sqlite3": "^5.0.2",
+        "ts-node-dev": "^1.0.0-pre.43",
+        "typeorm": "^0.3.0-alpha.24",
+        "typescript": "^3.6.3"
+    },
+    "_moduleAliases": {
+        "@root": "src",
+        "@controllers": "src/controllers",
+        "@models": "src/models",
+        "@util": "src/util",
+        "@routes": "src/routes"
+    },
+    "devDependencies": {
+        "@types/node": "^15.6.1"
+    }
+}
