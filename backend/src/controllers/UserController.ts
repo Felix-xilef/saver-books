@@ -31,19 +31,47 @@ const getJsonFromUser = (user: User): UserJson => {
     };
 }
 
+const userRepository = getRepository(User);
+
 export class UserController {
     async select(request: Request, response: Response): Promise<Response> {
         const cpf = String(request.query.cpf);
 
-        try {
-            if (cpf) {
-                const user: User = await getRepository(User).findOne(cpf);
+        if (cpf) {
+            const user: User = await userRepository.findOne(cpf, { relations: { userType: true } });
+
+            if (user) response.status(200).json(getJsonFromUser(getJsonFromUser(user)));
+            else response.status(404).json({ "error": "User not found" });
+
+        } else {
+            response.status(400).json({ "error": "cpf can't be null or undefined" });
+        }
+
+        return response;
+    }
     
-                if (user) response.status(200).json(getJsonFromUser(getJsonFromUser(user)));
-                else response.status(404).json({ "error": "User not found" });
-            } else {
-                response.status(400).json({ "error": "cpf can't be null or undefined" });
-            }
+    async selectAll(request: Request, response: Response): Promise<Response> {
+        const users: User[] = await userRepository.find({ relations: { userType: true } });
+
+        let usersJson: UserJson[] = [];
+
+        users.forEach((element) => {
+            usersJson.push(getJsonFromUser(element));
+        });
+
+        response.status(200).json(usersJson)
+
+        return response;
+    }
+    
+    async saveEntry(request: Request, response: Response): Promise<Response> {
+        const receivedJson = request.body
+
+        const user = await userRepository.create(getUserFromJson(receivedJson));
+
+        try {
+            userRepository.save(user);
+            response.status(201).json(receivedJson)
         } catch (error) {
             response.status(500).json({ "error": error.message })
         }
@@ -51,33 +79,20 @@ export class UserController {
         return response;
     }
     
-    selectAll(request: Request, response: Response): Response {
-        return response;
-    }
-    
-    insert(request: Request, response: Response): Response {
-        const receivedJson = request.body
+    async delete(request: Request, response: Response): Promise<Response> {
+        const cpf = String(request.query.cpf);
 
-        try {
-            const user = getRepository(User).create(getUserFromJson(receivedJson));
-            try {
-                getRepository(User).save(user);
-                response.status(201).json(receivedJson)
-            } catch (error) {
-                response.status(500).json({ "error": error.message })
-            }
-        } catch (error) {
-            response.status(400).json({ "error": error.message })
-        }
+        if (cpf) {
+            const user: User = await userRepository.findOne(cpf, { relations: { userType: true } });
 
-        return response;
-    }
-    
-    update(request: Request, response: Response): Response {
-        return response;
-    }
-    
-    delete(request: Request, response: Response): Response {
+            if (user) {
+                userRepository.remove(user);
+                response.status(200).json(getJsonFromUser(user));
+            } else response.status(404).json({ "error": "User not found" });
+
+        } else response.status(400).json({ "error": "cpf can't be null or undefined" });
+
+
         return response;
     }
 }
