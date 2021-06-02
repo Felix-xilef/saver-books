@@ -7,4 +7,6 @@ export interface LoanJson extends OperationJson {
     returnDate: Date;
 
     loanStatus: LoanStatusJson;
+
+    reservationId?: number;
 }

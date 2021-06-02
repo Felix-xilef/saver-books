@@ -56,4 +56,18 @@ export class Book {
         this.availCopies = availCopies;
         this.unavailCopies = 0;
     }
+
+    getCopy() {
+        if (this.availCopies > 0) {
+            this.availCopies--;
+            this.unavailCopies++;
+        } else throw new Error('There is no available copies for the selected book');
+    }
+
+    returnCopy() {
+        if (this.unavailCopies > 0) {
+            this.availCopies++;
+            this.unavailCopies--;
+        } else throw new Error('There is no unavailable copies for the selected book');
+    }
 }

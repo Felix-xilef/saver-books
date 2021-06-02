@@ -11,5 +11,5 @@ export interface OperationJson {
 
     email: string;
 
-    book: BookJson;
+    bookIsbn: string;
 }
