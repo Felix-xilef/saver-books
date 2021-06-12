@@ -8,7 +8,11 @@
       <div class="row row-cols-md-2 row-cols-1">
         <div class="col-md-4">
           <div class="row justify-content-center">
-            <img src="../assets/userIcon.svg" alt="ícone de uma pessoa" class="userIcon">
+            <img
+              src="../assets/userIcon.svg"
+              alt="ícone de uma pessoa"
+              class="userIcon"
+            />
           </div>
         </div>
         <form class="col-md-8">
@@ -51,30 +55,30 @@
 </template>
 
 <script>
-	export default {
-		name: "Login",
-    props: {
-			login: String,
-			password: String,
-    }
-	};
+export default {
+  name: "Login",
+  props: {
+    login: String,
+    password: String,
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	.logo {
-		max-height: 164px;
-	}
+.logo {
+  max-height: 164px;
+}
 
-  .userIcon {
-    max-height: 150px;
-  }
+.userIcon {
+  max-height: 150px;
+}
 
-	.card {
-		max-width: 540px;
-	}
+.card {
+  max-width: 540px;
+}
 
-	input {
-		border-radius: 20px;
-	}
+input {
+  border-radius: 20px;
+}
 </style>

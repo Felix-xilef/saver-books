@@ -1,59 +1,83 @@
 <template>
-  <!-- <Login/> -->
-  <Search/>
+  <book-details />
 </template>
 
 <script>
-  // import Login from './components/Login.vue'
-  import Search from './components/Search.vue'
+import BookDetails from './components/BookDetails.vue';
 
-  export default {
-    name: 'App',
-    components: {
-      // Login,
-      Search,
-    }
-  }
+export default {
+  name: "App",
+  components: {
+    BookDetails,
+  },
+};
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* Importing font Roboto from Google-Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
-  #app {
-    font-family: 'Roboto', sans-serif;
-    /* -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px; */
-  }
+#app {
+  font-family: "Roboto", sans-serif;
+}
 
-  html, body {
-    padding: 0;
-    margin: 0;
-  }
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+/* 
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  background: transparent;
+}
 
-  .backgroundGradientPurple {
-    background: linear-gradient(90deg, rgba(40, 75, 255, 0.75) 0%, rgba(153, 73, 255, 0.75) 100%);
-  }
+::-webkit-scrollbar-thumb {
+  width: 10px;
+  position: absolute;
+} */
 
-  .backgroundGradientBlue {
-    background: linear-gradient(90deg, #0063D8 0%, #5EA8FF 100%);
-  }
+.backgroundGradientPurple {
+  background: linear-gradient(
+    90deg,
+    rgba(40, 75, 255, 0.75) 0%,
+    rgba(153, 73, 255, 0.75) 100%
+  );
+}
 
-  .backgroundGradientRed {
-    background: linear-gradient(90deg, rgba(105, 211, 22, 0.927083) 0.01%, #5EC20F 0.02%, #FF0000 0.03%, #FF574D 100%);
-  }
+.backgroundGradientBlue {
+  background: linear-gradient(90deg, #0063d8 0%, #5ea8ff 100%);
+}
 
-  .backgroundGradientGreen {
-    background: linear-gradient(90deg, #10C200 0%, #6AE667 100%);
-  }
+.backgroundGradientRed {
+  background: linear-gradient(
+    90deg,
+    rgba(105, 211, 22, 0.927083) 0.01%,
+    #5ec20f 0.02%,
+    #ff0000 0.03%,
+    #ff574d 100%
+  );
+}
 
-  .backgroundLightPurple {
-    background: rgba(80, 38, 200, 0.05);
-  }
+.backgroundGradientGreen {
+  background: linear-gradient(90deg, #10c200 0%, #6ae667 100%);
+}
 
-  .borderPurple {
-    border: 3px solid rgba(80, 38, 200, 0.5);
-  }
+.backgroundLightPurple {
+  background: rgba(80, 38, 200, 0.05);
+}
+
+.borderPurple {
+  border: 3px solid rgba(80, 38, 200, 0.502);
+}
+
+.backgrounLightGray {
+  background: rgba(128, 128, 128, 0.247);
+}
+
+.form-control,
+.form-select {
+  border-radius: 20px;
+}
 </style>
