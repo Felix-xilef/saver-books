@@ -8,7 +8,7 @@
           <div class="d-flex flex-column justify-content-evenly m-3">
             <h3>{{ book.title }}</h3>
             <h4>{{ book.author }}</h4>
-            <p><strong>Gênero:</strong> {{ book.genre }}</p>
+            <p><strong>Gênero:</strong> {{ book.genre.description }}</p>
           </div>
         </div>
         <p><strong>ISBN:</strong> {{ book.isbn }}</p>
@@ -41,9 +41,6 @@
         <div class="row row-cols-3">
           <div class="col p-3">
             <strong>Editora:</strong> {{ book.publisher }}
-          </div>
-          <div class="col p-3">
-            <strong>Número de Páginas:</strong> {{ book.pages }}
           </div>
           <div class="col p-3">
             <strong>Data de publicação:</strong> {{ book.publicDate }}
@@ -411,28 +408,20 @@
 </template>
 
 <script>
+import BookService from '../services/BookService';
 import NavbarReturn from "./NavbarReturn.vue";
-
 export default {
   name: "BookDetails",
   components: { NavbarReturn },
+  props: {
+    isbn: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      book: {
-        cover: "../assets/picture.png",
-        title: "Título do livro",
-        author: "Autor do livro",
-        genre: "Gênero do livro",
-        isbn: "XXX-X-XX-XXXXXX-X",
-        summary:
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        publisher: "Editora do livro",
-        language: "Idioma do livro",
-        pages: "X",
-        publicDate: "XX/XX/XXXX",
-        availCopies: "X",
-        unavailCopies: "X",
-      },
+      book: null,
       reservation: {
         isbn: "",
         name: "",
@@ -491,6 +480,16 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    getBook(isbn) {
+      BookService.getByIsbn(isbn).then(response => {
+        this.book = response.data
+      }).catch(err => console.log('An error ocurred: ' + err.message))
+    }
+  },
+  mounted() {
+    this.getBook(this.isbn)
   },
 };
 </script>

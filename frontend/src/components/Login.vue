@@ -1,4 +1,3 @@
-/*html*/
 <template>
   <div class="row m-0">
     <img src="../assets/logo.svg" alt="logo do site" class="logo" />
@@ -25,6 +24,7 @@
               placeholder="Digite seu CPF"
               class="form-control"
               :value="login"
+              required
             />
           </div>
 
@@ -37,6 +37,7 @@
               placeholder="Digite sua Senha"
               class="form-control"
               :value="password"
+              required
             />
           </div>
 
@@ -57,14 +58,15 @@
 <script>
 export default {
   name: "Login",
-  props: {
-    login: String,
-    password: String,
+  data() {
+    return {
+      login: "",
+      password: "",
+    };
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .logo {
   max-height: 164px;
@@ -76,9 +78,5 @@ export default {
 
 .card {
   max-width: 540px;
-}
-
-input {
-  border-radius: 20px;
 }
 </style>

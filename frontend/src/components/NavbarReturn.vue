@@ -2,14 +2,14 @@
   <nav class="navbar navbar-light backgroundGradientPurple">
     <div class="container-fluid justify-content-start">
       <div class="col-md-1">
-        <a href="#">
+        <button class="btn" @click="goBack">
           <img height="38" src="../assets/returnIcon.svg" alt="" />
-        </a>
+        </button>
       </div>
       <div class="col-md-2">
-        <a class="navbar-brand" href="#">
+        <router-link :to="{ name: 'Search' }" class="navbar-brand">
           <img src="../assets/logo.svg" alt="logo do site" class="logo" />
-        </a>
+        </router-link>
       </div>
     </div>
   </nav>
@@ -18,6 +18,11 @@
 <script>
 export default {
   name: "NavbarReturn",
+  methods: {
+    goBack() {
+      this.$router.back()
+    }
+  }
 };
 </script>
 

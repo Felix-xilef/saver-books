@@ -1,15 +1,10 @@
 <template>
-  <book-details />
+  <router-view></router-view>
 </template>
 
 <script>
-import BookDetails from './components/BookDetails.vue';
-
 export default {
   name: "App",
-  components: {
-    BookDetails,
-  },
 };
 </script>
 

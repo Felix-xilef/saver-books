@@ -13,16 +13,16 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="col-md-2">
-        <a class="navbar-brand" href="#">
+        <router-link :to="{ name: 'Search' }" class="navbar-brand">
           <img src="../assets/logo.svg" alt="logo do site" class="logo" />
-        </a>
+        </router-link>
       </div>
       <form class="col-md-9">
         <div class="input-group me-2 bg-white">
           <input
             class="form-control"
             type="search"
-            :value="filtro"
+            :value="filter"
             placeholder="digite para pesquisar..."
           />
           <button
@@ -47,13 +47,45 @@
     </div>
   </nav>
   <div class="collapse" id="navbarToggleExternalContent">
-    <div class="backgroundGradientPurple p-4">
-      <div>Reservas</div>
-      <div>Empréstimos</div>
-      <div>Livros</div>
-      <div>Usuários</div>
-      <div>Relatórios</div>
-      <div>Sair</div>
+    <div class="backgroundGradientPurple p-4 d-flex">
+      <div>
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageOperations', params: { operationName: 'reservation' } }"
+        >
+          Reserva
+        </router-link>
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageOperations', params: { operationName: 'loan' } }"
+        >
+          Empréstimo
+        </router-link>
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageBooks' }"
+        >
+          Livro
+        </router-link>
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageUsers' }"
+        >
+          Usuário
+        </router-link>
+        <router-link
+          class="nav-link p-0 m-2"
+          to=""
+        >
+          Relatório
+        </router-link>
+        <a
+          href="#"
+          class="nav-link p-0 m-2"
+        >
+          Sair
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -61,8 +93,15 @@
 <script>
 export default {
   name: "Navbar",
-  props: {
-    filtro: String,
+  computed: {
+    filter: {
+      get() {
+        return this.$store.filter
+      },
+      set(newValue) {
+        this.$store.filter = newValue
+      }
+    }
   },
 };
 </script>
@@ -73,8 +112,17 @@ export default {
   width: 36px;
 }
 
+.nav-link {
+  color: inherit;
+}
+
+.nav-link:hover {
+  color: rgb(230, 230, 230);
+}
+
 .logo {
   max-height: 60px;
+  border-radius: 50px;
 }
 
 .input-group {

@@ -56,13 +56,18 @@
       <div class="row row-cols-4">
         <div
           v-for="book in books"
-          class="col d-flex flex-column align-items-center p-3"
-          :key="book.id"
+          class="col p-3"
+          :key="book.isbn"
         >
-          <img src="../assets/picture.png" alt="Book cover" class="bookCover" />
-          <h5>{{ book.title }}</h5>
-          <h6>{{ book.author }}</h6>
-          <p class="summary">{{ book.summary }}</p>
+          <router-link
+            class="d-flex flex-column align-items-center text-decoration-none rounded bookContainer"
+            :to="{ name: 'BookDetails', params: { isbn: book.isbn } }"
+          >
+            <img src="../assets/picture.png" alt="Book cover" class="bookCover" />
+            <h5>{{ book.title }}</h5>
+            <h6>{{ book.author }}</h6>
+            <p class="summary">{{ book.summary }}</p>
+          </router-link>
         </div>
       </div>
     </div>
@@ -72,7 +77,7 @@
 
 <script>
 import Navbar from "./Navbar.vue";
-
+import BookService from "../services/BookService";
 export default {
   name: "Search",
   components: {
@@ -98,58 +103,29 @@ export default {
           content: ["romance", "suspense"],
         },
       ],
-      books: [
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-        {
-          id: 1,
-          image: "../assets/picture.png",
-          title: "Título do Livro",
-          author: "Autor do Livro",
-          summary:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur aliquid earum vel impedit quis possimus ab! Quis, officia? Laboriosam, beatae alias repellat est excepturi error? Debitis ipsa magnam similique iure.",
-        },
-      ],
+      books: [],
     };
   },
+  computed: {
+    filter() {
+      return this.$store.state.filter
+    }
+  },
+  methods: {
+    getBooks(filter) {
+      BookService.getAll(filter).then(response => {
+        this.books = response.data
+      })
+    },
+  },
+  mounted() {
+    this.getBooks()
+  },
+  watch: {
+    filter(newFilter) {
+      this.getBooks(newFilter)
+    }
+  }
 };
 </script>
 
@@ -165,6 +141,14 @@ export default {
 
 .form-control {
   border-radius: 20px;
+}
+
+.bookContainer {
+  color: inherit;
+}
+
+.bookContainer:hover {
+  background-color: rgba(221, 221, 221, 0.527);
 }
 
 .bookCover {

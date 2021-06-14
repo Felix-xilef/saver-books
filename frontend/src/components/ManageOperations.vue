@@ -215,7 +215,6 @@ export default {
   name: "ManageOperations",
   data() {
     return {
-      isReservation: true,
       registry: {
         id: "",
         cpf: "",
@@ -280,6 +279,10 @@ export default {
     };
   },
   computed: {
+    isReservation() {
+      console.log(this.$route)
+      return this.$route.params['operationName'] == 'reservation'
+    },
     statusOptions() {
       return this.isReservation
         ? [ //reservationStatus
