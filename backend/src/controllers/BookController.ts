@@ -2,7 +2,7 @@ import { Book } from "../entities/books/Book";
 import { Genre } from "../entities/books/Genre";
 import { BookJson } from "../interfaces/BookJson";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, Like } from "typeorm";
 
 const getBookFromJson = async (bookJson: BookJson): Promise<Book> => {
     return new Book(
@@ -55,8 +55,21 @@ export class BookController {
     }
     
     async selectAll(request: Request, response: Response): Promise<Response> {
+        const title = request.query.title;
+        const isbn = request.query.isbn;
+        const author = request.query.author;
+
+        let whereStatement: { title?, isbn?, author? } = {};
+
+        if (title && title != '') whereStatement.title = Like(String(title));
+        if (isbn && isbn != '') whereStatement.isbn = Like(String(isbn));
+        if (author && author != '') whereStatement.author = Like(String(author));
+
         try {
-            const books: Book[] = await getRepository(Book).find({ relations: { genre: true } });
+            const books: Book[] = await getRepository(Book).find({
+                relations: { genre: true },
+                where: whereStatement
+            });
     
             let booksJson: BookJson[] = [];
     

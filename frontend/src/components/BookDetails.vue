@@ -1,6 +1,6 @@
 <template>
   <navbar-return />
-  <div class="container p-4">
+  <div v-if="book" class="container p-4">
     <div class="row">
       <div class="col">
         <div class="d-inline-flex">
@@ -15,7 +15,7 @@
       </div>
       <div class="col d-flex justify-content-end align-items-end">
         <button
-          class="btn text-white backgroundGradientGreen me-3"
+          class="btn text-white backgroundGradientGreen"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#loanModal"
@@ -23,13 +23,20 @@
           Realizar Empréstimo
         </button>
         <button
-          class="btn text-white backgroundGradientBlue"
+          v-if="book.availCopies > 0"
+          class="btn text-white backgroundGradientBlue ms-3"
           type="button"
           data-bs-toggle="modal"
           data-bs-target="#reservationModal"
         >
           Reservar
         </button>
+        <router-link :to="{ name: 'ManageBooks', params: { isbn: book.isbn } }"
+          class="btn text-white backgroundGradientRed ms-3"
+          type="button"
+        >
+          Editar
+        </router-link>
       </div>
     </div>
     <div class="row p-4">
@@ -69,7 +76,7 @@
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <form class="modal-content" @submit.prevent="postReservation">
         <div class="modal-header">
           <h5 class="modal-title" id="reservationModalLabel">
             Cadastro de Reserva
@@ -86,7 +93,7 @@
             Preencha as informações abaixo e clique em finalizar reserva para
             concluir o cadastro da sua reserva.
           </p>
-          <form class="container-fluid">
+          <div class="container-fluid">
             <div class="row">
               <div class="col-4">
                 <label class="form-label" for="txtReservationIsbn">
@@ -99,6 +106,7 @@
                   id="txtReservationIsbn"
                   :value="book.isbn"
                   disabled
+                  required
                 />
               </div>
               <div class="col" disabled>
@@ -125,8 +133,9 @@
                   type="name"
                   name="txtReservationName"
                   id="txtReservationName"
-                  :value="reservation.name"
+                  v-model="reservation.name"
                   placeholder="digite seu nome"
+                  required
                 />
               </div>
               <div class="col">
@@ -138,8 +147,9 @@
                   type="email"
                   name="txtReservationEmail"
                   id="txtReservationEmail"
-                  :value="reservation.email"
+                  v-model="reservation.email"
                   placeholder="digite um e-mail válido"
+                  required
                 />
               </div>
             </div>
@@ -151,8 +161,9 @@
                   type="text"
                   name="txtReservationCpf"
                   id="txtReservationCpf"
-                  :value="reservation.cpf"
+                  v-model="reservation.cpf"
                   placeholder="digite seu CPF"
+                  required
                 />
               </div>
               <div class="col">
@@ -164,8 +175,9 @@
                   type="tel"
                   name="txtReservationPhone"
                   id="txtReservationPhone"
-                  :value="reservation.phone"
+                  v-model="reservation.phone"
                   placeholder="digite um telefone válido"
+                  required
                 />
               </div>
               <div class="col">
@@ -177,18 +189,19 @@
                   type="date"
                   name="txtReservationWithdrawal"
                   id="txtReservationWithdrawal"
-                  :value="reservation.withdrawalDate"
+                  v-model="reservation.withdrawalDate"
+                  required
                 />
               </div>
             </div>
-          </form>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn text-white backgroundGradientBlue">
+          <button type="submit" class="btn text-white backgroundGradientBlue">
             Finalizar Reserva
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -200,7 +213,7 @@
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <form class="modal-content" @submit.prevent="postLoan">
         <div class="modal-header">
           <h5 class="modal-title" id="loanModalLabel">
             Cadastro de Empréstimo
@@ -219,7 +232,7 @@
             reservas para reslizar um empréstimo a partir de uma reserva já
             existente.
           </p>
-          <form class="container-fluid">
+          <div class="container-fluid">
             <div class="row">
               <div class="col-4">
                 <label class="form-label" for="txtLoanIsbn">
@@ -232,6 +245,7 @@
                   id="txtLoanIsbn"
                   :value="book.isbn"
                   disabled
+                  required
                 />
               </div>
               <div class="col" disabled>
@@ -247,6 +261,19 @@
                   disabled
                 />
               </div>
+              <div v-if="loan.reservationId" class="col-2" disabled>
+                <label class="form-label" for="txtLoanReservationId">
+                  ID da Reserva
+                </label>
+                <input
+                  class="form-control"
+                  type="number"
+                  name="txtLoanReservationId"
+                  id="txtLoanReservationId"
+                  :value="loan.reservationId"
+                  disabled
+                />
+              </div>
             </div>
             <div class="row mt-3">
               <div class="col">
@@ -256,8 +283,9 @@
                   type="name"
                   name="txtLoanName"
                   id="txtLoanName"
-                  :value="loan.name"
+                  v-model="loan.name"
                   placeholder="digite seu nome"
+                  required
                 />
               </div>
               <div class="col">
@@ -267,8 +295,9 @@
                   type="email"
                   name="txtLoanEmail"
                   id="txtLoanEmail"
-                  :value="loan.email"
+                  v-model="loan.email"
                   placeholder="digite um e-mail válido"
+                  required
                 />
               </div>
             </div>
@@ -280,8 +309,9 @@
                   type="text"
                   name="txtLoanCpf"
                   id="txtLoanCpf"
-                  :value="loan.cpf"
+                  v-model="loan.cpf"
                   placeholder="digite seu CPF"
+                  required
                 />
               </div>
               <div class="col">
@@ -291,8 +321,9 @@
                   type="tel"
                   name="txtLoanPhone"
                   id="txtLoanPhone"
-                  :value="loan.phone"
+                  v-model="loan.phone"
                   placeholder="digite um telefone válido"
+                  required
                 />
               </div>
               <div class="col">
@@ -304,11 +335,12 @@
                   type="date"
                   name="txtLoanWithdrawal"
                   id="txtLoanWithdrawal"
-                  :value="loan.returnDate"
+                  v-model="loan.returnDate"
+                  required
                 />
               </div>
             </div>
-          </form>
+          </div>
         </div>
         <div class="modal-footer justify-content-between">
           <div>
@@ -318,21 +350,23 @@
               data-bs-target="#reservationsModal"
               data-bs-toggle="modal"
               data-bs-dismiss="modal"
+              @click="getReservations"
             >
               Visualizar Reservas
             </button>
             <button
-              type="button"
+              v-if="book.availCopies > 0 || loan.reservationId"
+              type="submit"
               class="btn text-white backgroundGradientBlue ms-2"
             >
               Finalizar Empréstimo
             </button>
           </div>
-          <button type="button" class="btn p-0">
+          <button type="button" class="btn p-0" @click="resetLoanForm">
             <img src="../assets/clean.svg" alt="" />
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -348,7 +382,7 @@
         <div class="modal-header justify-content-between">
           <button
             type="button"
-            class="btn p-0 me-auto"
+            class="btn p-0 me-auto return"
             data-bs-target="#loanModal"
             data-bs-toggle="modal"
             data-bs-dismiss="modal"
@@ -356,7 +390,7 @@
             <img height="32" src="../assets/arrow-left.svg" alt="back arrow" />
           </button>
           <h5 class="modal-title" id="reservationsModalLabel">
-            Cadastro de Empréstimo
+            Selecione uma Reserva
           </h5>
           <button
             type="button"
@@ -368,7 +402,7 @@
         <div class="modal-body">
           <div class="borderPurple rounded operationsView p-3">
             <div v-for="item in reservations" :key="item.id">
-              <div class="p-3 registry">
+              <div class="p-3 registry" @click="selectReservation(item)">
                 <div class="row">
                   <div class="col-1 me-2">
                     <img
@@ -385,11 +419,11 @@
                     <div class="d-inline-flex">
                       <div class="d-flex flex-column me-3">
                         <strong>Data da Reserva:</strong>
-                        {{ item.reservationDate }}
+                        {{ item.reservedDate.slice(0, 10).split("-").reverse().join("/") }}
                       </div>
                       <div class="d-flex flex-column">
                         <strong>Data da Retirada:</strong>
-                        {{ item.withdrawalDate }}
+                        {{ item.withdrawalDate.slice(0, 10).split("-").reverse().join("/") }}
                       </div>
                     </div>
                   </div>
@@ -409,6 +443,8 @@
 
 <script>
 import BookService from '../services/BookService';
+import ReservationService from '../services/ReservationService';
+import LoanService from '../services/LoanService';
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   name: "BookDetails",
@@ -421,75 +457,108 @@ export default {
   },
   data() {
     return {
-      book: null,
-      reservation: {
-        isbn: "",
-        name: "",
-        email: "",
-        cpf: "",
-        phone: "",
-        withdrawalDate: "",
-      },
-      loan: {
-        isbn: "",
-        name: "",
-        email: "",
-        cpf: "",
-        phone: "",
-        returnDate: "",
-      },
-			reservations: [
-        {
-          id: 1,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-        {
-          id: 2,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-        {
-          id: 3,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-      ],
+      book: false,
+      loan: {},
+      reservation: {},
+			reservations: [],
     };
   },
   methods: {
+    resetReservation() {
+      this.reservation = {
+        cpf: '',
+        name: '',
+        phone: '',
+        email: '',
+        bookIsbn: '',
+        reservedDate: '',
+        withdrawalDate: '',
+        reservationStatus: {
+          id: 1,
+        },
+      }
+    },
+    resetLoan() {
+      this.loan = {
+        cpf: '',
+        name: '',
+        phone: '',
+        email: '',
+        bookIsbn: '',
+        withdrawalDate: '',
+        returnDate: '',
+        loanStatus: {
+          id: 1,
+        },
+      }
+    },
+    resetLoanForm() {
+      this.resetReservation()
+      this.resetLoan()
+    },
+    closeModal(modalId) {
+      document.querySelector(`#${modalId} button.btn-close`).click()
+    },
+    selectReservation(reservation) {
+      this.reservation = reservation
+      this.loan.reservationId = reservation.id
+      this.loan.cpf = reservation.cpf
+      this.loan.name = reservation.name
+      this.loan.phone = reservation.phone
+      this.loan.email = reservation.email
+      this.loan.bookIsbn = reservation.bookIsbn
+      document.querySelector(`#reservationsModal button.return`).click()
+    },
     getBook(isbn) {
       BookService.getByIsbn(isbn).then(response => {
         this.book = response.data
-      }).catch(err => console.log('An error ocurred: ' + err.message))
-    }
+      }).catch(err => {
+        alert('Erro ao procurar livro')
+        console.log(err)
+      })
+    },
+    getReservations() {
+      ReservationService.getAll({ isbn: this.book.isbn, isActive: true }).then(response => {
+        this.reservations = response.data
+      }).catch(err => {
+        alert('Erro ao listar reservas')
+        console.log(err)
+      })
+    },
+    postReservation() {
+      this.reservation.bookIsbn = this.book.isbn
+      this.reservation.reservedDate = new Date().toISOString()
+      ReservationService.postReservation(this.reservation).then(response => {
+        console.log(response)
+        this.resetReservation()
+        this.getBook(this.isbn)
+        this.closeModal('reservationModal')
+        alert('Reserva cadastrada com sucesso!')
+      }).catch(err => {
+        alert('Erro ao cadastrar')
+        console.log(err)
+      })
+    },
+    postLoan() {
+      this.loan.bookIsbn = this.book.isbn
+      this.loan.withdrawalDate = new Date().toISOString()
+      LoanService.postLoan(this.loan).then(response => {
+        console.log(response)
+        this.resetReservation()
+        this.resetLoan()
+        this.getBook(this.isbn)
+        this.closeModal('loanModal')
+        alert('Empréstimo cadastrado com sucesso!')
+      }).catch(err => {
+        alert('Erro ao cadastrar')
+        console.log(err)
+      })
+    },
   },
   mounted() {
     this.getBook(this.isbn)
+    this.resetReservation()
+    this.resetLoan()
   },
 };
 </script>

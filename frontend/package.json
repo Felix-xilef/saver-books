@@ -15,8 +15,7 @@
     "es6-promise": "^4.2.8",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "4",
-    "vuex": "^4.0.1"
+    "vue-router": "4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

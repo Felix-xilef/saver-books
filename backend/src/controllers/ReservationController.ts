@@ -3,7 +3,7 @@ import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Book } from "../entities/books/Book";
 import { ReservationJson } from "../interfaces/ReservationJson";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, In, Like } from "typeorm";
 
 const getReservationFromJson = async (reservationJson: ReservationJson): Promise<Reservation> => {
     const reservation = new Reservation(
@@ -60,8 +60,36 @@ export class ReservationController {
     }
     
     async selectAll(request: Request, response: Response): Promise<Response> {
+        const isbn = request.query.isbn;
+        const cpf = request.query.cpf;
+        const isActive = request.query.isActive;
+
+        let whereStatement = {};
+
+        if (isbn && isbn != '') {
+            let book = await getRepository(Book).findOne(String(isbn));
+
+            if (!book) {
+                return response.status(404).json({ "error": "Book not found" });
+            }
+
+            if (isActive) {
+                whereStatement = [
+                    { book: book, reservationStatus: new ReservationStatus(1) },
+                    { book: book, reservationStatus: new ReservationStatus(2) }
+                ]
+            } else {
+                whereStatement = { book: book }
+            }
+        } else if (cpf && cpf != '') {
+            whereStatement = { cpf: String(cpf) }
+        }
+
         try {
-            const reservations: Reservation[] = await getRepository(Reservation).find({ relations: { reservationStatus: true, book: true } });
+            const reservations: Reservation[] = await getRepository(Reservation).find({
+                relations: { reservationStatus: true, book: true },
+                where: whereStatement,
+            });
     
             let reservationsJson: ReservationJson[] = [];
     
@@ -85,10 +113,15 @@ export class ReservationController {
             const reservation = await reservationRepository.create(await getReservationFromJson(request.body));
 
             if (reservation.id) {
-                const oldReservation = await reservationRepository.findOne(reservation.id, { relations: { reservationStatus: true, book: true } });
+                const oldReservation = await reservationRepository.findOne(reservation.id, {
+                    relations: { reservationStatus: true, book: true }
+                });
 
                 if (reservation.reservationStatus.id == 4 && oldReservation.reservationStatus.id != 4) {
                     oldReservation.book.returnCopy();
+                    getRepository(Book).save(oldReservation.book);
+                } else if (reservation.reservationStatus.id != 4 && oldReservation.reservationStatus.id == 4) {
+                    oldReservation.book.getCopy();
                     getRepository(Book).save(oldReservation.book);
                 }
             } else {

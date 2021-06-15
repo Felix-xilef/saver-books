@@ -1,7 +1,7 @@
 <template>
   <navbar-return />
-  <div class="container p-3">
-    <form class="row">
+  <form class="container p-3" @submit.prevent="saveRegistry">
+    <div class="row">
       <div class="row">
         <div class="col-3">
           <img src="../assets/picture.png" alt="" />
@@ -27,8 +27,9 @@
                 type="text"
                 name="txtCpf"
                 id="txtCpf"
-                :value="registry.cpf"
+                v-model="registry.cpf"
                 placeholder="CPF do ator"
+                required
               />
             </div>
             <div class="col">
@@ -38,8 +39,9 @@
                 type="name"
                 name="txtNome"
                 id="txtNome"
-                :value="registry.name"
+                v-model="registry.name"
                 placeholder="nome do ator"
+                required
               />
             </div>
           </div>
@@ -51,8 +53,9 @@
                 type="tel"
                 name="txtPhone"
                 id="txtPhone"
-                :value="registry.phone"
+                v-model="registry.phone"
                 placeholder="telefone do ator"
+                required
               />
             </div>
             <div class="col">
@@ -62,8 +65,9 @@
                 type="email"
                 name="txtEmail"
                 id="txtEmail"
-                :value="registry.email"
+                v-model="registry.email"
                 placeholder="e-mail do ator"
+                required
               />
             </div>
           </div>
@@ -75,8 +79,9 @@
                 type="text"
                 name="txtIsbn"
                 id="txtIsbn"
-                :value="registry.isbn"
+                v-model="registry.bookIsbn"
                 placeholder="ISBN do livro"
+                required
               />
             </div>
             <div class="col">
@@ -104,9 +109,7 @@
             type="date"
             name="txtFirstDate"
             id="txtFirstDate"
-            :value="
-              isReservation ? registry.reservationDate : registry.withdrawalDate
-            "
+            :value="isReservation ? registry.reservedDate.slice(0, 10) : registry.withdrawalDate.slice(0, 10)"
             disabled
           />
         </div>
@@ -119,19 +122,22 @@
             type="date"
             name="txtSecondDate"
             id="txtSecondDate"
-            :value="
-              isReservation ? registry.withdrawalDate : registry.returnDate
-            "
+            v-model="registrySecondDate"
+            required
           />
         </div>
         <div class="col">
           <label class="form-label" for="selectStatus"> Situação </label>
-          <select class="form-select" name="selectStatus" id="selectStatus">
+          <select
+            v-model="registryStatus.id"
+            class="form-select"
+            name="selectStatus"
+            id="selectStatus"
+          >
             <option
               v-for="status in statusOptions"
               :key="status.id"
               :value="status.id"
-              :selected="registry.status.id == status.id"
             >
               {{ status.description }}
             </option>
@@ -150,11 +156,11 @@
           />
         </div>
       </div>
-    </form>
+    </div>
     <div class="row p-5">
       <div class="borderPurple rounded operationsView">
         <div v-for="item in registries" :key="item.id">
-          <div class="p-3 registry">
+          <div class="p-3 registry" @click="selectRegistry(item)">
             <div class="row">
               <div class="col-1">
                 <img
@@ -164,16 +170,20 @@
                 />
               </div>
               <div class="col d-flex flex-column justify-content-evenly m-2">
-                <h6>{{ item.title }}</h6>
+                <!-- <h6>{{ item.title }}</h6> -->
                 <div class="d-inline-flex">
-                  <strong class="pe-1">ISBN:</strong>{{ item.isbn }}
+                  <strong class="pe-1">ISBN:</strong>{{ item.bookIsbn }}
                 </div>
                 <div class="d-inline-flex">
                   <strong class="pe-1">CPF:</strong>{{ item.cpf }}
                 </div>
               </div>
               <div class="col-1">
-                <strong>{{ item.status.description }}</strong>
+                <strong>{{
+                  isReservation
+                    ? item.reservationStatus.description
+                    : item.loanStatus.description
+                }}</strong>
               </div>
             </div>
             <div class="row mt-1">
@@ -181,15 +191,13 @@
                 <strong>{{
                   isReservation ? "Data da Reserva:" : "Data da Retirada:"
                 }}</strong>
-                {{
-                  isReservation ? item.reservationDate : item.withdrawalDate
-                }}
+                {{ isReservation ? item.reservedDate.slice(0, 10).split('-').reverse().join('/') : item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') }}
               </div>
               <div class="col-2">
                 <strong>{{
                   isReservation ? "Data da Retirada:" : "Data da Devolução:"
                 }}</strong>
-                {{ isReservation ? item.withdrawalDate : item.returnDate }}
+                {{ isReservation ? item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') : item.returnDate.slice(0, 10).split('-').reverse().join('/') }}
               </div>
             </div>
           </div>
@@ -197,22 +205,31 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="position-fixed">
-    <button class="btn p-0 m-2" type="button">
-      <img height="40" src="../assets/saveButton.svg" alt="" />
-    </button>
-    <button class="btn p-0 m-2" type="button">
-      <img height="40" src="../assets/searchButton.svg" alt="" />
-    </button>
-  </div>
+    <div class="position-fixed">
+      <button v-if="registry.id != ''" class="btn p-0 m-2" type="submit">
+        <img height="40" src="../assets/saveButton.svg" alt="" />
+      </button>
+      <button class="btn p-0 m-2" type="button" @click="getRegistries">
+        <img height="40" src="../assets/searchButton.svg" alt="" />
+      </button>
+    </div>
+  </form>
 </template>
 
 <script>
+import LoanService from '../services/LoanService';
+import ReservationService from '../services/ReservationService';
+import SubTypesService from "../services/SubTypesService";
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   components: { NavbarReturn },
   name: "ManageOperations",
+  props: {
+    operationName: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       registry: {
@@ -221,103 +238,139 @@ export default {
         name: "",
         phone: "",
         email: "",
-        isbn: "",
-        reservationDate: "",
+        bookIsbn: "",
+        reservedDate: "",
         withdrawalDate: "",
         returnDate: "",
-        status: {
-          id: "",
+        reservationStatus: {
+          id: 1,
+          description: "",
+        },
+        loanStatus: {
+          id: 1,
           description: "",
         },
       },
-      registries: [
-        {
-          id: 1,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-        {
-          id: 2,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-        {
-          id: 3,
-          image: "",
-          cpf: "XXX.XXX.XXX-XX",
-          title: "Book Title",
-          isbn: "XXX-X-XX-XXXXXX-X",
-          reservationDate: "XX/XX/XXXX",
-          withdrawalDate: "XX/XX/XXXX",
-          returnDate: "XX/XX/XXXX",
-          status: {
-            description: "situação",
-          },
-        },
-      ],
+      registries: [],
       book: {
         isbn: "",
         title: "",
         genre: "",
       },
+      statusOptions: [],
     };
   },
   computed: {
     isReservation() {
-      console.log(this.$route)
-      return this.$route.params['operationName'] == 'reservation'
+      return this.operationName == "reservation";
     },
-    statusOptions() {
-      return this.isReservation
-        ? [ //reservationStatus
-            {
-              id: 1,
-              description: "aberto",
-            },
-            {
-              id: 2,
-              description: "atrasado",
-            },
-            {
-              id: 3,
-              description: "retirado",
-            },
-            {
-              id: 4,
-              description: "cancelado",
-            },
-          ]
-        : [ //loanStatus
-            {
-              id: 1,
-              description: "retirado",
-            },
-            {
-              id: 2,
-              description: "atrasado",
-            },
-            {
-              id: 3,
-              description: "devolvido",
-            },
-          ];
+    registrySecondDate: {
+      get() {
+        return this.isReservation ? this.registry.withdrawalDate.slice(0, 10) : this.registry.returnDate.slice(0, 10)
+      },
+      set(newValue) {
+        if (this.isReservation) {
+          this.registry.withdrawalDate = newValue
+        } else {
+          this.registry.returnDate = newValue
+        }
+      },
     },
+    registryStatus: {
+      get() {
+        return this.isReservation ? this.registry.reservationStatus : this.registry.loanStatus
+      },
+      set(newValue) {
+        if (this.isReservation) {
+          this.registry.reservationStatus = newValue
+        } else {
+          this.registry.loanStatus = newValue
+        }
+      },
+    },
+  },
+  methods: {
+    getStatus() {
+      if (this.isReservation) {
+        SubTypesService.getReservationStatus()
+          .then((response) => {
+            this.statusOptions = response.data;
+          })
+          .catch((error) => {
+            alert("Erro ao listar as Situações da reserva");
+            console.log(error);
+          });
+      } else {
+        SubTypesService.getLoanStatus()
+          .then((response) => {
+            this.statusOptions = response.data;
+          })
+          .catch((error) => {
+            alert("Erro ao listar as Situações do empréstimo");
+            console.log(error);
+          });
+      }
+    },
+    getRegistries() {
+      let param = {}
+      if (this.registry.cpf != '') {
+        param = {
+          cpf: this.registry.cpf
+        }
+      } else if (this.registry.bookIsbn != '') {
+        param = {
+          isbn: this.registry.bookIsbn
+        }
+      }
+      if (this.isReservation) {
+        ReservationService.getAll(param).then(response => {
+          this.registries = response.data
+        }).catch(error => {
+          if (error == 'Error: Request failed with status code 404') {
+            alert(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          } else {
+            alert("Erro ao listar as Reservas");
+          }
+          console.log(error);
+          this.registries = []
+        })
+      } else {
+        LoanService.getAll(param).then(response => {
+          this.registries = response.data
+        }).catch(error => {
+          if (error == 'Error: Request failed with status code 404') {
+            alert(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          } else {
+            alert("Erro ao listar as Empréstimos");
+          }
+          console.log(error);
+          this.registries = []
+        })
+      }
+    },
+    saveRegistry() {
+      if (this.isReservation) {
+        ReservationService.updateReservation(this.registry).then(() => {
+          alert('Reserva atualizada com sucesso!')
+        }).catch(error => {
+          alert('Erro ao atualizar a reserva!')
+          console.log(error)
+        })
+      } else {
+        LoanService.updateLoan(this.registry).then(() => {
+          alert('Empréstimo atualizado com sucesso!')
+        }).catch(error => {
+          alert('Erro ao atualizar a empréstimo!')
+          console.log(error)
+        })
+      }
+    },
+    selectRegistry(newRegistry) {
+      this.registry = newRegistry
+    },
+  },
+  mounted() {
+    this.getStatus();
   },
 };
 </script>
@@ -350,7 +403,7 @@ export default {
 }
 
 .operationsView .registry:hover {
-	background-color: rgba(219, 219, 219, 0.616);
+  background-color: rgba(219, 219, 219, 0.616);
 }
 
 .operationsView hr {

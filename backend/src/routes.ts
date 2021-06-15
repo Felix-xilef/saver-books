@@ -1,8 +1,9 @@
-import { BookController } from "./controllers//BookController";
-import { LoanController } from "./controllers//LoanController";
-import { ReportController } from "./controllers//ReportController";
-import { ReservationController } from "./controllers//ReservationController";
-import { UserController } from "./controllers//UserController";
+import { BookController } from "./controllers/BookController";
+import { LoanController } from "./controllers/LoanController";
+import { ReportController } from "./controllers/ReportController";
+import { ReservationController } from "./controllers/ReservationController";
+import { UserController } from "./controllers/UserController";
+import { SubTypesController } from "./controllers/SubTypesController";
 import { Router } from "express";
 
 const router = Router();
@@ -12,6 +13,7 @@ const bookController = new BookController;
 const reservationController = new ReservationController;
 const loanController = new LoanController;
 const reportController = new ReportController;
+const subTypesController = new SubTypesController;
 
 router.get('/user', userController.select);
 router.get('/users', userController.selectAll);
@@ -36,6 +38,11 @@ router.get('/loans', loanController.selectAll);
 router.post('/loan', loanController.saveEntry);
 router.put('/loan', loanController.saveEntry);
 router.delete('/loan', loanController.delete);
+
+router.get('/genres', subTypesController.getGenres);
+router.get('/usertypes', subTypesController.getUserTypes);
+router.get('/reservationstatus', subTypesController.getReservationStatus);
+router.get('/loanstatus', subTypesController.getLoanStatus);
 
 router.get('/report', reportController.calculate);
 

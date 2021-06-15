@@ -14,7 +14,7 @@
             />
           </div>
         </div>
-        <form class="col-md-8">
+        <form class="col-md-8" @submit.prevent="enter">
           <div class="mb-3">
             <label for="txtLogin" class="form-label">Login</label>
             <input
@@ -23,7 +23,7 @@
               id="txtLogin"
               placeholder="Digite seu CPF"
               class="form-control"
-              :value="login"
+              v-model="login"
               required
             />
           </div>
@@ -36,7 +36,7 @@
               id="txtPassword"
               placeholder="Digite sua Senha"
               class="form-control"
-              :value="password"
+              v-model="password"
               required
             />
           </div>
@@ -56,14 +56,31 @@
 </template>
 
 <script>
+import LoginService from '../services/LoginService'
 export default {
   name: "Login",
   data() {
     return {
-      login: "",
-      password: "",
+      login: '',
+      password: '',
     };
   },
+  methods: {
+    enter() {
+      LoginService.login(this.login, this.password).then(response => {
+        if (response) {
+          alert('Erro ao realizar login');
+          console.log(response);
+        } else if (LoginService.isLogged()) {
+          this.$router.replace({ name: 'Search' })
+        } else {
+          alert('CPF ou senha incorretos!')
+          this.login = ''
+          this.password = ''
+        }
+      })
+    },
+  }
 };
 </script>
 

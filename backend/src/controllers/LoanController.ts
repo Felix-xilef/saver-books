@@ -62,8 +62,30 @@ export class LoanController {
     }
     
     async selectAll(request: Request, response: Response): Promise<Response> {
+        const isbn = request.query.isbn;
+        const cpf = request.query.cpf;
+
+        let whereStatement = {};
+
+        if (isbn && isbn != '') {
+            let book = await getRepository(Book).findOne(String(isbn));
+
+            if (!book) {
+                return response.status(404).json({ "error": "Book not found" });
+            } else {
+                whereStatement = { book: book }
+            }
+        } else if (cpf && cpf != '') {
+            whereStatement = { cpf: String(cpf) }
+        }
+
+        console.log(whereStatement)
+
         try {
-            const loans: Loan[] = await getRepository(Loan).find({ relations: { book: true, loanStatus: true, } });
+            const loans: Loan[] = await getRepository(Loan).find({
+                relations: { book: true, loanStatus: true, },
+                where: whereStatement,
+            });
     
             let loansJson: LoanJson[] = [];
     
@@ -100,6 +122,9 @@ export class LoanController {
 
                 if (loan.loanStatus.id == 3 && oldLoan.loanStatus.id != 3) {
                     loan.book.returnCopy();
+                    getRepository(Book).save(loan.book);
+                } else if (loan.loanStatus.id != 3 && oldLoan.loanStatus.id == 3) {
+                    loan.book.getCopy();
                     getRepository(Book).save(loan.book);
                 }
             } else {
