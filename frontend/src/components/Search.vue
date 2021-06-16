@@ -68,7 +68,7 @@
         <router-link class="nav-link p-0 m-2" :to="{ name: 'ManageBooks' }">
           Livro
         </router-link>
-        <router-link class="nav-link p-0 m-2" :to="{ name: 'ManageUsers' }">
+        <router-link v-if="isManager" class="nav-link p-0 m-2" :to="{ name: 'ManageUsers' }">
           Usuário
         </router-link>
         <router-link class="nav-link p-0 m-2" to=""> Relatório </router-link>
@@ -170,6 +170,11 @@ export default {
       booksReceived: [],
       filter: "",
     };
+  },
+  computed: {
+    isManager() {
+      return localStorage.userTypeId == '1'
+    }
   },
   methods: {
     getBooks(filter) {

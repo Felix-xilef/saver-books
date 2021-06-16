@@ -63,6 +63,8 @@ router.beforeEach(async (to) => {
 	} else {
 		if (!isLogged) {
 			return { name: 'Login', replace: true }
+		} else if (to.name == 'ManageUsers' && localStorage.userTypeId != '1') {
+			return { name: 'Search', replace: true }
 		}
 	}
 })

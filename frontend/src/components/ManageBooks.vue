@@ -180,7 +180,7 @@ export default {
         summary: '',
         availCopies: '',
         genre: {
-          id: '',
+          id: 1,
           description: '',
         }
       },
