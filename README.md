@@ -11,7 +11,7 @@ Feito com:
     </a>
     <a href="https://v3.vuejs.org/" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
         <img height="64" src="https://v3.vuejs.org/logo.png"></img>
-        <h2 style="margin-left: 6px; font-size: 20pt;">Vue.js</h2>
+        <p style="margin: 0; margin-left: 6px; font-size: 20pt;">Vue.js</p>
     </a>
 </div>
 
@@ -19,7 +19,7 @@ Feito com:
 
 Para rodar o projeto é necessário ter o `Node.js` e a `Vue Cli` instalados:
 
-- Para verificar se você tem o `Node.js` instalado execute o comando a seguir:
+- Para verificar se você tem o `Node.js` instalado execute o comando `'node --version'` como a seguir:
 
 ```
 > node --version
@@ -28,7 +28,7 @@ v14.17.1
 
 Caso a versão seja impressa na tela, como no exemplo acima, ele está instalado. Caso contrário basta acessar [Node.org](https://nodejs.org/en/) para realizar a instalação.
 
-- Para verificar se você tem a `Vue Cli` instalada execute o comando a seguir:
+- Para verificar se você tem a `Vue Cli` instalada execute o comando `'vue --version'` como a seguir:
 
 ```
 > vue --version
