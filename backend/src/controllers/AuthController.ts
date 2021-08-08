@@ -4,19 +4,7 @@ import { UserJson } from "../interfaces/UserJson";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { compare } from "bcryptjs";
-import { sign } from "jsonwebtoken";
-
-const getUserFromJson = (userJson: UserJson): User => {
-    return new User(
-        userJson.cpf,
-        userJson.name,
-        userJson.birthDate,
-        userJson.phone,
-        userJson.email,
-        userJson.password,
-        new UserType(userJson.userType.id)
-    );
-}
+import { sign, verify } from "jsonwebtoken";
 
 const getJsonFromUser = (user: User): UserJson => {
     return {
@@ -35,9 +23,21 @@ const getJsonFromUser = (user: User): UserJson => {
 
 export class AuthController {
     async authenticate(request: Request, response: Response): Promise<Response> {
-        const { cpf, password } = request.body;
+        const { cpf, password, token } = request.body;
 
-        if (cpf && password) {
+        if (token) {
+            console.log(token);
+            
+            try {
+                verify(token, process.env.SECRET);
+                
+                return response.status(200);
+
+            } catch {
+                return response.status(401).json({ "error": "not authorized" });
+            }
+            
+        } else if (cpf && password) {
             const user: User = await getRepository(User).findOne(cpf, {
                 select: [
                     "birthDate",

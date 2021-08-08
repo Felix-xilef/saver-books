@@ -45,6 +45,10 @@ body {
   background: linear-gradient(90deg, #0063d8 0%, #5ea8ff 100%);
 }
 
+.backgroundGradientDisabled {
+  background: linear-gradient(90deg, #bbbbbb 0%, #dddddd 100%);
+}
+
 .backgroundGradientRed {
   background: linear-gradient(
     90deg,

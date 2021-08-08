@@ -3,8 +3,8 @@
   <form class="container p-3" @submit.prevent="salveBook">
     <div class="row">
       <div class="col-3">
-        <!-- <input type="image" src="../assets/picture.png" alt="" /> -->
-        <img src="../assets/picture.png" alt="" />
+        <!-- <input type="image" src="../shared/assets/picture.png" alt="" /> -->
+        <img src="../shared/assets/picture.png" alt="" />
         <div class="mt-2">
           <label class="form-label" for="txtAvailCopies">
             Número de cópias disponíveis
@@ -146,18 +146,18 @@
     </div>
     <div class="position-fixed">
       <button class="btn p-0 m-2" type="submit">
-        <img height="40" src="../assets/saveButton.svg" alt="" />
+        <img height="40" src="../shared/assets/saveButton.svg" alt="" />
       </button>
       <button v-if="isbn" class="btn p-0 m-2" type="button" @click="removeBook">
-        <img height="40" src="../assets/removeButton.svg" alt="" />
+        <img height="40" src="../shared/assets/removeButton.svg" alt="" />
       </button>
     </div>
   </form>
 </template>
 
 <script>
-import BookService from '../services/BookService';
-import SubTypesService from '../services/SubTypesService';
+import BookService from '../shared/services/BookService';
+import SubTypesService from '../shared/services/SubTypesService';
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   components: { NavbarReturn },

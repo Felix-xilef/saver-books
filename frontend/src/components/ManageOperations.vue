@@ -4,7 +4,7 @@
     <div class="row">
       <div class="row">
         <div class="col-3">
-          <img src="../assets/picture.png" alt="" />
+          <img src="../shared/assets/picture.png" alt="" />
         </div>
         <div class="col">
           <div class="row mt-2">
@@ -165,7 +165,7 @@
               <div class="col-1">
                 <img
                   height="100"
-                  src="../assets/picture.png"
+                  src="../shared/assets/picture.png"
                   alt="Book cover"
                 />
               </div>
@@ -207,19 +207,19 @@
     </div>
     <div class="position-fixed">
       <button v-if="registry.id != ''" class="btn p-0 m-2" type="submit">
-        <img height="40" src="../assets/saveButton.svg" alt="" />
+        <img height="40" src="../shared/assets/saveButton.svg" alt="" />
       </button>
       <button class="btn p-0 m-2" type="button" @click="getRegistries">
-        <img height="40" src="../assets/searchButton.svg" alt="" />
+        <img height="40" src="../shared/assets/searchButton.svg" alt="" />
       </button>
     </div>
   </form>
 </template>
 
 <script>
-import LoanService from '../services/LoanService';
-import ReservationService from '../services/ReservationService';
-import SubTypesService from "../services/SubTypesService";
+import LoanService from '../shared/services/LoanService';
+import ReservationService from '../shared/services/ReservationService';
+import SubTypesService from "../shared/services/SubTypesService";
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   components: { NavbarReturn },

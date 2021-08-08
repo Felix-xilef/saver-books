@@ -1,6 +1,6 @@
 <template>
   <div class="row m-0">
-    <img src="../assets/logo.svg" alt="logo do site" class="logo" />
+    <img src="../shared/assets/logo.svg" alt="logo do site" class="logo" />
   </div>
   <div class="row m-0 justify-content-center p-md-0 p-3">
     <div class="card p-4 backgroundLightPurple borderPurple">
@@ -15,13 +15,13 @@
         <div class="col-md-4">
           <div class="row justify-content-center">
             <img
-              src="../assets/userIcon.svg"
+              src="../shared/assets/userIcon.svg"
               alt="ícone de uma pessoa"
               class="userIcon"
             />
           </div>
         </div>
-        <form class="col-md-8 needs-validation" @submit.prevent="enter" novalidate>
+        <form class="col-md-8" @submit.prevent="submit">
           <div class="mb-3">
             <label for="txtLogin" class="form-label">Login</label>
             <input
@@ -30,11 +30,12 @@
               id="txtLogin"
               placeholder="Digite seu CPF"
               class="form-control"
-              v-model="cpf"
-              required
+              :class="{ 'is-valid': cpfIsValid, 'is-invalid': cpfHasError }"
+              @blur="v$.loginForm.cpf.$touch"
+              v-model="loginForm.cpf"
             />
-            <div class="invalid-feedback">
-              Digite o CPF para continuar
+            <div v-if="v$.loginForm.cpf.$invalid" class="invalid-feedback">
+              Digite um CPF válido para continuar
             </div>
           </div>
 
@@ -46,8 +47,7 @@
               id="txtPassword"
               placeholder="Digite sua Senha"
               class="form-control"
-              v-model="password"
-              required
+              v-model="loginForm.password"
             />
             <div class="invalid-feedback">
               Digite a senha para continuar
@@ -57,7 +57,9 @@
           <div class="d-flex justify-content-end">
             <button
               type="submit"
-              class="btn btn-primary backgroundGradientBlue"
+              class="btn"
+              :class="{ 'btn-primary backgroundGradientBlue': loginFormIsValid, 'backgroundGradientDisabled': !loginFormIsValid }"
+              :disabled="!loginFormIsValid"
             >
               Login
             </button>
@@ -69,20 +71,50 @@
 </template>
 
 <script>
-import AuthService from '../services/AuthService'
+import vuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import cpfValidator from '../shared/validators/cpfValidator';
+import AuthService from '../shared/services/AuthService';
 export default {
+  setup() {
+    return { v$: vuelidate() }
+  },
   name: "Login",
   data() {
     return {
-      cpf: '',
-      password: '',
       error: false,
       logMessage: '',
+      loginForm: {
+        cpf: '',
+        password: '',
+      },
     };
   },
+  validations() {
+    return {
+      loginForm: {
+        cpf: { required, cpfValidator },
+        password: { required },
+      },
+    }
+  },
+  computed: {
+    loginFormIsValid() {
+      return !this.v$.loginForm.$invalid;
+    },
+    cpfIsValid() {
+      return !this.v$.loginForm.cpf.$invalid && this.v$.loginForm.cpf.$dirty;
+    },
+    cpfHasError() {
+      return this.v$.loginForm.cpf.$error;
+    },
+  },
   methods: {
+    submit() {
+      if (this.loginFormIsValid) this.enter();
+    },
     enter() {
-      AuthService.login(this.cpf, this.password).then(loggedIn => {
+      AuthService.login(this.loginForm.cpf, this.loginForm.password).then(loggedIn => {
         if (loggedIn) this.$router.push({ name: 'Search' });
         else {
           this.logMessage = 'CPF ou senha incorreto(s)';
@@ -90,20 +122,6 @@ export default {
         }
       });
     },
-  },
-  mounted() {
-    var forms = document.querySelectorAll('.needs-validation')
-
-    Array.prototype.slice.call(forms).forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        form.classList.add('was-validated')
-      }, false)
-    })
   },
 };
 </script>

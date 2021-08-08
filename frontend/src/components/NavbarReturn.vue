@@ -3,12 +3,12 @@
     <div class="container-fluid justify-content-start">
       <div class="col-md-1">
         <button class="btn" @click="goBack">
-          <img height="38" src="../assets/returnIcon.svg" alt="" />
+          <img height="38" src="../shared/assets/returnIcon.svg" alt="" />
         </button>
       </div>
       <div class="col-md-2">
         <router-link :to="{ name: 'Search' }" class="navbar-brand">
-          <img src="../assets/logo.svg" alt="logo do site" class="logo" />
+          <img src="../shared/assets/logo.svg" alt="logo do site" class="logo" />
         </router-link>
       </div>
     </div>

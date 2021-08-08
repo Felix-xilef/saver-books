@@ -116,21 +116,21 @@
 		</div>
 		<div class="position-fixed">
 			<button class="btn p-0 m-2" type="submit">
-				<img height="40" src="../assets/saveButton.svg" alt="" />
+				<img height="40" src="../shared/assets/saveButton.svg" alt="" />
 			</button>
 			<button v-if="selectedCpf != ''" class="btn p-0 m-2" type="button" @click="removeUser">
-				<img height="40" src="../assets/removeButton.svg" alt="" />
+				<img height="40" src="../shared/assets/removeButton.svg" alt="" />
 			</button>
 			<button class="btn p-0 m-2" type="button" @click="getUser">
-				<img height="40" src="../assets/searchButton.svg" alt="" />
+				<img height="40" src="../shared/assets/searchButton.svg" alt="" />
 			</button>
 		</div>
   </form>
 </template>
 
 <script>
-import SubTypesService from '../services/SubTypesService';
-import UserService from '../services/UserService';
+import SubTypesService from '../shared/services/SubTypesService';
+import UserService from '../shared/services/UserService';
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   components: { NavbarReturn },

@@ -1,5 +1,5 @@
 {
-  "name": "SaverBooks",
+  "name": "saver_books",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,13 +9,16 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.9.2",
+    "@vuelidate/core": "^2.0.0-alpha.23",
+    "@vuelidate/validators": "^2.0.0-alpha.20",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
     "es6-promise": "^4.2.8",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "4"
+    "vue-router": "4",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

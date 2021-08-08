@@ -1,11 +1,15 @@
 import { createWebHistory, createRouter } from "vue-router"
 import store from "../store"
+import AuthService from "../shared/services/AuthService";
 import Login from '../components/Login.vue'
 import BookDetails from '../components/BookDetails.vue'
 import ManageBooks from '../components/ManageBooks.vue'
 import ManageOperations from '../components/ManageOperations.vue'
 import ManageUsers from '../components/ManageUsers.vue'
 import Search from '../components/Search.vue'
+
+const searchRedirection = { name: 'Search', replace: true };
+const loginRedirection = { name: 'Login', replace: true };
 
 const routes = [
 	{
@@ -54,11 +58,20 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	if (to.name == 'Login') {
-		if (store.state.isLogged) return { name: 'Search', replace: true };
+		if (store.state.isLogged) return searchRedirection;
+		else if (JSON.parse(localStorage.getItem('credentials'))?.token) {
+			await AuthService.verifyToken().then(() => {
+				return searchRedirection;
+			});
+		}
 
 	} else {
-		if (!store.state.isLogged) return { name: 'Login', replace: true };
-		else if (to.name == 'ManageUsers' && localStorage.userTypeId != '1') return { name: 'Search', replace: true };
+		if (!store.state.isLogged) {
+			await AuthService.verifyToken().catch(() => {
+				return loginRedirection;
+			});
+
+		} else if (to.name == 'ManageUsers' && store.state.user.type != '1') return searchRedirection;
 	}
 })
 

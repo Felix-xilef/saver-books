@@ -14,7 +14,7 @@
       </button>
       <div class="col-md-2">
         <router-link :to="{ name: 'Search' }" class="navbar-brand">
-          <img src="../assets/logo.svg" alt="logo do site" class="logo" />
+          <img src="../shared/assets/logo.svg" alt="logo do site" class="logo" />
         </router-link>
       </div>
       <form class="col-md-9" @submit.prevent="searchByParameter">
@@ -143,7 +143,7 @@
               :to="{ name: 'BookDetails', params: { isbn: book.isbn } }"
             >
               <img
-                src="../assets/picture.png"
+                src="../shared/assets/picture.png"
                 alt="Book cover"
                 class="bookCover"
               />
@@ -159,8 +159,8 @@
 </template>
 
 <script>
-import BookService from "../services/BookService";
-// import LoginService from '../services/LoginService';
+import BookService from "../shared/services/BookService";
+// import LoginService from '../shared/services/LoginService';
 export default {
   name: "Search",
   data() {

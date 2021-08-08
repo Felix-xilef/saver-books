@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col">
         <div class="d-inline-flex">
-          <img src="../assets/picture.png" alt="Book cover" class="bookCover" />
+          <img src="../shared/assets/picture.png" alt="Book cover" class="bookCover" />
           <div class="d-flex flex-column justify-content-evenly m-3">
             <h3>{{ book.title }}</h3>
             <h4>{{ book.author }}</h4>
@@ -363,7 +363,7 @@
             </button>
           </div>
           <button type="button" class="btn p-0" @click="resetLoanForm">
-            <img src="../assets/clean.svg" alt="" />
+            <img src="../shared/assets/clean.svg" alt="" />
           </button>
         </div>
       </form>
@@ -387,7 +387,7 @@
             data-bs-toggle="modal"
             data-bs-dismiss="modal"
           >
-            <img height="32" src="../assets/arrow-left.svg" alt="back arrow" />
+            <img height="32" src="../shared/assets/arrow-left.svg" alt="back arrow" />
           </button>
           <h5 class="modal-title" id="reservationsModalLabel">
             Selecione uma Reserva
@@ -407,7 +407,7 @@
                   <div class="col-1 me-2">
                     <img
                       height="100"
-                      src="../assets/picture.png"
+                      src="../shared/assets/picture.png"
                       alt="Book cover"
                     />
                   </div>
@@ -442,9 +442,9 @@
 </template>
 
 <script>
-import BookService from '../services/BookService';
-import ReservationService from '../services/ReservationService';
-import LoanService from '../services/LoanService';
+import BookService from '../shared/services/BookService';
+import ReservationService from '../shared/services/ReservationService';
+import LoanService from '../shared/services/LoanService';
 import NavbarReturn from "./NavbarReturn.vue";
 export default {
   name: "BookDetails",
