@@ -9,6 +9,13 @@ export class LoanStatus {
     @Column()
     description: string;
 
+    /**
+     * Creates a new LoanStatus object
+     * @param id Object id, insert:
+     *  - 1 -> 'Retirado'
+     *  - 2 -> 'Atrasado'
+     *  - 3 -> 'Devolvido'
+     */
     constructor(id: number) {
         let description = [
             'Retirado',

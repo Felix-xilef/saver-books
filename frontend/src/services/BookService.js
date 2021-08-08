@@ -1,28 +1,39 @@
-import { http } from './config'
+import axios from "axios"
+import AuthService from "./AuthService"
 
-export default {
-    postBook: (book) => {
-        return http.post('book', book)
-    },
+export default class BookService {
+    postBook(book) {
+        return axios.post(process.env.VUE_APP_API_URL + 'book', book, { headers: AuthService.authHeader })
+    }
 
-    updateBook: (book) => {
-        return http.put('book', book)
-    },
+    updateBook(book) {
+        return axios.put(process.env.VUE_APP_API_URL + 'book', book, { headers: AuthService.authHeader })
+    }
 
-    removeBook: (isbn) => {
-        return http.delete('book', { params: { isbn: isbn } })
-    },
+    removeBook(isbn) {
+        return axios.delete(process.env.VUE_APP_API_URL + 'book', {
+            params: { isbn: isbn },
+            headers: AuthService.authHeader
+        })
+    }
 
-    getByIsbn: (isbn) => {
-        return http.get('book', { params: { isbn: isbn } })
-    },
+    getByIsbn(isbn) {
+        return axios.get(process.env.VUE_APP_API_URL + 'book', {
+            params: { isbn: isbn },
+            headers: AuthService.authHeader
+        })
+    }
 
-    getAll: (filters) => {
+    getAll(filters) {
         let params = {}
+
         if (filters.title) params.title = filters.title
         else if (filters.isbn) params.isbn = filters.isbn
         else if (filters.author) params.author = filters.author
 
-        return http.get('books', { params: params })
-    },
+        return axios.get(process.env.VUE_APP_API_URL + 'book', {
+            params: params,
+            headers: AuthService.authHeader
+        })
+    }
 }

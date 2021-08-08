@@ -1,4 +1,5 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { UserType } from "../../entities/users/UserType";
+import {getRepository, MigrationInterface, QueryRunner, Table} from "typeorm";
 
 export class UserTypeMigration1622422322489 implements MigrationInterface {
 
@@ -10,8 +11,6 @@ export class UserTypeMigration1622422322489 implements MigrationInterface {
                     name: 'id',
                     type: 'integer',
                     isPrimary: true,
-                    isGenerated: true,
-                    generationStrategy: "increment"
                 },
                 {
                     name: 'description',
@@ -20,7 +19,16 @@ export class UserTypeMigration1622422322489 implements MigrationInterface {
             ]
         }), true);
 
-        await queryRunner.query('insert into user_type (description) values ("Gerente"), ("Bibliotecário")');
+        await getRepository(UserType).insert([
+            {
+                id: 1,
+                description: 'Gerente'
+            },
+            {
+                id: 2,
+                description: 'Bibliotecário'
+            },
+        ]);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

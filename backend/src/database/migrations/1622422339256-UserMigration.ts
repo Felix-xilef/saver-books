@@ -1,4 +1,7 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { User } from "../../entities/users/User";
+import { UserType } from "../../entities/users/UserType";
+import {getRepository, MigrationInterface, QueryRunner, Table} from "typeorm";
+import { hashSync } from "bcryptjs";
 
 export class UserMigration1622422339256 implements MigrationInterface {
 
@@ -45,6 +48,16 @@ export class UserMigration1622422339256 implements MigrationInterface {
                 }
             ]
         }), true);
+        
+        await getRepository(User).insert({
+            cpf: '50040030020',
+            email: 'dev@mail.com',
+            password: hashSync('dev12345678'),
+            name: 'Dev User',
+            userType: new UserType(1),
+            birthDate: '',
+            phone: '1150403020'
+        });
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

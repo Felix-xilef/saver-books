@@ -1,4 +1,5 @@
-import {Column, Entity, ManyToOne, PrimaryColumn} from "typeorm";
+import {BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, PrimaryColumn} from "typeorm";
+import { hashSync } from "bcryptjs";
 import { UserType } from "./UserType";
 
 @Entity()
@@ -19,11 +20,17 @@ export class User {
     @Column()
     email: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @ManyToOne(() => UserType)
     userType: UserType;
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    hashPassword() {
+        this.password = hashSync(this.password);
+    }
 
     constructor(
         cpf: string,

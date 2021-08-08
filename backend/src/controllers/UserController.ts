@@ -39,7 +39,7 @@ export class UserController {
             try {
                 const user: User = await getRepository(User).findOne(cpf, { relations: { userType: true } });
 
-                if (user) response.status(200).json(getJsonFromUser(getJsonFromUser(user)));
+                if (user) response.status(200).json(getJsonFromUser(user));
                 else response.status(404).json({ "error": "User not found" });
 
             } catch (error) {

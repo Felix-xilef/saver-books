@@ -9,6 +9,12 @@ export class UserType {
     @Column()
     description: string;
 
+    /**
+     * Creates a new UserType object
+     * @param id Object id, insert:
+     *  - 1 -> 'Gerente'
+     *  - 2 -> 'Bibliotecário'
+     */
     constructor(id: number) {
         let description = [
             'Gerente',

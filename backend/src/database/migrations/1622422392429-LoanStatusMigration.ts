@@ -1,4 +1,5 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { LoanStatus } from "../../entities/operations/LoanStatus";
+import {getRepository, MigrationInterface, QueryRunner, Table} from "typeorm";
 
 export class LoanStatusMigration1622422392429 implements MigrationInterface {
 
@@ -20,7 +21,20 @@ export class LoanStatusMigration1622422392429 implements MigrationInterface {
             ]
         }), true);
 
-        await queryRunner.query('insert into loan_status (description) values ("Retirado"), ("Atrasado"), ("Devolvido")');
+        await getRepository(LoanStatus).insert([
+            {
+                id: 1,
+                description: 'Retirado'
+            },
+            {
+                id: 2,
+                description: 'Atrasado'
+            },
+            {
+                id: 3,
+                description: 'Devolvido'
+            },
+        ]);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

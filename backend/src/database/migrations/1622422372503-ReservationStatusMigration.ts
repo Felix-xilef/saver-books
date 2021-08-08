@@ -1,4 +1,5 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { ReservationStatus } from "../../entities/operations/ReservationStatus";
+import {getRepository, MigrationInterface, QueryRunner, Table} from "typeorm";
 
 export class ReservationStatusMigration1622422372503 implements MigrationInterface {
 
@@ -10,8 +11,6 @@ export class ReservationStatusMigration1622422372503 implements MigrationInterfa
                     name: 'id',
                     type: 'integer',
                     isPrimary: true,
-                    isGenerated: true,
-                    generationStrategy: "increment"
                 },
                 {
                     name: 'description',
@@ -20,7 +19,24 @@ export class ReservationStatusMigration1622422372503 implements MigrationInterfa
             ]
         }), true);
 
-        await queryRunner.query('insert into reservation_status (description) values ("Aberto"), ("Atrasado"), ("Retirado"), ("Cancelado")');
+        await getRepository(ReservationStatus).insert([
+            {
+                id: 1,
+                description: 'Aberto'
+            },
+            {
+                id: 2,
+                description: 'Atrasado'
+            },
+            {
+                id: 3,
+                description: 'Retirado'
+            },
+            {
+                id: 4,
+                description: 'Cancelado'
+            },
+        ]);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

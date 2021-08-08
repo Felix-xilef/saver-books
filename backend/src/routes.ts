@@ -1,19 +1,23 @@
+import { Router } from "express";
 import { BookController } from "./controllers/BookController";
 import { LoanController } from "./controllers/LoanController";
 import { ReportController } from "./controllers/ReportController";
 import { ReservationController } from "./controllers/ReservationController";
 import { UserController } from "./controllers/UserController";
 import { SubTypesController } from "./controllers/SubTypesController";
-import { Router } from "express";
+import { AuthController } from "./controllers/AuthController";
 
 const router = Router();
 
+const authController = new AuthController;
 const userController = new UserController;
 const bookController = new BookController;
 const reservationController = new ReservationController;
 const loanController = new LoanController;
 const reportController = new ReportController;
 const subTypesController = new SubTypesController;
+
+router.post('/authenticate', authController.authenticate);
 
 router.get('/user', userController.select);
 router.get('/users', userController.selectAll);

@@ -160,7 +160,7 @@
 
 <script>
 import BookService from "../services/BookService";
-import LoginService from '../services/LoginService';
+// import LoginService from '../services/LoginService';
 export default {
   name: "Search",
   data() {
@@ -213,8 +213,8 @@ export default {
       this.getBooks(this.filter);
     },
     logout() {
-      LoginService.logout()
-      this.$router.replace({ name: 'Login' })
+      // LoginService.logout()
+      // this.$router.replace({ name: 'Login' })
     },
   },
   mounted() {

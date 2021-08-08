@@ -1,4 +1,5 @@
-import {MigrationInterface, QueryRunner, Table} from "typeorm";
+import { Genre } from "../../entities/books/Genre";
+import {getRepository, MigrationInterface, QueryRunner, Table} from "typeorm";
 
 export class GenreMigration1622422347273 implements MigrationInterface {
 
@@ -20,7 +21,43 @@ export class GenreMigration1622422347273 implements MigrationInterface {
             ]
         }), true);
 
-        await queryRunner.query('insert into genre (description) values ("Administração"), ("Agropecuária"), ("Artes"), ("Autoajuda"), ("Ciências Biológicas"), ("Ciências Exatas"), ("Ciências Humanas e Sociais"), ("Contabilidade"), ("Gastronomia"), ("Cursos e Idiomas"), ("Didáticos"), ("Dicionários e Manuais de Conversação"), ("Direito"), ("Economia"), ("Engenharia e Tecnologia"), ("Esoterismo"), ("Espiritismo"), ("Esportes e Lazer"), ("Geografia e Historia"), ("Informática"), ("Linguística"), ("Literatura Infantojuvenil"), ("Medicina"), ("Psicologia e Psicanálise"), ("Religião"), ("Turismo"), ("Audiolivro"), ("Biografias e Memórias"), ("Ensaios"), ("Ficção Científica e Fantasia"), ("Humor"), ("Poesia"), ("Policial e Suspense"), ("Romance"), ("Terror"), ("Contos e Crônicas")');
+        await getRepository(Genre).insert([
+            { description: 'Administração' },
+            { description: 'Agropecuária' },
+            { description: 'Artes' },
+            { description: 'Autoajuda' },
+            { description: 'Ciências Biológicas' },
+            { description: 'Ciências Exatas' },
+            { description: 'Ciências Humanas e Sociais' },
+            { description: 'Contabilidade' },
+            { description: 'Gastronomia' },
+            { description: 'Cursos e Idiomas' },
+            { description: 'Didáticos' },
+            { description: 'Dicionários e Manuais de Conversação' },
+            { description: 'Direito' },
+            { description: 'Economia' },
+            { description: 'Engenharia e Tecnologia' },
+            { description: 'Esoterismo' },
+            { description: 'Espiritismo' },
+            { description: 'Esportes e Lazer' },
+            { description: 'Geografia e Historia' },
+            { description: 'Informática' },
+            { description: 'Linguística' },
+            { description: 'Literatura Infantojuvenil' },
+            { description: 'Medicina' },
+            { description: 'Psicologia e Psicanálise' },
+            { description: 'Religião' },
+            { description: 'Turismo' },
+            { description: 'Biografias e Memórias' },
+            { description: 'Ensaios' },
+            { description: 'Ficção Científica e Fantasia' },
+            { description: 'Humor' },
+            { description: 'Poesia' },
+            { description: 'Policial e Suspense' },
+            { description: 'Romance' },
+            { description: 'Terror' },
+            { description: 'Contos e Crônicas' },
+        ]);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -28,5 +65,3 @@ export class GenreMigration1622422347273 implements MigrationInterface {
     }
 
 }
-
-// Gêneros -> ("Administração"), ("Agropecuária"), ("Artes"), ("Autoajuda"), ("Ciências Biológicas"), ("Ciências Exatas"), ("Ciências Humanas e Sociais"), ("Contabilidade"), ("Gastronomia"), ("Cursos e Idiomas"), ("Didáticos"), ("Dicionários e Manuais de Conversação"), ("Direito"), ("Economia"), ("Engenharia e Tecnologia"), ("Esoterismo"), ("Espiritismo"), ("Esportes e Lazer"), ("Geografia e Historia"), ("Informática"), ("Linguística"), ("Literatura Infantojuvenil"), ("Medicina"), ("Psicologia e Psicanálise"), ("Religião"), ("Turismo"), ("Audiolivro"), ("Biografias e Memórias"), ("Ensaios"), ("Ficção Científica e Fantasia"), ("Humor"), ("Poesia"), ("Policial e Suspense"), ("Romance"), ("Terror"), ("Contos e Crônicas")

@@ -1,15 +1,16 @@
-import { http } from './config'
+import axios from "axios"
+import AuthService from "./AuthService"
 
-export default {
-    postReservation: (reservation) => {
-        return http.post('reservation', reservation)
-    },
+export default class ReservationService {
+    postReservation(reservation) {
+        return axios.post(process.env.VUE_APP_API_URL + 'reservation', reservation, { headers: AuthService.authHeader })
+    }
 
-    updateReservation: (reservation) => {
-        return http.put('reservation', reservation)
-    },
+    updateReservation(reservation) {
+        return axios.put(process.env.VUE_APP_API_URL + 'reservation', reservation, { headers: AuthService.authHeader })
+    }
 
-    getAll: ({ isbn, isActive, cpf }) => {
+    getAll({ isbn, isActive, cpf }) {
         let params = {}
 
         if (isbn) {
@@ -17,6 +18,9 @@ export default {
             if (isActive == true || isActive == false) params.isActive = isActive
         } else if (cpf) params.cpf = cpf
 
-        return http.get('reservations', { params: params })
-    },
+        return axios.get(process.env.VUE_APP_API_URL + 'reservations', {
+            params: params,
+            headers: AuthService.authHeader
+        })
+    }
 }

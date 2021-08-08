@@ -1,13 +1,11 @@
 import { createWebHistory, createRouter } from "vue-router"
-
+import store from "../store"
 import Login from '../components/Login.vue'
 import BookDetails from '../components/BookDetails.vue'
 import ManageBooks from '../components/ManageBooks.vue'
 import ManageOperations from '../components/ManageOperations.vue'
 import ManageUsers from '../components/ManageUsers.vue'
 import Search from '../components/Search.vue'
-
-import LoginService from '../services/LoginService'
 
 const routes = [
 	{
@@ -55,17 +53,12 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-	let isLogged = await LoginService.isLogged()
 	if (to.name == 'Login') {
-		if (isLogged) {
-			return { name: 'Search', replace: true }
-		}
+		if (store.state.isLogged) return { name: 'Search', replace: true };
+
 	} else {
-		if (!isLogged) {
-			return { name: 'Login', replace: true }
-		} else if (to.name == 'ManageUsers' && localStorage.userTypeId != '1') {
-			return { name: 'Search', replace: true }
-		}
+		if (!store.state.isLogged) return { name: 'Login', replace: true };
+		else if (to.name == 'ManageUsers' && localStorage.userTypeId != '1') return { name: 'Search', replace: true };
 	}
 })
 
