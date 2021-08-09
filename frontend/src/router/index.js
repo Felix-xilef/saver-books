@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router"
 import store from "../store"
-import AuthService from "../shared/services/AuthService";
+// import AuthService from "../shared/services/AuthService";
 import Login from '../components/Login.vue'
 import BookDetails from '../components/BookDetails.vue'
 import ManageBooks from '../components/ManageBooks.vue'
@@ -56,22 +56,13 @@ const router = createRouter({
 	routes,
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(to => {
 	if (to.name == 'Login') {
 		if (store.state.isLogged) return searchRedirection;
-		else if (JSON.parse(localStorage.getItem('credentials'))?.token) {
-			await AuthService.verifyToken().then(() => {
-				return searchRedirection;
-			});
-		}
 
 	} else {
-		if (!store.state.isLogged) {
-			await AuthService.verifyToken().catch(() => {
-				return loginRedirection;
-			});
-
-		} else if (to.name == 'ManageUsers' && store.state.user.type != '1') return searchRedirection;
+		if (!store.state.isLogged) return loginRedirection;
+		else if (to.name == 'ManageUsers' && store.state.user.type != '1') return searchRedirection;
 	}
 })
 

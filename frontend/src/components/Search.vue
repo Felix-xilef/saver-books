@@ -52,10 +52,7 @@
       <div>
         <router-link
           class="nav-link p-0 m-2"
-          :to="{
-            name: 'ManageOperations',
-            params: { operationName: 'reservation' },
-          }"
+          :to="{ name: 'ManageOperations', params: { operationName: 'reservation' }, }"
         >
           Reserva
         </router-link>
@@ -160,7 +157,7 @@
 
 <script>
 import BookService from "../shared/services/BookService";
-// import LoginService from '../shared/services/LoginService';
+import AuthService from '../shared/services/AuthService';
 export default {
   name: "Search",
   data() {
@@ -173,7 +170,7 @@ export default {
   },
   computed: {
     isManager() {
-      return localStorage.userTypeId == '1'
+      return this.$store.state.user.userType.id == '1';
     }
   },
   methods: {
@@ -191,30 +188,32 @@ export default {
           { name: 'Gênero', content: [] },
         ]
 
-        this.books.map(item => {
+        this.books.forEach(item => {
           [
             item.language,
             item.author,
             item.publisher,
             item.genre.description
-          ].map((value, index) => {
+          ].forEach((value, index) => {
             if (!localFilters[index].content.find(filterValue => filterValue == value)) {
               localFilters[index].content.push(value)
             }
           })
         })
 
-        localFilters.map(item => {
+        localFilters.forEach(item => {
           if (item.content.length > 1) this.checkboxFilters.push(item)
-        })
+        });
+      }).catch(error => {
+        console.log(error);
       });
     },
     searchByParameter() {
       this.getBooks(this.filter);
     },
     logout() {
-      // LoginService.logout()
-      // this.$router.replace({ name: 'Login' })
+      AuthService.logout()
+      this.$router.replace({ name: 'Login' })
     },
   },
   mounted() {
@@ -222,6 +221,7 @@ export default {
   },
   watch: {
     filter(newFilter) {
+      console.log(newFilter);
       this.getBooks(newFilter);
     },
   },

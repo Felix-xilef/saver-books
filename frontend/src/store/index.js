@@ -3,7 +3,7 @@ import { createStore } from "vuex"
 const store = createStore({
 	state: {
 		isLogged: false,
-		user: false,
+		user: null,
 	},
 	mutations: {
 		login(state, user) {
@@ -12,7 +12,7 @@ const store = createStore({
 		},
 		logout(state) {
 			state.isLogged = false;
-			state.user = false;
+			state.user = null;
 		},
 	},
 });

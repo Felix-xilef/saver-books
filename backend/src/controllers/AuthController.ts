@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { compare } from "bcryptjs";
 import { sign, verify } from "jsonwebtoken";
+import { TokenPayload } from "interfaces/TokenPayload";
 
 const getJsonFromUser = (user: User): UserJson => {
     return {
@@ -25,13 +26,11 @@ export class AuthController {
     async authenticate(request: Request, response: Response): Promise<Response> {
         const { cpf, password, token } = request.body;
 
-        if (token) {
-            console.log(token);
-            
+        if (token) {            
             try {
-                verify(token, process.env.SECRET);
+                const { cpf: tokenCpf } = verify(token, process.env.SECRET) as TokenPayload;
                 
-                return response.status(200);
+                return response.status(200).json({ "cpf": tokenCpf });
 
             } catch {
                 return response.status(401).json({ "error": "not authorized" });

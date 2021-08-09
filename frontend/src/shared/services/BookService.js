@@ -1,7 +1,7 @@
 import axios from "axios"
 import AuthService from "./AuthService"
 
-export default class BookService {
+class BookService {
     postBook(book) {
         return axios.post(process.env.VUE_APP_API_URL + 'book', book, { headers: AuthService.authHeader })
     }
@@ -31,9 +31,11 @@ export default class BookService {
         else if (filters.isbn) params.isbn = filters.isbn
         else if (filters.author) params.author = filters.author
 
-        return axios.get(process.env.VUE_APP_API_URL + 'book', {
+        return axios.get(process.env.VUE_APP_API_URL + 'books', {
             params: params,
             headers: AuthService.authHeader
         })
     }
 }
+
+export default new BookService();

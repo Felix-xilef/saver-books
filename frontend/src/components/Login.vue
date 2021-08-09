@@ -4,13 +4,6 @@
   </div>
   <div class="row m-0 justify-content-center p-md-0 p-3">
     <div class="card p-4 backgroundLightPurple borderPurple">
-      <div v-if="error" class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
-        <!-- <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
-          <use xlink:href="#exclamation-triangle-fill"/>
-        </svg> -->
-        <div>{{ logMessage }}</div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
       <div class="row row-cols-md-2 row-cols-1">
         <div class="col-md-4">
           <div class="row justify-content-center">
@@ -47,6 +40,8 @@
               id="txtPassword"
               placeholder="Digite sua Senha"
               class="form-control"
+              :class="{ 'is-valid': passwordIsValid, 'is-invalid': passwordHasError }"
+              @blur="v$.loginForm.password.$touch"
               v-model="loginForm.password"
             />
             <div class="invalid-feedback">
@@ -68,6 +63,28 @@
       </div>
     </div>
   </div>
+
+  <div
+    id="toast"
+    class="toast align-items-center text-white-50 bg-danger position-absolute top-0 start-50 translate-middle-x mt-3"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-bs-animation="true"
+    data-bs-autohide="true"
+  >
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ logMessage }}
+      </div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -75,6 +92,7 @@ import vuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
 import AuthService from '../shared/services/AuthService';
+import { Toast } from 'bootstrap';
 export default {
   setup() {
     return { v$: vuelidate() }
@@ -82,8 +100,8 @@ export default {
   name: "Login",
   data() {
     return {
-      error: false,
-      logMessage: '',
+      error: true,
+      logMessage: 'Log message...',
       loginForm: {
         cpf: '',
         password: '',
@@ -108,6 +126,15 @@ export default {
     cpfHasError() {
       return this.v$.loginForm.cpf.$error;
     },
+    passwordIsValid() {
+      return !this.v$.loginForm.password.$invalid && this.v$.loginForm.password.$dirty;
+    },
+    passwordHasError() {
+      return this.v$.loginForm.password.$error;
+    },
+    toast() {
+      return new Toast(document.getElementById('toast'));
+    },
   },
   methods: {
     submit() {
@@ -119,9 +146,22 @@ export default {
         else {
           this.logMessage = 'CPF ou senha incorreto(s)';
           this.error = true;
+          this.toast.show();
         }
       });
     },
+  },
+  beforeMount() {
+    AuthService.verifyCredentials().then(tokenIsValid => {
+      if (tokenIsValid) this.$router.push({ name: 'Search' });
+    });
+  },
+  mounted() {
+    // var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    // var toastList = toastElList.map(function (toastEl) {
+    //   return new Toast(toastEl, option);
+    // });
+    this.toast.show();
   },
 };
 </script>

@@ -1,7 +1,7 @@
 import axios from "axios"
 import AuthService from "./AuthService"
 
-export default class ReservationService {
+class ReservationService {
     postReservation(reservation) {
         return axios.post(process.env.VUE_APP_API_URL + 'reservation', reservation, { headers: AuthService.authHeader })
     }
@@ -24,3 +24,5 @@ export default class ReservationService {
         })
     }
 }
+
+export default new ReservationService();

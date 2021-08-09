@@ -1,7 +1,7 @@
 import axios from "axios"
 import AuthService from "./AuthService"
 
-export default class SubTypesService {
+class SubTypesService {
     getGenres() {
         return axios.get(process.env.VUE_APP_API_URL + 'genres', { headers: AuthService.authHeader })
     }
@@ -18,3 +18,5 @@ export default class SubTypesService {
         return axios.get(process.env.VUE_APP_API_URL + 'loanstatus', { headers: AuthService.authHeader })
     }
 }
+
+export default new SubTypesService();

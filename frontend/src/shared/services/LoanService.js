@@ -1,7 +1,7 @@
 import axios from "axios"
 import AuthService from './AuthService';
 
-export default class LoanService {
+class LoanService {
     postLoan(loan) {
         return axios.post(process.env.VUE_APP_API_URL + 'loan', loan, { headers: AuthService.authHeader })
     }
@@ -22,3 +22,5 @@ export default class LoanService {
         })
     }
 }
+
+export default new LoanService();

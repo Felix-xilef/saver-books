@@ -1,7 +1,7 @@
 import axios from "axios"
 import AuthService from "./AuthService"
 
-export default class UserService {
+class UserService {
     postUser(user) {
         return axios.post(process.env.VUE_APP_API_URL + 'user', user, { headers: AuthService.authHeader })
     }
@@ -24,3 +24,5 @@ export default class UserService {
         })
     }
 }
+
+export default new UserService();
