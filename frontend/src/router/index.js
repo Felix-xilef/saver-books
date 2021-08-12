@@ -1,14 +1,15 @@
 import { createWebHistory, createRouter } from "vue-router"
 import store from "../store"
-// import AuthService from "../shared/services/AuthService";
 import Login from '../components/Login.vue'
+import Home from '../components/Home.vue'
 import BookDetails from '../components/BookDetails.vue'
 import ManageBooks from '../components/ManageBooks.vue'
 import ManageOperations from '../components/ManageOperations.vue'
 import ManageUsers from '../components/ManageUsers.vue'
 import Search from '../components/Search.vue'
+import Reports from '../components/Reports.vue'
 
-const searchRedirection = { name: 'Search', replace: true };
+const homeRedirection = { name: 'Home', replace: true };
 const loginRedirection = { name: 'Login', replace: true };
 
 const routes = [
@@ -18,13 +19,18 @@ const routes = [
 		component: Login,
 	},
 	{
-		path: '/book/search',
-		name: 'Search',
-		component: Search,
+		path: '/home',
+		name: 'Home',
+		component: Home,
 	},
 	{
 		path: '/',
-		redirect: { name: 'Search' },
+		redirect: { name: 'Home' },
+	},
+	{
+		path: '/book/search',
+		name: 'Search',
+		component: Search,
 	},
 	{
 		path: '/book/:isbn',
@@ -49,6 +55,11 @@ const routes = [
 		name: 'ManageUsers',
 		component: ManageUsers,
 	},
+	{
+		path: '/reports',
+		name: 'Reports',
+		component: Reports,
+	},
 ]
 
 const router = createRouter({
@@ -58,11 +69,11 @@ const router = createRouter({
 
 router.beforeEach(to => {
 	if (to.name == 'Login') {
-		if (store.state.isLogged) return searchRedirection;
+		if (store.state.isLogged) return homeRedirection;
 
 	} else {
 		if (!store.state.isLogged) return loginRedirection;
-		else if (to.name == 'ManageUsers' && store.state.user.type != '1') return searchRedirection;
+		else if (to.name == 'ManageUsers' && store.state.user.type != '1') return homeRedirection;
 	}
 })
 
