@@ -64,27 +64,7 @@
     </div>
   </div>
 
-  <div
-    id="toast"
-    class="toast align-items-center text-white-50 bg-danger position-absolute top-0 start-50 translate-middle-x mt-3"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-    data-bs-animation="true"
-    data-bs-autohide="true"
-  >
-    <div class="d-flex">
-      <div class="toast-body">
-        {{ logMessage }}
-      </div>
-      <button
-        type="button"
-        class="btn-close btn-close-white me-2 m-auto"
-        data-bs-dismiss="toast"
-        aria-label="Close"
-      ></button>
-    </div>
-  </div>
+  <alert :logMessage="log.message" :error="log.error"></alert>
 </template>
 
 <script>
@@ -92,16 +72,19 @@ import vuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
 import AuthService from '../shared/services/AuthService';
-import { Toast } from 'bootstrap';
+import Alert from '../shared/components/Alert.vue';
 export default {
+  components: { Alert },
   setup() {
     return { v$: vuelidate() }
   },
   name: "Login",
   data() {
     return {
-      error: true,
-      logMessage: 'Log message...',
+      log: {
+        message: '',
+        error: false,
+      },
       loginForm: {
         cpf: '',
         password: '',
@@ -132,21 +115,24 @@ export default {
     passwordHasError() {
       return this.v$.loginForm.password.$error;
     },
-    toast() {
-      return new Toast(document.getElementById('toast'));
-    },
   },
   methods: {
+    resetForm() {
+      this.loginForm.cpf = '';
+      this.loginForm.password = '';
+    },
     submit() {
+      this.log.error = false;
+
       if (this.loginFormIsValid) this.enter();
     },
     enter() {
       AuthService.login(this.loginForm.cpf, this.loginForm.password).then(loggedIn => {
         if (loggedIn) this.$router.push({ name: 'Search' });
         else {
-          this.logMessage = 'CPF ou senha incorreto(s)';
-          this.error = true;
-          this.toast.show();
+          this.resetForm();
+          this.log.message = 'CPF ou senha incorreto(s)';
+          this.log.error = true;
         }
       });
     },
@@ -155,13 +141,6 @@ export default {
     AuthService.verifyCredentials().then(tokenIsValid => {
       if (tokenIsValid) this.$router.push({ name: 'Search' });
     });
-  },
-  mounted() {
-    // var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-    // var toastList = toastElList.map(function (toastEl) {
-    //   return new Toast(toastEl, option);
-    // });
-    this.toast.show();
   },
 };
 </script>
