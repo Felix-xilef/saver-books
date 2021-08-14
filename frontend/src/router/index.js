@@ -19,46 +19,47 @@ const routes = [
 		component: Login,
 	},
 	{
-		path: '/home',
-		name: 'Home',
+		path: '/library',
 		component: Home,
+		children: [
+			{
+				path: 'search',
+				name: 'Search',
+				component: Search,
+			},
+			{
+				path: 'book/:isbn',
+				name: 'BookDetails',
+				component: BookDetails,
+				props: true,
+			},
+			{
+				path: 'book/manage/:isbn?',
+				name: 'ManageBooks',
+				component: ManageBooks,
+				props: true,
+			},
+			{
+				path: 'operation/:operationName(reservation|loan)',
+				name: 'ManageOperations',
+				component: ManageOperations,
+				props: true,
+			},
+			{
+				path: 'user',
+				name: 'ManageUsers',
+				component: ManageUsers,
+			},
+			{
+				path: 'reports',
+				name: 'Reports',
+				component: Reports,
+			},
+		],
 	},
 	{
-		path: '/',
-		redirect: { name: 'Home' },
-	},
-	{
-		path: '/book/search',
-		name: 'Search',
-		component: Search,
-	},
-	{
-		path: '/book/:isbn',
-		name: 'BookDetails',
-		component: BookDetails,
-		props: true,
-	},
-	{
-		path: '/book/manage/:isbn?',
-		name: 'ManageBooks',
-		component: ManageBooks,
-		props: true,
-	},
-	{
-		path: '/operation/:operationName(reservation|loan)',
-		name: 'ManageOperations',
-		component: ManageOperations,
-		props: true,
-	},
-	{
-		path: '/user',
-		name: 'ManageUsers',
-		component: ManageUsers,
-	},
-	{
-		path: '/reports',
-		name: 'Reports',
-		component: Reports,
+		path: '',
+		redirect: { name: 'Search' },
 	},
 ]
 

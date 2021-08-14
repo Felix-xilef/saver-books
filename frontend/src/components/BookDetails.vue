@@ -1,5 +1,4 @@
 <template>
-  <navbar-return />
   <div v-if="book" class="container p-4">
     <div class="row">
       <div class="col">
@@ -445,10 +444,8 @@
 import BookService from '../shared/services/BookService';
 import ReservationService from '../shared/services/ReservationService';
 import LoanService from '../shared/services/LoanService';
-import NavbarReturn from "./NavbarReturn.vue";
 export default {
   name: "BookDetails",
-  components: { NavbarReturn },
   props: {
     isbn: {
       type: String,

@@ -1,5 +1,4 @@
 <template>
-  <navbar-return />
   <form class="container p-3" @submit.prevent="saveUser">
     <div class="row">
       <div class="col-3">
@@ -131,9 +130,7 @@
 <script>
 import SubTypesService from '../shared/services/SubTypesService';
 import UserService from '../shared/services/UserService';
-import NavbarReturn from "./NavbarReturn.vue";
 export default {
-  components: { NavbarReturn },
   name: "ManageUsers",
   data() {
     return {

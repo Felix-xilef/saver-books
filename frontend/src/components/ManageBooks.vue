@@ -1,5 +1,4 @@
 <template>
-  <navbar-return />
   <form class="container p-3" @submit.prevent="salveBook">
     <div class="row">
       <div class="col-3">
@@ -158,9 +157,7 @@
 <script>
 import BookService from '../shared/services/BookService';
 import SubTypesService from '../shared/services/SubTypesService';
-import NavbarReturn from "./NavbarReturn.vue";
 export default {
-  components: { NavbarReturn },
   name: "ManageBooks",
   props: {
     isbn: {

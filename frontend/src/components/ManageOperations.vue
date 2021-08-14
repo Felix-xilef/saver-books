@@ -1,5 +1,4 @@
 <template>
-  <navbar-return />
   <form class="container p-3" @submit.prevent="saveRegistry">
     <div class="row">
       <div class="row">
@@ -220,9 +219,7 @@
 import LoanService from '../shared/services/LoanService';
 import ReservationService from '../shared/services/ReservationService';
 import SubTypesService from "../shared/services/SubTypesService";
-import NavbarReturn from "./NavbarReturn.vue";
 export default {
-  components: { NavbarReturn },
   name: "ManageOperations",
   props: {
     operationName: {

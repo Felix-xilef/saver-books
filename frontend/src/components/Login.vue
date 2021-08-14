@@ -128,7 +128,7 @@ export default {
     },
     enter() {
       AuthService.login(this.loginForm.cpf, this.loginForm.password).then(loggedIn => {
-        if (loggedIn) this.$router.push({ name: 'Home' });
+        if (loggedIn) this.$router.push({ name: 'Search', replace: true });
         else {
           this.resetForm();
           this.log.message = 'CPF ou senha incorreto(s)';
@@ -139,7 +139,7 @@ export default {
   },
   beforeMount() {
     AuthService.verifyCredentials().then(tokenIsValid => {
-      if (tokenIsValid) this.$router.push({ name: 'Home' });
+      if (tokenIsValid) this.$router.push({ name: 'Search', replace: true });
     });
   },
 };
