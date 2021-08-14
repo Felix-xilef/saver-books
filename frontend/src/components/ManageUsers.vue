@@ -125,15 +125,25 @@
 			</button>
 		</div>
   </form>
+
+  <alert :logMessage="log.message" :error="log.error" :success="log.success" :warning="log.warning" />
 </template>
 
 <script>
+import Alert from '../shared/components/Alert.vue';
 import SubTypesService from '../shared/services/SubTypesService';
 import UserService from '../shared/services/UserService';
 export default {
+  components: { Alert },
   name: "ManageUsers",
   data() {
     return {
+      log: {
+        message: '',
+        error: false,
+        success: false,
+				warning: false,
+      },
       user: {
         cpf: '',
         name: '',
@@ -153,6 +163,24 @@ export default {
     };
   },
 	methods: {
+		success(message) {
+			this.log.message = message;
+			this.log.error = false;
+			this.log.warning = false;
+			this.log.success = true;
+		},
+		error(message) {
+			this.log.message = message;
+			this.log.success = false;
+			this.log.warning = false;
+			this.log.error = true;
+		},
+		warning(message) {
+			this.log.message = message;
+			this.log.success = false;
+			this.log.error = false;
+			this.log.warning = true;
+		},
 		resetForm() {
 			this.user = {
         cpf: '',
@@ -172,56 +200,53 @@ export default {
 		},
 		getUserTypes() {
 			SubTypesService.getUserTypes().then(response => {
-				this.userTypes = response.data
-			}).catch(error => {
-				alert('Erro ao listar tipos de usuário')
-				console.log(error)
-			})
+				this.userTypes = response.data;
+
+			}).catch(err => {
+				this.error('Erro ao listar tipos de usuário: ' + err);
+			});
 		},
 		saveUser() {
 			if (this.selectedCpf == '') {
 				UserService.postUser(this.user).then(() => {
-					alert('Usuário cadastrado com sucesso!')
-					this.resetForm()
-				}).catch(error => {
-					alert('Erro ao cadastrar usuário!')
-					console.log(error)
-				})
+					this.success('Usuário cadastrado com sucesso!');
+					this.resetForm();
+
+				}).catch(err => {
+					this.error('Erro ao cadastrar usuário: ' + err);
+				});
+
 			} else {
 				UserService.updateUser(this.user).then(() => {
-					alert('Usuário atualizado com sucesso!')
-				}).catch(error => {
-					alert('Erro ao atualizar usuário!')
-					console.log(error)
-				})
+					this.success('Usuário atualizado com sucesso!');
+
+				}).catch(err => {
+					this.error('Erro ao editar usuário: ' + err);
+				});
 			}
 		},
 		removeUser() {
 			UserService.removeUser(this.selectedCpf).then(() => {
-				alert('Usuário removido com sucesso!')
-				this.resetForm()
-			}).catch(error => {
-				alert('Erro ao remover usuário!')
-				console.log(error)
-			})
+				this.success('Usuário removido com sucesso!');
+				this.resetForm();
+
+			}).catch(err => {
+				this.error('Erro ao remover usuário: ' + err);
+			});
 		},
 		getUser() {
-			if (this.selectedCpf != '') {
-				alert('Antes de realizar uma busca limpe os campos')
-			} else {
+			if (this.selectedCpf != '') this.warning('Antes de realizar uma busca limpe os campos');
+			else {
 				UserService.getByCpf(this.user.cpf).then(response => {
 					this.user = response.data
 					this.user.birthDate = response.data.birthDate.slice(0, 10)
 					this.selectedCpf = response.data.cpf
-					this.passwordConfirmation = response.data.password
-				}).catch(error => {
-					if (error == 'Error: Request failed with status code 404') {
-						alert(`Usuário de CPF: ${this.user.cpf} não encontrado!`)
-					} else {
-						alert('Erro ao buscar o usuário')
-					}
-					console.log(error)
-				})
+					this.passwordConfirmation = response.data.password;
+
+				}).catch(err => {
+					if (err.includes('404')) this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
+					else this.error('Erro ao buscar o usuário: ' + err);
+				});
 			}
 		},
 	},
