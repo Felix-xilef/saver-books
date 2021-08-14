@@ -438,13 +438,17 @@
       </div>
     </div>
   </div>
+
+  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
 </template>
 
 <script>
 import BookService from '../shared/services/BookService';
 import ReservationService from '../shared/services/ReservationService';
 import LoanService from '../shared/services/LoanService';
+import Alert from '../shared/components/Alert.vue';
 export default {
+  components: { Alert },
   name: "BookDetails",
   props: {
     isbn: {
@@ -454,6 +458,11 @@ export default {
   },
   data() {
     return {
+      log: {
+        message: '',
+        error: false,
+        success: false,
+      },
       book: false,
       loan: {},
       reservation: {},
@@ -461,6 +470,16 @@ export default {
     };
   },
   methods: {
+		success(message) {
+			this.log.message = message;
+			this.log.error = false;
+			this.log.success = true;
+		},
+		error(message) {
+			this.log.message = message;
+			this.log.success = false;
+			this.log.error = true;
+		},
     resetReservation() {
       this.reservation = {
         cpf: '',
@@ -508,18 +527,18 @@ export default {
     },
     getBook(isbn) {
       BookService.getByIsbn(isbn).then(response => {
-        this.book = response.data
+        this.book = response.data;
+
       }).catch(err => {
-        alert('Erro ao procurar livro')
-        console.log(err)
+				this.error('Erro ao buscar livro: ' + err);
       })
     },
     getReservations() {
       ReservationService.getAll({ isbn: this.book.isbn, isActive: true }).then(response => {
-        this.reservations = response.data
+        this.reservations = response.data;
+
       }).catch(err => {
-        alert('Erro ao listar reservas')
-        console.log(err)
+				this.error('Erro ao listar reservas: ' + err);
       })
     },
     postReservation() {
@@ -529,12 +548,13 @@ export default {
         console.log(response)
         this.resetReservation()
         this.getBook(this.isbn)
-        this.closeModal('reservationModal')
-        alert('Reserva cadastrada com sucesso!')
+        this.closeModal('reservationModal');
+
+				this.success('Reserva cadastrada com sucesso!');
+
       }).catch(err => {
-        alert('Erro ao cadastrar')
-        console.log(err)
-      })
+				this.error('Erro ao cadastrar Reserva: ' + err);
+      });
     },
     postLoan() {
       this.loan.bookIsbn = this.book.isbn
@@ -545,11 +565,12 @@ export default {
         this.resetLoan()
         this.getBook(this.isbn)
         this.closeModal('loanModal')
-        alert('Empréstimo cadastrado com sucesso!')
+
+				this.success('Empréstimo cadastrado com sucesso!');
+
       }).catch(err => {
-        alert('Erro ao cadastrar')
-        console.log(err)
-      })
+				this.error('Erro ao cadastrar Empréstimo: ' + err);
+      });
     },
   },
   mounted() {
