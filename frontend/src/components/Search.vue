@@ -79,14 +79,22 @@
       </div>
     </div>
   </div>
+
+  <alert :logMessage="log.message" :error="log.error" />
 </template>
 
 <script>
+import Alert from '../shared/components/Alert.vue';
 import BookService from "../shared/services/BookService";
 export default {
+  components: { Alert },
   name: "Search",
   data() {
     return {
+      log: {
+        message: '',
+        error: '',
+      },
       checkboxFilters: [],
       books: [],
       booksReceived: [],
@@ -125,7 +133,8 @@ export default {
           if (item.content.length > 1) this.checkboxFilters.push(item)
         });
       }).catch(error => {
-        console.log(error);
+        this.log.message = 'Erro ao buscar livros: ' + error;
+				this.log.error = true;
       });
     },
   },

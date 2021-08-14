@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <alert :logMessage="log.message" :error="log.error"></alert>
+  <alert :logMessage="log.message" :error="log.error" />
 </template>
 
 <script>
