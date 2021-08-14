@@ -2,7 +2,7 @@
   <div
     id="toast"
     class="toast align-items-center text-white position-absolute top-0 start-50 translate-middle-x mt-3"
-    :class="{ 'bg-danger': error, 'bg-success': success }"
+    :class="{ 'bg-danger': error, 'bg-success': success, 'bg-warning': warning }"
     role="alert"
     aria-live="assertive"
     aria-atomic="true"
@@ -31,6 +31,7 @@ export default {
     'logMessage',
     'error',
     'success',
+    'warning',
   ],
   computed: {
     toast() {

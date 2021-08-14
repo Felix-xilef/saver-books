@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <alert :logMessage="log.message" :error="log.error"></alert>
+  <alert :logMessage="log.message" :error="log.error" />
 </template>
 
 <script>
@@ -128,7 +128,7 @@ export default {
     },
     enter() {
       AuthService.login(this.loginForm.cpf, this.loginForm.password).then(loggedIn => {
-        if (loggedIn) this.$router.push({ name: 'Search' });
+        if (loggedIn) this.$router.push({ name: 'Search', replace: true });
         else {
           this.resetForm();
           this.log.message = 'CPF ou senha incorreto(s)';
@@ -139,7 +139,7 @@ export default {
   },
   beforeMount() {
     AuthService.verifyCredentials().then(tokenIsValid => {
-      if (tokenIsValid) this.$router.push({ name: 'Search' });
+      if (tokenIsValid) this.$router.push({ name: 'Search', replace: true });
     });
   },
 };
