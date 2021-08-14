@@ -152,12 +152,16 @@
       </button>
     </div>
   </form>
+
+  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
 </template>
 
 <script>
+import Alert from '../shared/components/Alert.vue';
 import BookService from '../shared/services/BookService';
 import SubTypesService from '../shared/services/SubTypesService';
 export default {
+  components: { Alert },
   name: "ManageBooks",
   props: {
     isbn: {
@@ -167,6 +171,11 @@ export default {
   },
   data() {
     return {
+      log: {
+        message: '',
+        error: '',
+        success: '',
+      },
       book: {
         isbn: '',
         language: '',
@@ -185,6 +194,16 @@ export default {
     };
   },
   methods: {
+    error(message) {
+      this.log.message = message;
+      this.log.success = false;
+      this.log.error = true;
+    },
+    success(message) {
+      this.log.message = message;
+      this.log.error = false;
+      this.log.success = true;
+    },
     resetBook() {
       this.book = {
         isbn: '',
@@ -203,45 +222,48 @@ export default {
     },
     getGenres() {
       SubTypesService.getGenres().then(response => {
-        this.genres = response.data
+        this.genres = response.data;
+        
       }).catch(err => {
-        alert('Erro ao listar gêneros')
-        console.log(err)
-      })
+        this.error('Erro ao listar gêneros: ' + err);
+      });
     },
     getBook(isbn) {
       BookService.getByIsbn(isbn).then(response => {
-        this.book = response.data
+        this.book = response.data;
+
       }).catch(err => {
-        alert('Erro ao procurar livro')
-        console.log(err)
-      })
+        this.error('Erro ao buscar livro: ' + err);
+      });
     },
     salveBook() {
       if (this.isbn) {
         BookService.updateBook(this.book).then(() => {
-          alert('Livro salvo com sucesso!')
+          this.success('Livro salvo com sucesso!');
+
         }).catch(err => {
-          alert('Erro ao salvar livro')
-          console.log(err)
-        })
+          this.error('Erro ao salvar livro: ' + err);
+        });
+
       } else {
         BookService.postBook(this.book).then(() => {
-          alert('Livro salvo com sucesso!')
+          this.success('Livro salvo com sucesso!');
+
         }).catch(err => {
-          alert('Erro ao salvar livro')
-          console.log(err)
-        })
+          this.error('Erro ao salvar livro: ' + err);
+        });
       }
-      if (!this.isbn) this.resetBook()
+
+      if (!this.isbn) this.resetBook();
     },
     removeBook() {
       BookService.removeBook(this.isbn).then(() => {
-        alert('Livro removido com sucesso!')
+        this.success('Livro removido com sucesso!');
+
       }).catch(err => {
-        alert('Erro ao salvar livro')
-        console.log(err)
-      })
+        this.error('Erro ao remover livro: ' + err);
+      });
+
       this.resetBook()
     },
   },
