@@ -1,24 +1,21 @@
 # frontend
 
-## Project setup
-```
-yarn install
+Acesse o diretório do frontend (`./frontend`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+
+`npm`
+
+```bash
+> cd ./frontend
+> npm install
+> npm run serve
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
+`yarn`
+
+```bash
+> cd ./frontend
+> yarn
+> yarn serve
 ```
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+> Pronto, agora o sistema está rodando no endereço [localhost:8080](http://localhost:8080/)

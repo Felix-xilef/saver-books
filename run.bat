@@ -1,1 +1,3 @@
-wt -p "Fatec" -d ".\backend" --title "Backend - Node" cmd /k "yarn dev" ; split-pane -V -p "Fatec" -d ".\frontend" --title "Frontend - Vue" cmd /k "yarn serve"
+start "Backend - Node" cmd /c "cd backend && npm run dev"
+
+start "Frontend - Vue" cmd /c "cd frontend && npm run serve"

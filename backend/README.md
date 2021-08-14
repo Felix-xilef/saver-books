@@ -1,33 +1,21 @@
 # backend
 
-## Setup
+Acesse o diretório do backend (`./backend`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
-1. Go to project folder
+`npm`
 
-> cd backend
+```bash
+> cd ./backend
+> npm install
+> npm run dev
+```
 
-2. Install Dependencies
+`yarn`
 
-> npm run setup
+```bash
+> cd ./backend
+> yarn
+> yarn dev
+```
 
-3. Create .env with following content
-
-````
-DB_HOST=
-DB_DATABASE=
-DB_USER=
-DB_PASSWORD=
-
-PORT=3000
-SECRET=AAA
-````
-
-## Run
-
-1. Start Server
-
-> npm start
-
-2. Open in url or using an Endpoint tester (postman)
-
-> http://127.0.0.1:3000/
+> Pronto, agora a api está rodando no endereço [localhost:3333](http://localhost:3333/)
