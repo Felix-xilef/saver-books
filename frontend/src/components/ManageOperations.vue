@@ -213,13 +213,17 @@
       </button>
     </div>
   </form>
+
+  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
 </template>
 
 <script>
+import Alert from '../shared/components/Alert.vue';
 import LoanService from '../shared/services/LoanService';
 import ReservationService from '../shared/services/ReservationService';
 import SubTypesService from "../shared/services/SubTypesService";
 export default {
+  components: { Alert },
   name: "ManageOperations",
   props: {
     operationName: {
@@ -229,6 +233,11 @@ export default {
   },
   data() {
     return {
+      log: {
+        message: '',
+        error: false,
+        success: false,
+      },
       registry: {
         id: "",
         cpf: "",
@@ -287,79 +296,78 @@ export default {
     },
   },
   methods: {
+    success(message) {
+      this.log.message = message;
+      this.log.error = false;
+      this.log.success = true;
+    },
+    error(message) {
+      this.log.message = message;
+      this.log.success = false;
+      this.log.error = true;
+    },
     getStatus() {
       if (this.isReservation) {
-        SubTypesService.getReservationStatus()
-          .then((response) => {
-            this.statusOptions = response.data;
-          })
-          .catch((error) => {
-            alert("Erro ao listar as Situações da reserva");
-            console.log(error);
-          });
+        SubTypesService.getReservationStatus().then((response) => {
+          this.statusOptions = response.data;
+        }).catch(err => {
+          this.error('Erro ao listar as Situações da reserva: ' + err);
+        });
+
       } else {
-        SubTypesService.getLoanStatus()
-          .then((response) => {
-            this.statusOptions = response.data;
-          })
-          .catch((error) => {
-            alert("Erro ao listar as Situações do empréstimo");
-            console.log(error);
-          });
+        SubTypesService.getLoanStatus().then((response) => {
+          this.statusOptions = response.data;
+
+        }).catch(err => {
+          this.error('Erro ao listar as Situações do empréstimo: ' + err);
+        });
       }
     },
     getRegistries() {
       let param = {}
-      if (this.registry.cpf != '') {
-        param = {
-          cpf: this.registry.cpf
-        }
-      } else if (this.registry.bookIsbn != '') {
-        param = {
-          isbn: this.registry.bookIsbn
-        }
-      }
+
+      if (this.registry.cpf != '') param = { cpf: this.registry.cpf };
+      else if (this.registry.bookIsbn != '') param = { isbn: this.registry.bookIsbn };
+
       if (this.isReservation) {
         ReservationService.getAll(param).then(response => {
-          this.registries = response.data
-        }).catch(error => {
-          if (error == 'Error: Request failed with status code 404') {
-            alert(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
-          } else {
-            alert("Erro ao listar as Reservas");
-          }
-          console.log(error);
-          this.registries = []
-        })
+          this.registries = response.data;
+
+        }).catch(err => {
+          if (err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          else this.error('Erro ao listar as Reservas: ' + err);
+
+          this.registries = [];
+        });
+
       } else {
         LoanService.getAll(param).then(response => {
-          this.registries = response.data
-        }).catch(error => {
-          if (error == 'Error: Request failed with status code 404') {
-            alert(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
-          } else {
-            alert("Erro ao listar as Empréstimos");
-          }
-          console.log(error);
-          this.registries = []
-        })
+          this.registries = response.data;
+
+        }).catch(err => {
+          if (err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          else this.error('Erro ao listar as Empréstimos: ' + err);
+
+          this.registries = [];
+        });
       }
     },
     saveRegistry() {
       if (this.isReservation) {
         ReservationService.updateReservation(this.registry).then(() => {
-          alert('Reserva atualizada com sucesso!')
-        }).catch(error => {
-          alert('Erro ao atualizar a reserva!')
-          console.log(error)
-        })
+          this.success('Reserva atualizada com sucesso!');
+          
+        }).catch(err => {
+          this.error('Erro ao atualizar a reserva: ' + err);
+        });
+
       } else {
         LoanService.updateLoan(this.registry).then(() => {
-          alert('Empréstimo atualizado com sucesso!')
-        }).catch(error => {
-          alert('Erro ao atualizar a empréstimo!')
-          console.log(error)
-        })
+          this.success('Empréstimo atualizado com sucesso!');
+
+        }).catch(err => {
+          this.error('Erro ao atualizar empréstimo: ' + err);
+        });
       }
     },
     selectRegistry(newRegistry) {

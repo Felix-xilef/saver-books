@@ -173,8 +173,8 @@ export default {
     return {
       log: {
         message: '',
-        error: '',
-        success: '',
+        error: false,
+        success: false,
       },
       book: {
         isbn: '',
