@@ -74,7 +74,7 @@ router.beforeEach(to => {
 
 	} else {
 		if (!store.state.isLogged) return loginRedirection;
-		else if (to.name == 'ManageUsers' && store.state.user.type != '1') return homeRedirection;
+		else if (to.name == 'ManageUsers' && store.state.user.userType.id != '1') return homeRedirection;
 	}
 })
 
