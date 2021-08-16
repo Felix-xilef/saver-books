@@ -54,26 +54,42 @@
       <div>
         <router-link
           class="nav-link p-0 m-2"
-          :to="{ name: 'ManageOperations', params: { operationName: 'reservation' }, }"
+          :to="{ name: 'ManageOperations', params: { operationName: 'reservation' } }"
         >
           Reserva
         </router-link>
+
         <router-link
           class="nav-link p-0 m-2"
           :to="{ name: 'ManageOperations', params: { operationName: 'loan' } }"
         >
           Empréstimo
         </router-link>
-        <router-link class="nav-link p-0 m-2" :to="{ name: 'ManageBooks' }">
+
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageBooks' }"
+        >
           Livro
         </router-link>
-        <router-link v-if="isManager" class="nav-link p-0 m-2" :to="{ name: 'ManageUsers' }">
+
+        <router-link
+          v-if="isManager"
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageUsers' }"
+        >
           Usuário
         </router-link>
-        <router-link class="nav-link p-0 m-2" :to="{ name: 'Reports' }">
+
+        <router-link
+          v-if="isManager"
+          class="nav-link p-0 m-2"
+          :to="{ name: 'Reports' }"
+        >
           Relatório
         </router-link>
-        <a href="" class="nav-link p-0 m-2" @click="logout">
+
+        <a href="#" class="nav-link p-0 m-2" @click="logout">
           Sair
         </a>
       </div>
