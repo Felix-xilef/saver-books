@@ -1,4 +1,5 @@
 <template>
+  <!-- Main Body -->
   <div v-if="book" class="container p-4">
     <div class="row">
       <div class="col">
@@ -25,8 +26,7 @@
           v-if="book.availCopies > 0"
           class="btn text-white backgroundGradientBlue ms-3"
           type="button"
-          data-bs-toggle="modal"
-          data-bs-target="#reservationModal"
+          @click="openReservationModal()"
         >
           Reservar
         </button>
@@ -66,144 +66,13 @@
       </div>
     </div>
   </div>
+  <!-- Main Body End -->
 
-  <div
-    class="modal fade"
-    id="reservationModal"
-    tabindex="-1"
-    aria-labelledby="reservationModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-lg">
-      <form class="modal-content" @submit.prevent="postReservation">
-        <div class="modal-header">
-          <h5 class="modal-title" id="reservationModalLabel">
-            Cadastro de Reserva
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <p>
-            Preencha as informações abaixo e clique em finalizar reserva para
-            concluir o cadastro da sua reserva.
-          </p>
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-4">
-                <label class="form-label" for="txtReservationIsbn">
-                  ISBN do Livro
-                </label>
-                <input
-                  class="form-control"
-                  type="text"
-                  name="txtReservationIsbn"
-                  id="txtReservationIsbn"
-                  :value="book.isbn"
-                  disabled
-                  required
-                />
-              </div>
-              <div class="col" disabled>
-                <label class="form-label" for="txtReservationTitle">
-                  Título do Livro
-                </label>
-                <input
-                  class="form-control"
-                  type="text"
-                  name="txtReservationTitle"
-                  id="txtReservationTitle"
-                  :value="book.title"
-                  disabled
-                />
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col">
-                <label class="form-label" for="txtReservationName">
-                  Nome
-                </label>
-                <input
-                  class="form-control"
-                  type="name"
-                  name="txtReservationName"
-                  id="txtReservationName"
-                  v-model="reservation.name"
-                  placeholder="digite seu nome"
-                  required
-                />
-              </div>
-              <div class="col">
-                <label class="form-label" for="txtReservationEmail">
-                  E-mail
-                </label>
-                <input
-                  class="form-control"
-                  type="email"
-                  name="txtReservationEmail"
-                  id="txtReservationEmail"
-                  v-model="reservation.email"
-                  placeholder="digite um e-mail válido"
-                  required
-                />
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col">
-                <label class="form-label" for="txtReservationCpf"> CPF </label>
-                <input
-                  class="form-control"
-                  type="text"
-                  name="txtReservationCpf"
-                  id="txtReservationCpf"
-                  v-model="reservation.cpf"
-                  placeholder="digite seu CPF"
-                  required
-                />
-              </div>
-              <div class="col">
-                <label class="form-label" for="txtReservationPhone">
-                  Telefone
-                </label>
-                <input
-                  class="form-control"
-                  type="tel"
-                  name="txtReservationPhone"
-                  id="txtReservationPhone"
-                  v-model="reservation.phone"
-                  placeholder="digite um telefone válido"
-                  required
-                />
-              </div>
-              <div class="col">
-                <label class="form-label" for="txtReservationWithdrawal">
-                  Data da Retirada
-                </label>
-                <input
-                  class="form-control"
-                  type="date"
-                  name="txtReservationWithdrawal"
-                  id="txtReservationWithdrawal"
-                  v-model="reservation.withdrawalDate"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn text-white backgroundGradientBlue">
-            Finalizar Reserva
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
+  <!-- Reservation Modal -->
+  <reservation-modal :book="book" @success="success" @error="error" />
+  <!-- Reservation Modal End -->
 
+  <!-- Loan Modal -->
   <div
     class="modal fade"
     id="loanModal"
@@ -368,7 +237,9 @@
       </form>
     </div>
   </div>
+  <!-- Loan Modal End -->
 
+  <!-- Search Reservation Modal -->
   <div
     class="modal fade"
     id="reservationsModal"
@@ -438,6 +309,7 @@
       </div>
     </div>
   </div>
+  <!-- Search Reservation Modal End -->
 
   <alert :logMessage="log.message" :error="log.error" :success="log.success" />
 </template>
@@ -447,8 +319,9 @@ import BookService from '../shared/services/BookService';
 import ReservationService from '../shared/services/ReservationService';
 import LoanService from '../shared/services/LoanService';
 import Alert from '../shared/components/Alert.vue';
+import ReservationModal from './reservationModal.vue';
 export default {
-  components: { Alert },
+  components: { Alert, ReservationModal },
   name: "BookDetails",
   props: {
     isbn: {
@@ -465,7 +338,6 @@ export default {
       },
       book: false,
       loan: {},
-      reservation: {},
 			reservations: [],
     };
   },
@@ -480,19 +352,8 @@ export default {
 			this.log.success = false;
 			this.log.error = true;
 		},
-    resetReservation() {
-      this.reservation = {
-        cpf: '',
-        name: '',
-        phone: '',
-        email: '',
-        bookIsbn: '',
-        reservedDate: '',
-        withdrawalDate: '',
-        reservationStatus: {
-          id: 1,
-        },
-      }
+    openReservationModal() {
+      ReservationModal.computed.modal().show();
     },
     resetLoan() {
       this.loan = {
@@ -541,21 +402,6 @@ export default {
 				this.error('Erro ao listar reservas: ' + err);
       })
     },
-    postReservation() {
-      this.reservation.bookIsbn = this.book.isbn
-      this.reservation.reservedDate = new Date().toISOString()
-      ReservationService.postReservation(this.reservation).then(response => {
-        console.log(response)
-        this.resetReservation()
-        this.getBook(this.isbn)
-        this.closeModal('reservationModal');
-
-				this.success('Reserva cadastrada com sucesso!');
-
-      }).catch(err => {
-				this.error('Erro ao cadastrar Reserva: ' + err);
-      });
-    },
     postLoan() {
       this.loan.bookIsbn = this.book.isbn
       this.loan.withdrawalDate = new Date().toISOString()
@@ -575,7 +421,6 @@ export default {
   },
   mounted() {
     this.getBook(this.isbn)
-    this.resetReservation()
     this.resetLoan()
   },
 };
