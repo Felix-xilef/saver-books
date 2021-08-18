@@ -5,6 +5,7 @@
     tabindex="-1"
     aria-labelledby="reservationModalLabel"
     aria-hidden="true"
+    @closed="v$.$reset()"
   >
     <div class="modal-dialog modal-lg">
       <form class="modal-content" @submit.prevent="submit">
@@ -39,6 +40,7 @@
                   disabled
                 />
               </div>
+
               <div class="col" disabled>
                 <label class="form-label" for="txtReservationTitle">
                   Título do Livro
@@ -53,6 +55,7 @@
                 />
               </div>
             </div>
+
             <div class="row mt-3">
               <div class="col">
                 <label class="form-label" for="txtReservationName">
@@ -66,7 +69,6 @@
                   id="txtReservationName"
                   v-model="reservation.name"
                   placeholder="digite seu nome"
-                  @blur="v$.reservation.name.$touch"
                 />
                 <div class="invalid-feedback">
                   O nome é obrigatório
@@ -85,7 +87,6 @@
                   id="txtReservationEmail"
                   v-model="reservation.email"
                   placeholder="digite um e-mail válido"
-                  @blur="v$.reservation.email.$touch"
                 />
                 <div class="invalid-feedback">
                   <span v-if="reservation.email == ''">
@@ -111,7 +112,6 @@
                   id="txtReservationCpf"
                   v-model="reservation.cpf"
                   placeholder="digite seu CPF"
-                  @blur="v$.reservation.cpf.$touch"
                 />
                 <div class="invalid-feedback">
                   <span v-if="reservation.cpf == ''">
@@ -135,8 +135,10 @@
                   id="txtReservationPhone"
                   v-model="reservation.phone"
                   placeholder="digite um telefone válido"
-                  @blur="v$.reservation.phone.$touch"
                 />
+                <div class="invalid-feedback">
+                  O Telefone é obrigatório
+                </div>
               </div>
               
               <div class="col">
@@ -150,8 +152,16 @@
                   name="txtReservationWithdrawal"
                   id="txtReservationWithdrawal"
                   v-model="reservation.withdrawalDate"
-                  @blur="v$.reservation.withdrawalDate.$touch"
+                  min="2021-08-18"
                 />
+                <div class="invalid-feedback">
+                  <span v-if="reservation.withdrawalDate == ''">
+                    A data de retirada é obrigatória
+                  </span>
+                  <span v-else>
+                    A data de retirada deve ser a partir de hoje
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -175,8 +185,9 @@
 import ReservationService from '../shared/services/ReservationService';
 import { Modal } from 'bootstrap';
 import vuelidate from '@vuelidate/core';
-import { required, email, sameAs, minValue } from '@vuelidate/validators';
+import { required, email, sameAs } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
+import minDateValidator from '../shared/validators/minDateValidator';
 export default {
   setup() {
     return { v$: vuelidate() }
@@ -197,7 +208,7 @@ export default {
         phone: '',
         email: '',
         bookIsbn: '',
-        reservedDate: '',
+        reservedDate: new Date().toISOString(),
         withdrawalDate: '',
         reservationStatus: {
           id: 1,
@@ -208,21 +219,19 @@ export default {
   validations() {
     return {
       reservation: {
-        cpf: { required, cpfValidator },
-        name: { required },
-        phone: { required },
-        email: { required, email },
+        cpf: { required, cpfValidator, $autoDirty: true },
+        name: { required, $autoDirty: true },
+        phone: { required, $autoDirty: true },
+        email: { required, email, $autoDirty: true },
         bookIsbn: { required },
-        reservedDate: { required },
+        reservedDate: { required, $autoDirty: true },
         withdrawalDate: {
           required,
-          minValue: minValue(new Date()),
+          minDateValidator: minDateValidator(new Date().toISOString().slice(0, 10)),
+          $autoDirty: true
         },
         reservationStatus: {
-          id: {
-            required,
-            sameAs: sameAs(1),
-          }
+          id: { required, sameAs: sameAs(1) }
         },
       },
     }
@@ -247,9 +256,10 @@ export default {
       this.reservation.name = '';
       this.reservation.phone = '';
       this.reservation.email = '';
-      this.reservation.bookIsbn = '';
-      this.reservation.reservedDate = '';
+      this.reservation.reservedDate = new Date().toISOString();
       this.reservation.withdrawalDate = '';
+
+      this.v$.$reset();
     },
     controlIsValid(attributeName) {
       return !this.v$.reservation[attributeName].$invalid && this.v$.reservation[attributeName].$dirty;
@@ -258,16 +268,11 @@ export default {
       return this.v$.reservation[attributeName].$error;
     },
     submit() {
-      this.reservation.bookIsbn = this.book.isbn;
-      this.reservation.reservedDate = new Date().toISOString();
-
       if (this.reservationIsValid) this.postReservation();
     },
     postReservation() {
       ReservationService.postReservation(this.reservation).then(() => {
-
         this.resetReservation();
-        this.modal.hide();
 
 				this.success('Reserva cadastrada com sucesso!');
 
@@ -275,6 +280,14 @@ export default {
 				this.error('Erro ao cadastrar Reserva: ' + err);
       });
     },
+  },
+  watch: {
+    book(newBook) {
+      this.reservation.bookIsbn = newBook.isbn;
+    },
+  },
+  mounted() {
+    this.reservation.bookIsbn = this.book.isbn;
   },
 }
 </script>

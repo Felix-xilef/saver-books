@@ -52,4 +52,7 @@ export default {
 </script>
 
 <style scoped>
+div#toast {
+  z-index: 1090;
+}
 </style>
