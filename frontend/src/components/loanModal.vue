@@ -168,7 +168,7 @@
                   name="txtLoanWithdrawal"
                   id="txtLoanWithdrawal"
                   v-model="loan.returnDate"
-                  required
+                  :min="today.toISOString().slice(0, 10)"
                 />
                 <div class="invalid-feedback">
                   <span v-if="loan.returnDate == ''">
@@ -247,7 +247,13 @@
         <div class="modal-body">
           <div class="borderPurple rounded operationsView p-3">
             <div v-for="item in reservations" :key="item.id">
-              <div class="p-3 registry" @click="selectReservation(item)">
+              <div
+                class="p-3 registry"
+                data-bs-target="#loanModal"
+                data-bs-toggle="modal"
+                data-bs-dismiss="modal"
+                @click="selectReservation(item)"
+              >
                 <div class="row">
                   <div class="col-1 me-2">
                     <img
@@ -323,6 +329,7 @@ export default {
         reservationId: null,
       },
 			reservations: [],
+      today: new Date(),
     }
   },
   validations() {
@@ -333,10 +340,10 @@ export default {
         phone: { required, $autoDirty: true },
         email: { required, email, $autoDirty: true },
         bookIsbn: { required },
-        reservedDate: { required },
+        withdrawalDate: { required },
         returnDate: {
           required,
-          minDateValidator: minDateValidator(new Date().toISOString().slice(0, 10)),
+          minDateValidator: minDateValidator(this.today.toISOString().slice(0, 10)),
           $autoDirty: true
         },
         loanStatus: {
@@ -349,6 +356,9 @@ export default {
     loanIsValid() {
       return !this.v$.loan.$invalid;
     },
+    modal() {
+      return new Modal(document.getElementById('loanModal'));
+    },
   },
   methods: {
 		success(message) {
@@ -357,20 +367,18 @@ export default {
 		error(message) {
       this.$emit('error', message);
 		},
-    modal(modalId='loanModal') {
-      return new Modal(document.getElementById(modalId));
-    },
     resetLoan() {
+      this.today = new Date();
+
       this.loan.cpf = '';
       this.loan.name = '';
       this.loan.phone = '';
       this.loan.email = '';
-      this.loan.withdrawalDate = new Date().toISOString();
+      this.loan.withdrawalDate = this.today.toISOString();
       this.loan.returnDate = '';
       this.loan.reservationId = null;
 
       this.v$.loan.$reset();
-      this.v$.loan.name.$autoDirty = true;
     },
     controlIsValid(attributeName) {
       return !this.v$.loan[attributeName].$invalid && this.v$.loan[attributeName].$dirty;
@@ -379,12 +387,11 @@ export default {
       return this.v$.loan[attributeName].$error;
     },
     selectReservation(reservation) {
-      this.loan.reservationId = reservation.id
-      this.loan.cpf = reservation.cpf
-      this.loan.name = reservation.name
-      this.loan.phone = reservation.phone
-      this.loan.email = reservation.email
-      this.modal('reservationsModal').hide();
+      this.loan.reservationId = reservation.id;
+      this.loan.cpf = reservation.cpf;
+      this.loan.name = reservation.name;
+      this.loan.phone = reservation.phone;
+      this.loan.email = reservation.email;
     },
     getReservations() {
       ReservationService.getAll({ isbn: this.book.isbn, isActive: true }).then(response => {

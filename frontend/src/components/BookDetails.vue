@@ -65,9 +65,9 @@
     </div>
   </div>
 
-  <reservation-modal :book="book" @success="success" @error="error" />
+  <reservation-modal :book="book" @success="modalSuccess" @error="modalError" />
 
-  <loan-modal :book="book" @success="success" @error="error" />
+  <loan-modal :book="book" @success="modalSuccess" @error="modalError" />
 
   <alert :logMessage="log.message" :error="log.error" :success="log.success" />
 </template>
@@ -94,6 +94,8 @@ export default {
         success: false,
       },
       book: false,
+      loanModal: false,
+      reservationModal: false,
     };
   },
   methods: {
@@ -107,11 +109,29 @@ export default {
 			this.log.success = false;
 			this.log.error = true;
 		},
+    modalSuccess(message) {
+      this.getBook(this.isbn);
+
+      if (this.reservationModal) this.reservationModal.hide();
+      if (this.loanModal) this.loanModal.hide();
+
+      this.success(message);
+    },
+    modalError(message) {
+      if (this.reservationModal) this.reservationModal.hide();
+      if (this.loanModal) this.loanModal.hide();
+
+      this.error(message);
+    },
     openReservationModal() {
-      ReservationModal.computed.modal().show();
+      if (!this.reservationModal) this.reservationModal = ReservationModal.computed.modal();
+
+      this.reservationModal.show();
     },
     openLoanModal() {
-      LoanModal.methods.modal().show();
+      if (!this.loanModal) this.loanModal = LoanModal.computed.modal();
+
+      this.loanModal.show();
     },
     getBook(isbn) {
       BookService.getByIsbn(isbn).then(response => {
