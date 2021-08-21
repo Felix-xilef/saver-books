@@ -139,7 +139,7 @@
           type="password"
           name="txtPassword"
           id="txtPassword"
-          v-model="password"
+          v-model="user.password"
           placeholder="digite a senha"
         />
         <div class="invalid-feedback">
@@ -173,8 +173,8 @@
 
 		<div class="d-flex justify-content-end mt-4">
 			<button
-          class="btn text-white backgroundGradientBlue"
           type="button"
+          class="btn text-white backgroundGradientBlue"
 					@click="resetForm"
         >
           Limpar Campos
@@ -186,7 +186,14 @@
 				<img height="40" src="../shared/assets/saveButton.svg" alt="" />
 			</button>
 
-			<button v-if="selectedCpf != ''" class="btn p-0 m-2" type="button" @click="removeUser">
+			<button
+        v-if="selectedCpf != ''"
+        class="btn p-0 m-2"
+        :class="{ 'disabled': !userIsValid }"
+        type="button"
+        @click="removeUser"
+        :disabled="!userIsValid"
+      >
 				<img height="40" src="../shared/assets/removeButton.svg" alt="" />
 			</button>
 
@@ -204,7 +211,7 @@ import Alert from '../shared/components/Alert.vue';
 import SubTypesService from '../shared/services/SubTypesService';
 import UserService from '../shared/services/UserService';
 import vuelidate from '@vuelidate/core';
-import { required, email, sameAs, or } from '@vuelidate/validators';
+import { required, email, sameAs } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
 export default {
   setup() {
@@ -233,7 +240,6 @@ export default {
         password: '',
         passwordConfirmation: '',
       },
-      password: '',
       userTypes: [],
       selectedCpf: '',
     };
@@ -247,12 +253,11 @@ export default {
         phone: { required, $autoDirty: true },
         email: { required, email, $autoDirty: true },
         userType: {
-          id: { required, sameAs: or(sameAs(1), sameAs(2)) },
+          id: { required, $autoDirty: true },
         },
         password: { required, $autoDirty: true },
-        passwordConfirmation: { required, sameAsPassword: sameAs('password'), $autoDirty: true },
+        passwordConfirmation: { required, sameAsPassword: sameAs(this.user.password), $autoDirty: true },
       },
-      password: { required, $autoDirty: true }
     }
   },
   computed: {
@@ -292,7 +297,7 @@ export default {
 
 			this.selectedCpf = '';
 
-      this.v$.$reset();
+      this.v$.user.$reset();
 		},
     controlIsValid(attributeName) {
       return !this.v$.user[attributeName].$invalid && this.v$.user[attributeName].$dirty;
@@ -354,11 +359,6 @@ export default {
 			});
 		},
 	},
-  watch: {
-    password(newValue) {
-      this.user.password = newValue;
-    },
-  },
 	mounted() {
 		this.getUserTypes()
 	},
