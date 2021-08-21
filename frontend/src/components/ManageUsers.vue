@@ -214,9 +214,7 @@ import vuelidate from '@vuelidate/core';
 import { required, email, sameAs } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
 export default {
-  setup() {
-    return { v$: vuelidate() }
-  },
+  setup() { return { v$: vuelidate() } },
   components: { Alert },
   name: "ManageUsers",
   data() {
