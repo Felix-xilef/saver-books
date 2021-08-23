@@ -27,7 +27,7 @@
               @blur="v$.loginForm.cpf.$touch"
               v-model="loginForm.cpf"
             />
-            <div v-if="v$.loginForm.cpf.$invalid" class="invalid-feedback">
+            <div class="invalid-feedback">
               Digite um CPF válido para continuar
             </div>
           </div>

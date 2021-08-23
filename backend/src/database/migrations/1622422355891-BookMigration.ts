@@ -86,7 +86,7 @@ export class BookMigration1622422355891 implements MigrationInterface {
                 genre: new Genre(1, 'Administração'),
             },
             {
-                isbn: 'Joaquim Machado De Assis',
+                isbn: '9791022603591',
                 language: 'Português',
                 title: 'Memórias póstumas de Brás Cubas',
                 author: 'Joaquim Machado De Assis',

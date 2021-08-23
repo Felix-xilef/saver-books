@@ -21,6 +21,11 @@ body {
   padding: 0;
   margin: 0;
 }
+
+select {
+  cursor: pointer;
+}
+
 /* 
 ::-webkit-scrollbar {
   display: none;

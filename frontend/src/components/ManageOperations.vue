@@ -1,5 +1,5 @@
 <template>
-  <form class="container p-3" @submit.prevent="saveRegistry">
+  <form class="container p-3" @submit.prevent="submit">
     <div class="row">
       <div class="row">
         <div class="col-3">
@@ -19,70 +19,104 @@
                 disabled
               />
             </div>
+
             <div class="col-3">
               <label class="form-label" for="txtCpf">CPF</label>
               <input
                 class="form-control"
+                :class="{ 'is-valid': controlIsValid('cpf'), 'is-invalid': controlHasError('cpf') }"
                 type="text"
                 name="txtCpf"
                 id="txtCpf"
                 v-model="registry.cpf"
                 placeholder="CPF do ator"
-                required
               />
+              <div class="invalid-feedback">
+                <span v-if="registry.cpf == ''">
+                  O CPF é obrigatório
+                </span>
+                <span v-else>
+                  CPF inválido
+                </span>
+              </div>
             </div>
+
             <div class="col">
               <label class="form-label" for="txtNome">Nome</label>
               <input
                 class="form-control"
+                :class="{ 'is-valid': controlIsValid('name'), 'is-invalid': controlHasError('name') }"
                 type="name"
                 name="txtNome"
                 id="txtNome"
                 v-model="registry.name"
                 placeholder="nome do ator"
-                required
+                :disabled="registry.id == ''"
               />
+              <div class="invalid-feedback">
+                O nome é obrigatório
+              </div>
             </div>
           </div>
+
           <div class="row mt-2">
             <div class="col-3">
               <label class="form-label" for="txtPhone">Telefone</label>
               <input
                 class="form-control"
+                :class="{ 'is-valid': controlIsValid('phone'), 'is-invalid': controlHasError('phone') }"
                 type="tel"
                 name="txtPhone"
                 id="txtPhone"
                 v-model="registry.phone"
                 placeholder="telefone do ator"
-                required
+                :disabled="registry.id == ''"
               />
+              <div class="invalid-feedback">
+                O telefone é obrigatório
+              </div>
             </div>
+
             <div class="col">
               <label class="form-label" for="txtEmail">E-mail</label>
               <input
                 class="form-control"
+                :class="{ 'is-valid': controlIsValid('email'), 'is-invalid': controlHasError('email') }"
                 type="email"
                 name="txtEmail"
                 id="txtEmail"
                 v-model="registry.email"
                 placeholder="e-mail do ator"
-                required
+                :disabled="registry.id == ''"
               />
+              <div class="invalid-feedback">
+                <span v-if="registry.email == ''">
+                  O e-mail é obrigatório
+                </span>
+                <span v-else>
+                  E-mail inválido
+                </span>
+              </div>
             </div>
           </div>
+
           <div class="row mt-2">
             <div class="col-4">
               <label class="form-label" for="txtIsbn">ISBN</label>
               <input
                 class="form-control"
+                :class="{ 'is-valid': controlIsValid('bookIsbn'), 'is-invalid': controlHasError('bookIsbn') }"
                 type="text"
                 name="txtIsbn"
                 id="txtIsbn"
                 v-model="registry.bookIsbn"
                 placeholder="ISBN do livro"
-                required
               />
+              <div class="invalid-feedback">
+                O ISBN é obrigatório
+              </div>
             </div>
+
             <div class="col">
               <label class="form-label" for="txtTitle">Título</label>
               <input
@@ -98,6 +132,7 @@
           </div>
         </div>
       </div>
+
       <div class="row mt-2">
         <div class="col">
           <label class="form-label" for="txtFirstDate">
@@ -112,26 +147,51 @@
             disabled
           />
         </div>
+
         <div class="col">
           <label class="form-label" for="txtSecondDate">
             {{ isReservation ? "Data da Retirada" : "Data da Devolução" }}
           </label>
           <input
             class="form-control"
+            :class="isReservation ? {
+              'is-valid': controlIsValid('withdrawalDate'),
+              'is-invalid': controlHasError('withdrawalDate')
+            } : {
+              'is-valid': controlIsValid('returnDate'),
+              'is-invalid': controlHasError('returnDate')
+            }"
             type="date"
             name="txtSecondDate"
             id="txtSecondDate"
             v-model="registrySecondDate"
-            required
+            :disabled="registry.id == ''"
           />
+          <div class="invalid-feedback">
+            <span v-if="isReservation">
+              A data de retirada é obrigatória
+            </span>
+            <span v-else>
+              A data de devolução é obrigatória
+            </span>
+          </div>
         </div>
+
         <div class="col">
           <label class="form-label" for="selectStatus"> Situação </label>
           <select
             v-model="registryStatus.id"
             class="form-select"
+            :class="isReservation ? {
+              'is-valid': controlIsValid('reservationStatus'),
+              'is-invalid': controlHasError('reservationStatus')
+            } : {
+              'is-valid': controlIsValid('loanStatus'),
+              'is-invalid': controlHasError('loanStatus')
+            }"
             name="selectStatus"
             id="selectStatus"
+            :disabled="registry.id == ''"
           >
             <option
               v-for="status in statusOptions"
@@ -141,7 +201,16 @@
               {{ status.description }}
             </option>
           </select>
+          <div class="invalid-feedback">
+            <span v-if="isReservation">
+              A situação da reserva é obrigatória
+            </span>
+            <span v-else>
+              A situação do empréstimo é obrigatória
+            </span>
+          </div>
         </div>
+
         <div class="col">
           <label class="form-label" for="txtGenre">Gênero</label>
           <input
@@ -156,6 +225,7 @@
         </div>
       </div>
     </div>
+
     <div class="row p-5">
       <div class="borderPurple rounded operationsView">
         <div v-for="item in registries" :key="item.id">
@@ -169,7 +239,6 @@
                 />
               </div>
               <div class="col d-flex flex-column justify-content-evenly m-2">
-                <!-- <h6>{{ item.title }}</h6> -->
                 <div class="d-inline-flex">
                   <strong class="pe-1">ISBN:</strong>{{ item.bookIsbn }}
                 </div>
@@ -204,11 +273,25 @@
         </div>
       </div>
     </div>
+
     <div class="position-fixed">
-      <button v-if="registry.id != ''" class="btn p-0 m-2" type="submit">
+      <button
+        v-if="registry.id != ''"
+        class="btn p-0 m-2"
+        :class="{ 'disabled': !registryIsValid }"
+        type="submit"
+        :disabled="!registryIsValid"
+      >
         <img height="40" src="../shared/assets/saveButton.svg" alt="" />
       </button>
-      <button class="btn p-0 m-2" type="button" @click="getRegistries">
+
+      <button
+        class="btn p-0 m-2"
+        :class="{ 'disabled': !controlIsValid('cpf') && !controlIsValid('bookIsbn') }"
+        type="button"
+        @click="getRegistries"
+        :disabled="controlHasError('cpf') && controlHasError('bookIsbn')"
+      >
         <img height="40" src="../shared/assets/searchButton.svg" alt="" />
       </button>
     </div>
@@ -222,7 +305,13 @@ import Alert from '../shared/components/Alert.vue';
 import LoanService from '../shared/services/LoanService';
 import ReservationService from '../shared/services/ReservationService';
 import SubTypesService from "../shared/services/SubTypesService";
+import vuelidate from '@vuelidate/core';
+import { required, email } from '@vuelidate/validators';
+import cpfValidator from '../shared/validators/cpfValidator';
 export default {
+  setup() {
+    return { v$: vuelidate() }
+  },
   components: { Alert },
   name: "ManageOperations",
   props: {
@@ -266,9 +355,33 @@ export default {
       statusOptions: [],
     };
   },
+  validations() {
+    return {
+      registry: {
+        id: { required, $autoDirty: true },
+        cpf: { required, cpfValidator, $autoDirty: true },
+        name: { required, $autoDirty: true },
+        phone: { required, $autoDirty: true },
+        email: { required, email, $autoDirty: true },
+        bookIsbn: { required, $autoDirty: true },
+        reservedDate: this.isReservation ? { required, $autoDirty: true } : {},
+        withdrawalDate: { required, $autoDirty: true },
+        returnDate: this.isReservation ? {} : { required, $autoDirty: true },
+        reservationStatus: this.isReservation ? {
+          id: { required, $autoDirty: true }
+        } : {},
+        loanStatus: this.isReservation ? {} : {
+          id: { required, $autoDirty: true }
+        },
+      },
+    }
+  },
   computed: {
     isReservation() {
       return this.operationName == "reservation";
+    },
+    registryIsValid() {
+      return !this.v$.registry.$invalid;
     },
     registrySecondDate: {
       get() {
@@ -306,10 +419,17 @@ export default {
       this.log.success = false;
       this.log.error = true;
     },
+    controlIsValid(attributeName) {
+      return !this.v$.registry[attributeName].$invalid && this.v$.registry[attributeName].$dirty;
+    },
+    controlHasError(attributeName) {
+      return this.v$.registry[attributeName].$error;
+    },
     getStatus() {
       if (this.isReservation) {
         SubTypesService.getReservationStatus().then((response) => {
           this.statusOptions = response.data;
+
         }).catch(err => {
           this.error('Erro ao listar as Situações da reserva: ' + err);
         });
@@ -351,6 +471,9 @@ export default {
           this.registries = [];
         });
       }
+    },
+    submit() {
+      if (this.registryIsValid) this.saveRegistry();
     },
     saveRegistry() {
       if (this.isReservation) {

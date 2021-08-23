@@ -1,71 +1,119 @@
 <template>
-  <form class="container p-3" @submit.prevent="saveUser">
+  <form class="container p-3" @submit.prevent="submit">
     <div class="row">
       <div class="col-3">
-        <label class="form-label" for="txtCpf"> CPF </label>
+        <label class="form-label" for="txtCpf">
+          CPF
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('cpf'), 'is-invalid': controlHasError('cpf') }"
           type="text"
           name="txtCpf"
           id="txtCpf"
           v-model="user.cpf"
           placeholder="CPF do usuário"
 					:disabled="selectedCpf != ''"
-					required
         />
+        <div class="invalid-feedback">
+          <span v-if="user.cpf == ''">
+            O CPF é obrigatório
+          </span>
+          <span v-else>
+            CPF inválido
+          </span>
+        </div>
       </div>
+
       <div class="col">
-        <label class="form-label" for="txtName"> Nome </label>
+        <label class="form-label" for="txtName">
+          Nome
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('name'), 'is-invalid': controlHasError('name') }"
           type="name"
           name="txtName"
           id="txtName"
           v-model="user.name"
           placeholder="nome do usuário"
-					required
         />
+        <div class="invalid-feedback">
+          O nome é obrigatório
+        </div>
       </div>
+
       <div class="col-3">
-        <label class="form-label" for="txtbirthDate"> Data de Nascimento </label>
+        <label class="form-label" for="txtbirthDate">
+          Data de Nascimento
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('birthDate'), 'is-invalid': controlHasError('birthDate') }"
           type="date"
           name="txtbirthDate"
           id="txtbirthDate"
           v-model="user.birthDate"
-					required
         />
+        <div class="invalid-feedback">
+          A data de nascimento é obrigatória
+        </div>
       </div>
     </div>
+
     <div class="row mt-3">
       <div class="col-3">
-        <label class="form-label" for="txtPhone"> Telefone </label>
+        <label class="form-label" for="txtPhone">
+          Telefone
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('phone'), 'is-invalid': controlHasError('phone') }"
           type="tel"
           name="txtPhone"
           id="txtPhone"
           v-model="user.phone"
           placeholder="telefone do usuário"
-					required
         />
+        <div class="invalid-feedback">
+          O Telefone é obrigatório
+        </div>
       </div>
+
       <div class="col">
-        <label class="form-label" for="txtEmail"> E-mail </label>
+        <label class="form-label" for="txtEmail">
+          E-mail
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('email'), 'is-invalid': controlHasError('email') }"
           type="email"
           name="txtEmail"
           id="txtEmail"
           v-model="user.email"
           placeholder="e-mail do usuário"
-					required
         />
+        <div class="invalid-feedback">
+          <span v-if="user.email == ''">
+            O e-mail é obrigatório
+          </span>
+          <span v-else>
+            E-mail inválido
+          </span>
+        </div>
       </div>
+
       <div class="col-3">
-        <label class="form-label" for="selectUserType"> Tipo de Usuário </label>
-        <select v-model="user.userType.id" class="form-select" name="selectUserType" id="selectUserType" required>
+        <label class="form-label" for="selectUserType">
+          Tipo de Usuário
+        </label>
+        <select
+          v-model="user.userType.id"
+          class="form-select"
+          :class="{ 'is-valid': controlIsValid('userType'), 'is-invalid': controlHasError('userType') }"
+          name="selectUserType"
+          id="selectUserType"
+        >
           <option
             v-for="type in userTypes"
             :key="type.id"
@@ -74,52 +122,81 @@
             {{ type.description }}
           </option>
         </select>
+        <div class="invalid-feedback">
+          O tipo de usuário é obrigatório
+        </div>
       </div>
     </div>
+
     <div class="row mt-3">
       <div class="col-3">
-        <label class="form-label" for="txtPassword"> Senha </label>
+        <label class="form-label" for="txtPassword">
+          Senha
+        </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('password'), 'is-invalid': controlHasError('password') }"
           type="password"
           name="txtPassword"
           id="txtPassword"
           v-model="user.password"
           placeholder="digite a senha"
-					required
         />
+        <div class="invalid-feedback">
+          A senha é obrigatória
+        </div>
       </div>
+
       <div class="col-3">
         <label class="form-label" for="txtPasswordConfirmation">
           Confirmação da Senha
         </label>
         <input
           class="form-control"
+          :class="{ 'is-valid': controlIsValid('passwordConfirmation'), 'is-invalid': controlHasError('passwordConfirmation') }"
           type="password"
           name="txtPasswordConfirmation"
           id="txtPasswordConfirmation"
-          v-model="passwordConfirmation"
+          v-model="user.passwordConfirmation"
           placeholder="confirme a senha"
-					required
         />
+        <div class="invalid-feedback">
+          <span v-if="user.passwordConfirmation == ''">
+            A confirmação da senha é obrigatória
+          </span>
+          <span v-else>
+            A confirmação da senha deve ser igual a senha
+          </span>
+        </div>
       </div>
     </div>
+
 		<div class="d-flex justify-content-end mt-4">
 			<button
-          class="btn text-white backgroundGradientBlue"
           type="button"
+          class="btn text-white backgroundGradientBlue"
 					@click="resetForm"
         >
           Limpar Campos
         </button>
 		</div>
+
 		<div class="position-fixed">
 			<button class="btn p-0 m-2" type="submit">
 				<img height="40" src="../shared/assets/saveButton.svg" alt="" />
 			</button>
-			<button v-if="selectedCpf != ''" class="btn p-0 m-2" type="button" @click="removeUser">
+
+			<button
+        v-if="selectedCpf != ''"
+        class="btn p-0 m-2"
+        :class="{ 'disabled': !userIsValid }"
+        type="button"
+        @click="removeUser"
+        :disabled="!userIsValid"
+      >
 				<img height="40" src="../shared/assets/removeButton.svg" alt="" />
 			</button>
+
 			<button class="btn p-0 m-2" type="button" @click="getUser">
 				<img height="40" src="../shared/assets/searchButton.svg" alt="" />
 			</button>
@@ -133,7 +210,11 @@
 import Alert from '../shared/components/Alert.vue';
 import SubTypesService from '../shared/services/SubTypesService';
 import UserService from '../shared/services/UserService';
+import vuelidate from '@vuelidate/core';
+import { required, email, sameAs } from '@vuelidate/validators';
+import cpfValidator from '../shared/validators/cpfValidator';
 export default {
+  setup() { return { v$: vuelidate() } },
   components: { Alert },
   name: "ManageUsers",
   data() {
@@ -159,8 +240,28 @@ export default {
       },
       userTypes: [],
       selectedCpf: '',
-			passwordConfirmation: '',
     };
+  },
+  validations() {
+    return {
+      user: {
+        cpf: { required, cpfValidator, $autoDirty: true },
+        name: { required, $autoDirty: true },
+        birthDate: { required, $autoDirty: true },
+        phone: { required, $autoDirty: true },
+        email: { required, email, $autoDirty: true },
+        userType: {
+          id: { required, $autoDirty: true },
+        },
+        password: { required, $autoDirty: true },
+        passwordConfirmation: { required, sameAsPassword: sameAs(this.user.password), $autoDirty: true },
+      },
+    }
+  },
+  computed: {
+    userIsValid() {
+      return !this.v$.user.$invalid;
+    },
   },
 	methods: {
 		success(message) {
@@ -182,22 +283,26 @@ export default {
 			this.log.warning = true;
 		},
 		resetForm() {
-			this.user = {
-        cpf: '',
-        name: '',
-        birthDate: '',
-        phone: '',
-        email: '',
-        userType: {
-          id: 1,
-          description: '',
-        },
-        password: '',
-        passwordConfirmation: '',
-      }
-			this.selectedCpf = ''
-			this.passwordConfirmation = ''
+      this.user.cpf = '';
+      this.user.name = '';
+      this.user.birthDate = '';
+      this.user.phone = '';
+      this.user.email = '';
+      this.user.userType.id = 1;
+      this.user.userType.description = '';
+      this.user.password = '';
+      this.user.passwordConfirmation = '';
+
+			this.selectedCpf = '';
+
+      this.v$.user.$reset();
 		},
+    controlIsValid(attributeName) {
+      return !this.v$.user[attributeName].$invalid && this.v$.user[attributeName].$dirty;
+    },
+    controlHasError(attributeName) {
+      return this.v$.user[attributeName].$error;
+    },
 		getUserTypes() {
 			SubTypesService.getUserTypes().then(response => {
 				this.userTypes = response.data;
@@ -206,6 +311,23 @@ export default {
 				this.error('Erro ao listar tipos de usuário: ' + err);
 			});
 		},
+		getUser() {
+			if (this.selectedCpf != '') this.warning('Antes de realizar uma busca limpe os campos');
+			else {
+				UserService.getByCpf(this.user.cpf).then(response => {
+					this.user = response.data;
+					this.user.birthDate = response.data.birthDate.slice(0, 10);
+					this.selectedCpf = response.data.cpf;
+
+				}).catch(err => {
+					if (err.includes('404')) this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
+					else this.error('Erro ao buscar o usuário: ' + err);
+				});
+			}
+		},
+    submit() {
+      if (this.userIsValid) this.saveUser();
+    },
 		saveUser() {
 			if (this.selectedCpf == '') {
 				UserService.postUser(this.user).then(() => {
@@ -233,21 +355,6 @@ export default {
 			}).catch(err => {
 				this.error('Erro ao remover usuário: ' + err);
 			});
-		},
-		getUser() {
-			if (this.selectedCpf != '') this.warning('Antes de realizar uma busca limpe os campos');
-			else {
-				UserService.getByCpf(this.user.cpf).then(response => {
-					this.user = response.data
-					this.user.birthDate = response.data.birthDate.slice(0, 10)
-					this.selectedCpf = response.data.cpf
-					this.passwordConfirmation = response.data.password;
-
-				}).catch(err => {
-					if (err.includes('404')) this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
-					else this.error('Erro ao buscar o usuário: ' + err);
-				});
-			}
 		},
 	},
 	mounted() {
