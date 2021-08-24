@@ -89,6 +89,12 @@ import BookService from "../shared/services/BookService";
 export default {
   components: { Alert },
   name: "Search",
+  props: {
+    searchParameter: {
+      type: String,
+      required: false,
+    }
+  },
   data() {
     return {
       log: {
@@ -98,54 +104,41 @@ export default {
       checkboxFilters: [],
       books: [],
       booksReceived: [],
-      filter: "",
+      filters: {
+        language: { name: 'Idioma', content: [] },
+        author: { name: 'Autor', content: [] },
+        publisher: { name: 'Editora', content: [] },
+        genre: { name: 'Gênero', content: [] },
+      },
     };
   },
   methods: {
-    getBooks(filter) {
-      let filterObj = {}
-      if (filter) filterObj.title = filter
-      BookService.getAll(filterObj).then((response) => {
+    filterBooks(/*filters*/) {
+      // this.booksReceived.forEach(book => {
+
+      // });
+    },
+    getBooks(title) {
+      BookService.searchByTitle(title).then((response) => {
         this.booksReceived = response.data;
         this.books = response.data;
 
-        let localFilters = [
-          { name: 'Idioma', content: [] },
-          { name: 'Autor', content: [] },
-          { name: 'Editora', content: [] },
-          { name: 'Gênero', content: [] },
-        ]
+        this.filterBooks(this.filters);
 
-        this.books.forEach(item => {
-          [
-            item.language,
-            item.author,
-            item.publisher,
-            item.genre.description
-          ].forEach((value, index) => {
-            if (!localFilters[index].content.find(filterValue => filterValue == value)) {
-              localFilters[index].content.push(value)
-            }
-          })
-        })
-
-        localFilters.forEach(item => {
-          if (item.content.length > 1) this.checkboxFilters.push(item)
-        });
       }).catch(error => {
         this.log.message = 'Erro ao buscar livros: ' + error;
 				this.log.error = true;
       });
     },
   },
-  mounted() {
-    this.getBooks();
-  },
   watch: {
-    filter(newFilter) {
-      console.log(newFilter);
-      this.getBooks(newFilter);
+    searchParameter(newParam) {
+      this.getBooks(newParam);
     },
+  },
+  mounted() {
+    console.log(this.searchParameter);
+    if (this.searchParameter) this.getBooks(this.searchParameter);
   },
 };
 </script>

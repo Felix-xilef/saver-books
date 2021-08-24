@@ -23,9 +23,10 @@ const routes = [
 		component: Home,
 		children: [
 			{
-				path: 'search',
+				path: 'search/:searchParameter?',
 				name: 'Search',
 				component: Search,
+				props: true,
 			},
 			{
 				path: 'book/:isbn',

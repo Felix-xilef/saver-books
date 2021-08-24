@@ -24,6 +24,10 @@ class BookService {
         })
     }
 
+    searchByTitle(title) {
+        return this.getAll({ title });
+    }
+
     getAll(filters) {
         let params = {}
 

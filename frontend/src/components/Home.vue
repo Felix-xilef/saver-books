@@ -18,18 +18,17 @@
           <img src="../shared/assets/logo.svg" alt="logo do site" class="logo" />
         </router-link>
       </div>
-      <form class="col-md-9" @submit.prevent="searchByParameter">
+      <form class="col-md-9" @submit.prevent="submit">
         <div class="input-group me-2 bg-white searchInputGroup">
           <input
             class="form-control searchInput"
             type="search"
-            v-model="filter"
+            v-model="searchParam"
             placeholder="pesquise pelo título do livro"
-            required
           />
           <button
             type="submit"
-            class="input-group-text btn btn-outline-secondary searchButton"
+            class="input-group-text bg-transparent searchButton"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,11 +101,19 @@
 
 <script>
 import AuthService from '../shared/services/AuthService';
+import vuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 export default {
+  setup() { return { v$: vuelidate() } },
   name: 'Home',
   data() {
     return {
-      filter: "",
+      searchParam: "",
+    }
+  },
+  validations() {
+    return {
+      searchParam: { required },
     }
   },
   computed: {
@@ -115,7 +122,11 @@ export default {
     }
   },
   methods: {
-    searchByParameter() {
+    submit() {
+      if (!this.v$.searchParam.$invalid) this.searchByParameter(this.searchParam);
+    },
+    searchByParameter(searchParameter) {
+      this.$router.push({ name: 'Search', params: { searchParameter } });
     },
     logout() {
       AuthService.logout()
@@ -148,6 +159,16 @@ export default {
   border-radius: 20px;
 }
 
+.searchInputGroup:focus-within {
+  box-shadow: 0 0 0 .25rem rgba(41, 41, 41, 0.25);
+
+  transition: box-shadow .15s ease-in-out;
+}
+
+.searchInputGroup input:focus {
+  box-shadow: none;
+}
+
 .searchInput {
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
@@ -160,5 +181,11 @@ export default {
   border-bottom-right-radius: 20px;
 
   border: none;
+
+  color: rgb(70, 70, 70);
+}
+
+.searchButton:hover {
+  color: rgb(161, 161, 161);
 }
 </style>

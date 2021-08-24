@@ -1,5 +1,4 @@
 import { User } from "../entities/users/User";
-import { UserType } from "../entities/users/UserType";
 import { UserJson } from "../interfaces/UserJson";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
