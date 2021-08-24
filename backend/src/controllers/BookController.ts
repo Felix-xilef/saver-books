@@ -2,7 +2,7 @@ import { Book } from "../entities/books/Book";
 import { Genre } from "../entities/books/Genre";
 import { BookJson } from "../interfaces/BookJson";
 import { Request, Response } from "express";
-import { getRepository, Like } from "typeorm";
+import { FindOptionsWhere, getRepository, Like } from "typeorm";
 
 const getBookFromJson = async (bookJson: BookJson): Promise<Book> => {
     return new Book(
@@ -36,6 +36,10 @@ const getJsonFromBook = (book: Book): BookJson => {
     };
 }
 
+const generateLikeStatement = (param: string) => {
+    return Like(`%${ param.replace(' ', '%') }%`);
+}
+
 export class BookController {
     async select(request: Request, response: Response): Promise<Response> {
         const isbn = String(request.query.isbn);
@@ -59,12 +63,12 @@ export class BookController {
         const isbn = request.query.isbn;
         const author = request.query.author;
 
-        let whereStatement: { title?, isbn?, author? } = {};
+        let whereStatement: FindOptionsWhere<Book> = {};
 
-        if (title && title != '') whereStatement.title = Like(String(title));
-        if (isbn && isbn != '') whereStatement.isbn = Like(String(isbn));
-        if (author && author != '') whereStatement.author = Like(String(author));
-
+        if (title && title != '') whereStatement.title = generateLikeStatement(String(title));
+        if (isbn && isbn != '') whereStatement.isbn = generateLikeStatement(String(isbn));
+        if (author && author != '') whereStatement.author = generateLikeStatement(String(author));
+        
         try {
             const books: Book[] = await getRepository(Book).find({
                 relations: { genre: true },
