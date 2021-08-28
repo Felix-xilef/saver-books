@@ -22,7 +22,7 @@
         <div class="input-group me-2 bg-white searchInputGroup">
           <input
             class="form-control searchInput"
-            type="search"
+            type="text"
             v-model="searchParam"
             placeholder="pesquise pelo título do livro"
           />
