@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
-    <div class="row p-3">
-      <form class="col-3 backgroundLightPurple borderPurple p-4">
+  <div class="container-xxl my-md-4 bd-layout">
+    <aside class="bd-sidebar">
+      <form class="backgroundLightPurple borderPurple p-4">
         <div class="d-inline-flex align-items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -18,27 +18,66 @@
           </svg>
           <h5 class="ms-2 mb-0">Filtros</h5>
         </div>
-        <div class="p-4">
-          <div v-for="filter in checkboxFilters" :key="filter.id" class="pb-3">
-            <h6>{{ filter.name }}</h6>
-            <div
-              v-for="option in filter.content"
-              class="form-check"
-              :key="option.id"
+        <ul class="list-unstyled">
+          <li v-for="(filter, key) in checkboxFilters" :key="filter.id" class="mb-1">
+            <button
+              type="button"
+              class="btn d-inline-flex filterTitle align-items-center rounded collapsed"
+              data-bs-toggle="collapse"
+              :data-bs-target="'#' + key + 'Options'"
+              aria-expanded="false"
             >
-              <input
-                class="form-check-input"
-                type="checkbox"
-                :id="'checkbox' + option"
-              />
-              <label class="form-check-label" :for="'checkbox' + option">
-                {{ option }}
-              </label>
+              {{ filter.name }}
+            </button>
+
+            <div :id="key + 'Options'" class="collapse">
+              <ul v-if="typeof filter.content[0] == 'object'" class="list-unstyled fw-normal small">
+                <li
+                  v-for="option in filter.content"
+                  class="form-check"
+                  :key="option.description"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    :id="'checkbox' + option.description"
+                  />
+                  <label class="form-check-label" :for="'checkbox' + option.description">
+                    {{ option.description }}
+                  </label>
+                </li>
+              </ul>
+              <ul v-else class="list-unstyled fw-normal small">
+                <li
+                  v-for="option in filter.content"
+                  class="form-check"
+                  :key="option"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    :id="'checkbox' + option"
+                  />
+                  <label class="form-check-label" :for="'checkbox' + option">
+                    {{ option }}
+                  </label>
+                </li>
+              </ul>
             </div>
-          </div>
-          <div>
-            <h6>Data de publicação</h6>
-            <div>
+          </li>
+
+          <li v-if="books.length > 1">
+            <button
+              type="button"
+              class="btn d-inline-flex filterTitle align-items-center rounded collapsed"
+              data-bs-toggle="collapse"
+              data-bs-target="#publicDateOptions"
+              aria-expanded="false"
+            >
+              Data de publicação
+            </button>
+
+            <div id="publicDateOptions" class="collapse">
               <div class="pb-2">
                 <label class="form-label pe-2" for="dateFrom">De:</label>
                 <input class="form-control" type="date" id="dateFrom" />
@@ -48,33 +87,34 @@
                 <input class="form-control" type="date" id="dateFrom" />
               </div>
             </div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </form>
-      <div class="col">
-        <div class="row row-cols-4">
-          <div v-for="book in books" class="col p-3" :key="book.isbn">
-            <router-link
-              class="
-                d-flex
-                flex-column
-                align-items-center
-                text-decoration-none
-                rounded
-                bookContainer
-              "
-              :to="{ name: 'BookDetails', params: { isbn: book.isbn } }"
-            >
-              <img
-                src="../shared/assets/picture.png"
-                alt="Book cover"
-                class="bookCover"
-              />
-              <h5>{{ book.title }}</h5>
-              <h6>{{ book.author }}</h6>
-              <p class="summary">{{ book.summary }}</p>
-            </router-link>
-          </div>
+    </aside>
+
+    <div class="col">
+      <div class="row row-cols-4">
+        <div v-for="book in books" class="col p-3" :key="book.isbn">
+          <router-link
+            class="
+              d-flex
+              flex-column
+              align-items-center
+              text-decoration-none
+              rounded
+              bookContainer
+            "
+            :to="{ name: 'BookDetails', params: { isbn: book.isbn } }"
+          >
+            <img
+              src="../shared/assets/picture.png"
+              alt="Book cover"
+              class="bookCover"
+            />
+            <h5>{{ book.title }}</h5>
+            <h6>{{ book.author }}</h6>
+            <p class="summary" li>{{ book.summary }}</p>
+          </router-link>
         </div>
       </div>
     </div>
@@ -101,30 +141,36 @@ export default {
         message: '',
         error: '',
       },
-      checkboxFilters: [],
-      books: [],
       booksReceived: [],
-      filters: {
+      books: [],
+      checkboxFilters: {},
+      filters: {},
+    };
+  },
+  methods: {
+    filterBooks() {
+    },
+    getBooks(title) {
+      this.checkboxFilters = {
         language: { name: 'Idioma', content: [] },
         author: { name: 'Autor', content: [] },
         publisher: { name: 'Editora', content: [] },
         genre: { name: 'Gênero', content: [] },
-      },
-    };
-  },
-  methods: {
-    filterBooks(/*filters*/) {
-      // this.booksReceived.forEach(book => {
+      };
 
-      // });
-    },
-    getBooks(title) {
       BookService.searchByTitle(title).then((response) => {
         this.booksReceived = response.data;
         this.books = response.data;
 
-        this.filterBooks(this.filters);
+        this.booksReceived.forEach(book => {
+          Object.entries(this.checkboxFilters).forEach(([key, value]) => {
+            if (!value.content.includes(book[key])) value.content.push(book[key]);
+          });
+        });
 
+        Object.entries(this.checkboxFilters).forEach(([key, value]) => {
+          if (value.content.length <= 1) delete this.checkboxFilters[key];
+        });
       }).catch(error => {
         this.log.message = 'Erro ao buscar livros: ' + error;
 				this.log.error = true;
@@ -137,13 +183,46 @@ export default {
     },
   },
   mounted() {
-    console.log(this.searchParameter);
     if (this.searchParameter) this.getBooks(this.searchParameter);
   },
 };
 </script>
 
 <style scoped>
+.filterTitle, .bookContainer {
+  transition: 300ms;
+}
+
+.filterTitle {
+  padding: .25rem .5rem;
+}
+
+.filterTitle:hover {
+  background: rgba(81, 38, 200, 0.1);
+
+  color: #000000;
+}
+
+.filterTitle:focus {
+  background: rgba(81, 38, 200, 0.1);
+  box-shadow: none;
+  border: 1px solid var(--dark-purple);
+  
+  color: #000000;
+}
+
+.filterTitle::before {
+  width: 1.25em;
+  line-height: 0;
+  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  transition: transform 0.35s ease;
+  transform-origin: .5em 50%;
+}
+
+.filterTitle[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
 .container {
   max-width: 100%;
 }
@@ -159,10 +238,38 @@ export default {
 
 .bookContainer {
   color: inherit;
+
+  height: 300px;
+  overflow: hidden;
 }
 
 .bookContainer:hover {
   background-color: rgba(221, 221, 221, 0.527);
+}
+
+.bookContainer h5, .bookContainer h6, .bookContainer p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.bookContainer h5 {
+  font-size: 16px;
+
+  -webkit-line-clamp: 2;
+}
+
+.bookContainer h6 {
+  font-size: 14px;
+
+  -webkit-line-clamp: 1;
+}
+
+.bookContainer p {
+  font-size: 12px;
+
+  -webkit-line-clamp: 4;
 }
 
 .bookCover {
