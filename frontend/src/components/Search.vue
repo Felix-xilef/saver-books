@@ -1,5 +1,5 @@
 <template>
-  <div class="container-xxl my-md-4 bd-layout">
+  <div class="container-xxl my-md-4 bd-layout m-0">
     <aside class="bd-sidebar">
       <form class="backgroundLightPurple borderPurple p-4">
         <div class="d-inline-flex align-items-center">
@@ -19,73 +19,51 @@
           <h5 class="ms-2 mb-0">Filtros</h5>
         </div>
         <ul class="list-unstyled">
-          <li v-for="(filter, key) in checkboxFilters" :key="filter.id" class="mb-1">
+          <li v-for="(filter, filterKey) in filters" :key="filterKey" class="mb-1">
             <button
               type="button"
               class="btn d-inline-flex filterTitle align-items-center rounded collapsed"
               data-bs-toggle="collapse"
-              :data-bs-target="'#' + key + 'Options'"
+              :data-bs-target="'#' + filterKey + 'Options'"
               aria-expanded="false"
             >
               {{ filter.name }}
             </button>
 
-            <div :id="key + 'Options'" class="collapse">
-              <ul v-if="typeof filter.content[0] == 'object'" class="list-unstyled fw-normal small">
+            <div :id="filterKey + 'Options'" class="collapse">
+              <ul v-if="filter.type == 'checkbox'" class="list-unstyled fw-normal small">
                 <li
-                  v-for="option in filter.content"
+                  v-for="(option, optionKey) in filter.content"
                   class="form-check"
-                  :key="option.description"
+                  :key="optionKey"
                 >
                   <input
                     class="form-check-input"
                     type="checkbox"
-                    :id="'checkbox' + option.description"
+                    :id="'checkbox' + optionKey"
+                    @input="filters[filterKey].content[optionKey] = !filters[filterKey].content[optionKey]"
                   />
-                  <label class="form-check-label" :for="'checkbox' + option.description">
-                    {{ option.description }}
+                  <label class="form-check-label" :for="'checkbox' + optionKey">
+                    {{ optionKey }}
                   </label>
                 </li>
               </ul>
-              <ul v-else class="list-unstyled fw-normal small">
+              <ul v-else-if="filter.type == 'date'" class="list-unstyled fw-normal small">
                 <li
-                  v-for="option in filter.content"
-                  class="form-check"
-                  :key="option"
+                  v-for="(option, optionKey) in filter.content"
+                  class="pb-2"
+                  :key="optionKey"
                 >
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    :id="'checkbox' + option"
-                  />
-                  <label class="form-check-label" :for="'checkbox' + option">
-                    {{ option }}
+                  <label class="form-label pe-2" :for="optionKey">
+                    {{ optionKey == 'start' ? 'De' : 'Até' }}:
                   </label>
+                  <input
+                    class="form-control"
+                    type="date"
+                    :id="optionKey"
+                  />
                 </li>
               </ul>
-            </div>
-          </li>
-
-          <li v-if="books.length > 1">
-            <button
-              type="button"
-              class="btn d-inline-flex filterTitle align-items-center rounded collapsed"
-              data-bs-toggle="collapse"
-              data-bs-target="#publicDateOptions"
-              aria-expanded="false"
-            >
-              Data de publicação
-            </button>
-
-            <div id="publicDateOptions" class="collapse">
-              <div class="pb-2">
-                <label class="form-label pe-2" for="dateFrom">De:</label>
-                <input class="form-control" type="date" id="dateFrom" />
-              </div>
-              <div>
-                <label class="form-label pe-2" for="dateFrom">Até:</label>
-                <input class="form-control" type="date" id="dateFrom" />
-              </div>
             </div>
           </li>
         </ul>
@@ -126,6 +104,7 @@
 <script>
 import Alert from '../shared/components/Alert.vue';
 import BookService from "../shared/services/BookService";
+import SearchFilters from '../shared/models/SearchFilters';
 export default {
   components: { Alert },
   name: "Search",
@@ -143,7 +122,6 @@ export default {
       },
       booksReceived: [],
       books: [],
-      checkboxFilters: {},
       filters: {},
     };
   },
@@ -151,26 +129,12 @@ export default {
     filterBooks() {
     },
     getBooks(title) {
-      this.checkboxFilters = {
-        language: { name: 'Idioma', content: [] },
-        author: { name: 'Autor', content: [] },
-        publisher: { name: 'Editora', content: [] },
-        genre: { name: 'Gênero', content: [] },
-      };
-
       BookService.searchByTitle(title).then((response) => {
         this.booksReceived = response.data;
         this.books = response.data;
 
-        this.booksReceived.forEach(book => {
-          Object.entries(this.checkboxFilters).forEach(([key, value]) => {
-            if (!value.content.includes(book[key])) value.content.push(book[key]);
-          });
-        });
+        this.filters = new SearchFilters(this.books);
 
-        Object.entries(this.checkboxFilters).forEach(([key, value]) => {
-          if (value.content.length <= 1) delete this.checkboxFilters[key];
-        });
       }).catch(error => {
         this.log.message = 'Erro ao buscar livros: ' + error;
 				this.log.error = true;
