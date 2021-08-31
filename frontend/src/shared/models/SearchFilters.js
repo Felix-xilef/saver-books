@@ -42,4 +42,52 @@ export default class SearchFilters {
       });
     }
   }
+
+  /**
+   * Filters an array of books based on the object filters
+   * @param {Book[]} books array of books to be filtered
+   * @returns the filtered array of books
+   */
+  filterBooks(books) {
+    const filters = {}
+    
+    Object.entries(this).forEach(([key, value]) => {
+      if (key == 'publicDate') {
+        filters[key] = value.content;
+
+      } else {
+        let filter = Object.entries(value.content).map(([filterKey, filterValue]) => {
+          if (filterValue) return filterKey;
+        });
+  
+        if (filter.length >= 0) filters[key] = filter;
+      }
+    });
+
+    console.log(filters);
+
+    return books.filter(book => {
+      let bookValid = true;
+
+      Object.entries(filters).forEach(([key, value]) => {
+        if (key == 'publicDate') {
+          console.log(value, book[key]);
+
+        } else {
+          let bookValue;
+
+          if (typeof book[key] == 'object') bookValue = book[key].description;
+          else bookValue = book[key];
+
+          if (!value.includes(bookValue)) {
+            bookValid = false;
+            return;
+          }
+        }
+      });
+
+      console.log('Book valid: ', bookValid);
+      return bookValid;
+    });
+  }
 }

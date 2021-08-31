@@ -41,7 +41,7 @@
                     class="form-check-input"
                     type="checkbox"
                     :id="'checkbox' + optionKey"
-                    @input="filters[filterKey].content[optionKey] = !filters[filterKey].content[optionKey]"
+                    @change="filters[filterKey].content[optionKey] = !filters[filterKey].content[optionKey]; filterBooks()"
                   />
                   <label class="form-check-label" :for="'checkbox' + optionKey">
                     {{ optionKey }}
@@ -61,6 +61,7 @@
                     class="form-control"
                     type="date"
                     :id="optionKey"
+                    @change="filters[filterKey].content[optionKey] = $event.target.value; filterBooks()"
                   />
                 </li>
               </ul>
@@ -127,6 +128,7 @@ export default {
   },
   methods: {
     filterBooks() {
+      this.books = this.filters.filterBooks(this.booksReceived);
     },
     getBooks(title) {
       BookService.searchByTitle(title).then((response) => {
