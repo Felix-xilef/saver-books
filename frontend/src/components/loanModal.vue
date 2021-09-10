@@ -183,26 +183,26 @@
           </div>
         </div>
         <div class="modal-footer justify-content-between">
-          <div>
+          <div class="d-flex">
             <button
               type="button"
-              class="btn text-white backgroundGradientGreen"
+              class="btn text-white outlinedOnHover backgroundGradientGreen"
               data-bs-target="#reservationsModal"
               data-bs-toggle="modal"
               data-bs-dismiss="modal"
               @click="getReservations"
             >
-              Visualizar Reservas
+              <p class="m-0">Visualizar Reservas</p>
             </button>
 
             <button
               v-if="book.availCopies > 0 || loan.reservationId"
               type="submit"
               class="btn text-white ms-2"
-              :class="{ 'backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
+              :class="{ 'outlinedOnHover backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
               :disabled="!loanIsValid"
             >
-              Finalizar Empréstimo
+              <p class="m-0">Finalizar Empréstimo</p>
             </button>
           </div>
           <button type="button" class="btn p-0" @click="resetLoan">

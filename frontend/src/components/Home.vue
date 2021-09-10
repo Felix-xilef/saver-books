@@ -137,6 +137,14 @@ export default {
 </script>
 
 <style scoped>
+button.navbar-toggler, .nav-link, .searchInputGroup input, .searchButton {
+  transition: var(--transition-duration);
+}
+
+button.navbar-toggler:hover, button.navbar-toggler:focus {
+  background: rgba(69, 91, 204, 0.7);
+}
+
 .navbar-toggler-icon {
   height: 36px;
   width: 36px;
@@ -159,10 +167,16 @@ export default {
   border-radius: 20px;
 }
 
+.searchInputGroup {
+  transition: box-shadow var(--transition-duration) ease-in-out;
+}
+
+.searchInputGroup:hover {
+  box-shadow: 0 0 0 .18rem rgba(41, 41, 41, 0.15);
+}
+
 .searchInputGroup:focus-within {
   box-shadow: 0 0 0 .25rem rgba(41, 41, 41, 0.25);
-
-  transition: box-shadow .15s ease-in-out;
 }
 
 .searchInputGroup input:focus {

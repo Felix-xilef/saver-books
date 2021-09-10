@@ -170,10 +170,10 @@
           <button
             type="submit"
             class="btn text-white"
-            :class="{ 'backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
+            :class="{ 'outlinedOnHover backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
             :disabled="!reservationIsValid"
           >
-            Finalizar Reserva
+            <p class="m-0">Finalizar Reserva</p>
           </button>
         </div>
       </form>

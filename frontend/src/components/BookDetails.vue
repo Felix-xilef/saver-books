@@ -1,7 +1,7 @@
 <template>
   <div v-if="book" class="container p-4">
-    <div class="row">
-      <div class="col">
+    <div class="row row-cols-md-1 row-cols-lg-2">
+      <div class="col ps-0">
         <div class="d-inline-flex">
           <img src="../shared/assets/picture.png" alt="Book cover" class="bookCover" />
           <div class="d-flex flex-column justify-content-evenly m-3">
@@ -12,37 +12,37 @@
         </div>
         <p><strong>ISBN:</strong> {{ book.isbn }}</p>
       </div>
-      <div class="col d-flex justify-content-end align-items-end">
+      <div class="col-auto pe-0 d-flex justify-content-end align-items-end">
         <button
-          class="btn text-white backgroundGradientGreen"
+          class="btn text-white outlinedOnHover backgroundGradientGreen"
           type="button"
           @click="openLoanModal"
         >
-          Realizar Empréstimo
+          <p class="m-0">Realizar Empréstimo</p>
         </button>
         <button
           v-if="book.availCopies > 0"
-          class="btn text-white backgroundGradientBlue ms-3"
+          class="btn text-white ms-3 outlinedOnHover backgroundGradientBlue"
           type="button"
           @click="openReservationModal"
         >
-          Reservar
+          <p class="m-0">Reservar</p>
         </button>
         <router-link :to="{ name: 'ManageBooks', params: { isbn: book.isbn } }"
-          class="btn text-white backgroundGradientRed ms-3"
+          class="btn text-white ms-3 outlinedOnHover backgroundGradientRed"
           type="button"
         >
-          Editar
+          <p class="m-0">Editar</p>
         </router-link>
       </div>
     </div>
-    <div class="row p-4">
+    <div class="row p-3">
       <p class="p-2 border border-secondary rounded">{{ book.summary }}</p>
     </div>
     <div class="row">
       <strong>Mais Informações</strong>
       <div class="border border-secondary rounded backgrounLightGray">
-        <div class="row row-cols-3">
+        <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3">
           <div class="col p-3">
             <strong>Editora:</strong> {{ book.publisher }}
           </div>
@@ -157,4 +157,56 @@ export default {
   height: 250px;
   max-width: 200px;
 }
+
+/* .bookAction {
+  position: relative;
+  background-clip: padding-box;
+  border: solid 3px transparent;
+}
+
+.bookAction:first-child::before {
+  background: var(--gradient-green);
+}
+
+.bookAction:nth-child(2)::before {
+  background: var(--gradient-blue);
+}
+
+.bookAction:last-child::before {
+  background: var(--gradient-red);
+}
+
+.bookAction::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin: -3px;
+  border-radius: inherit;
+}
+
+.bookAction:hover {
+  background-color: white;
+}
+
+.bookAction:first-child:hover p {
+  background: var(--gradient-green);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bookAction:nth-child(2):hover p {
+  background: var(--gradient-blue);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bookAction:last-child:hover p {
+  background: var(--gradient-red);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+} */
 </style>

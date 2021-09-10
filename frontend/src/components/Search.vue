@@ -156,7 +156,7 @@ export default {
 
 <style scoped>
 .filterTitle, .bookContainer {
-  transition: 300ms;
+  transition: var(--transition-duration);
 }
 
 .filterTitle {
