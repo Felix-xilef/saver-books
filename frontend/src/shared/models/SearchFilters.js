@@ -52,26 +52,37 @@ export default class SearchFilters {
     const filters = {}
     
     Object.entries(this).forEach(([key, value]) => {
-      if (key == 'publicDate') {
+      if (value.type == 'date') {
         filters[key] = value.content;
 
-      } else {
-        let filter = Object.entries(value.content).map(([filterKey, filterValue]) => {
-          if (filterValue) return filterKey;
+      } else if (value.type == 'checkbox') {
+        let filter = [];
+        Object.entries(value.content).forEach(([filterKey, filterValue]) => {
+          if (filterValue) filter.push(filterKey);
         });
   
-        if (filter.length >= 0) filters[key] = filter;
+        if (filter.length > 0) filters[key] = filter;
       }
     });
-
-    console.log(filters);
 
     return books.filter(book => {
       let bookValid = true;
 
       Object.entries(filters).forEach(([key, value]) => {
         if (key == 'publicDate') {
-          console.log(value, book[key]);
+          if (value.start) {
+            if (Date.parse(book[key]) <= Date.parse(value.start)) {
+              bookValid = false;
+              return;
+            }
+          }
+
+          if (value.end) {
+            if (Date.parse(book[key]) >= Date.parse(value.end)) {
+              bookValid = false;
+              return;
+            }
+          }
 
         } else {
           let bookValue;
@@ -86,7 +97,6 @@ export default class SearchFilters {
         }
       });
 
-      console.log('Book valid: ', bookValid);
       return bookValid;
     });
   }

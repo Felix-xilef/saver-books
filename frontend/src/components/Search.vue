@@ -1,5 +1,5 @@
 <template>
-  <div class="container-xxl my-md-4 bd-layout m-0">
+  <div class="container my-md-4 bd-layout m-0">
     <aside class="bd-sidebar">
       <form class="backgroundLightPurple borderPurple p-4">
         <div class="d-inline-flex align-items-center">
@@ -18,7 +18,7 @@
           </svg>
           <h5 class="ms-2 mb-0">Filtros</h5>
         </div>
-        <ul class="list-unstyled">
+        <ul class="list-unstyled mb-0">
           <li v-for="(filter, filterKey) in filters" :key="filterKey" class="mb-1">
             <button
               type="button"
@@ -72,7 +72,7 @@
     </aside>
 
     <div class="col">
-      <div class="row row-cols-4">
+      <div class="row row-cols-lg-5 row-cols-md-4">
         <div v-for="book in books" class="col p-3" :key="book.isbn">
           <router-link
             class="
