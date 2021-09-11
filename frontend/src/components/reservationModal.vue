@@ -169,11 +169,11 @@
         <div class="modal-footer">
           <button
             type="submit"
-            class="btn text-white"
-            :class="{ 'outlinedOnHover backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
+            class="btn text-white outlinedOnHover"
+            :class="{ 'backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
             :disabled="!reservationIsValid"
           >
-            <p class="m-0">Finalizar Reserva</p>
+            <span><p>Finalizar Reserva</p></span>
           </button>
         </div>
       </form>

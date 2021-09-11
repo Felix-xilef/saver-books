@@ -174,10 +174,10 @@
 		<div class="d-flex justify-content-end mt-4">
 			<button
           type="button"
-          class="btn text-white backgroundGradientBlue"
+          class="btn text-white outlinedOnHover backgroundGradientBlue"
 					@click="resetForm"
         >
-          Limpar Campos
+          <span><p>Limpar Campos</p></span>
         </button>
 		</div>
 

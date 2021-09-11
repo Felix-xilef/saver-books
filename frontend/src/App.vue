@@ -16,16 +16,14 @@ export default {
 :root {
   --light-gray: rgba(128, 128, 128, 0.247);
   --dark-purple: rgba(80, 38, 200, 0.502);
+  --blue: #0063d8;
+  --green: #10c200;
+  --red: #ff0000;
 
-  --gradient-blue: linear-gradient(90deg, #0063d8 0%, #5ea8ff 100%);
-  --gradient-green: linear-gradient(90deg, #10c200 0%, #6ae667 100%);
-  --gradient-red: linear-gradient(
-    90deg,
-    rgba(105, 211, 22, 0.927083) 0.01%,
-    #5ec20f 0.02%,
-    #ff0000 0.03%,
-    #ff574d 100%
-  );
+  --gradient-gray: linear-gradient(90deg, #bbbbbb 0%, #dddddd 100%);
+  --gradient-blue: linear-gradient(90deg, var(--blue) 0%, #5ea8ff 100%);
+  --gradient-green: linear-gradient(90deg, var(--green) 0%, #6ae667 100%);
+  --gradient-red: linear-gradient(90deg, var(--red) 0%, #ff574d 100%);
 
   --transition-duration: 300ms;
 }
@@ -33,6 +31,7 @@ export default {
 /* App Global Style */
 #app {
   font-family: "Roboto", sans-serif;
+  caret-color: var(--dark-purple);
 }
 
 html, body {
@@ -55,6 +54,14 @@ html, body {
   );
 }
 
+.is-valid {
+  caret-color: var(--bs-success);
+}
+
+.is-invalid {
+  caret-color: var(--bs-danger);
+}
+
 select, input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
@@ -68,7 +75,7 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .backgroundGradientDisabled {
-  background: linear-gradient(90deg, #bbbbbb 0%, #dddddd 100%);
+  background: var(--gradient-gray);
 }
 
 .backgroundGradientBlue:not(.outlinedOnHover) {
@@ -115,20 +122,34 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
 /* gradient button that tunrs outlined when hovered */
 .outlinedOnHover {
   position: relative;
-  background-clip: padding-box;
   border: solid 3px transparent;
 }
 
-.outlinedOnHover::before {
+.outlinedOnHover span::before, .outlinedOnHover p {
+  transition-duration: var(--transition-duration);
+}
+
+.outlinedOnHover::before, .outlinedOnHover span::before {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: -1;
-  margin: -3px;
   border-radius: inherit;
+}
+
+.outlinedOnHover span {
+  border-radius: inherit;
+}
+
+.outlinedOnHover p {
+  margin: 0;
+  position: relative;
+}
+
+.outlinedOnHover::before {
+  margin: -3px;
 }
 
 .outlinedOnHover.backgroundGradientGreen::before {
@@ -143,8 +164,12 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--gradient-red);
 }
 
-.outlinedOnHover:hover {
-  background-color: white;
+.outlinedOnHover.backgroundGradientDisabled::before {
+  background: var(--gradient-gray);
+}
+
+.outlinedOnHover:hover span::before {
+  background: white;
 }
 
 .outlinedOnHover.backgroundGradientGreen:hover p {

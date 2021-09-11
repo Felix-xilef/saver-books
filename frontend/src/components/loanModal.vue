@@ -1,4 +1,4 @@
-<template>
+p<template>
   <!-- Loan Modal -->
   <div
     class="modal fade"
@@ -183,7 +183,8 @@
           </div>
         </div>
         <div class="modal-footer justify-content-between">
-          <div class="d-flex">
+          <div class="d-flex
+          ">
             <button
               type="button"
               class="btn text-white outlinedOnHover backgroundGradientGreen"
@@ -192,17 +193,17 @@
               data-bs-dismiss="modal"
               @click="getReservations"
             >
-              <p class="m-0">Visualizar Reservas</p>
+              <span><p>Visualizar Reservas</p></span>
             </button>
 
             <button
               v-if="book.availCopies > 0 || loan.reservationId"
               type="submit"
-              class="btn text-white ms-2"
-              :class="{ 'outlinedOnHover backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
+              class="btn text-white ms-2 outlinedOnHover"
+              :class="{ 'backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
               :disabled="!loanIsValid"
             >
-              <p class="m-0">Finalizar Empréstimo</p>
+              <span><p>Finalizar Empréstimo</p></span>
             </button>
           </div>
           <button type="button" class="btn p-0" @click="resetLoan">
