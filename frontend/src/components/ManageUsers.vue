@@ -177,7 +177,7 @@
           class="btn text-white outlinedOnHover backgroundGradientBlue"
 					@click="resetForm"
         >
-          <span><p>Limpar Campos</p></span>
+          <p>Limpar Campos</p>
         </button>
 		</div>
 

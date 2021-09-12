@@ -120,12 +120,9 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* gradient button that tunrs outlined when hovered */
-.outlinedOnHover::before, .outlinedOnHover p {
-  transition: var(--transition-duration);
-}
-
 .outlinedOnHover {
   position: relative;
+  border: solid 3px;
 }
 
 .outlinedOnHover::before {
@@ -135,38 +132,42 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
   right: 0;
   bottom: 0;
   left: 0;
-  margin: 2px;
+  margin: -3px;
   border-radius: inherit;
-
-  background-image: linear-gradient(#fff, #fff);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: 0 0;
 }
 
 .outlinedOnHover p {
-  margin: 0;
   position: relative;
+  margin: 0;
 }
 
 .outlinedOnHover.backgroundGradientGreen {
+  border-color: var(--green);
+}
+.outlinedOnHover.backgroundGradientGreen::before {
   background: var(--gradient-green);
 }
 
 .outlinedOnHover.backgroundGradientBlue {
+  border-color: var(--blue);
+}
+.outlinedOnHover.backgroundGradientBlue::before {
   background: var(--gradient-blue);
 }
 
 .outlinedOnHover.backgroundGradientRed {
+  border-color: var(--red);
+}
+.outlinedOnHover.backgroundGradientRed::before {
   background: var(--gradient-red);
 }
 
-.outlinedOnHover.backgroundGradientDisabled {
+.outlinedOnHover.backgroundGradientDisabled::before {
   background: var(--gradient-gray);
 }
 
 .outlinedOnHover:hover::before {
-  background-size: 100% 100%;
+  background: transparent;
 }
 
 .outlinedOnHover.backgroundGradientGreen:hover p {

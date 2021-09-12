@@ -173,7 +173,7 @@
             :class="{ 'backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
             :disabled="!reservationIsValid"
           >
-            <span><p>Finalizar Reserva</p></span>
+            <p>Finalizar Reserva</p>
           </button>
         </div>
       </form>
