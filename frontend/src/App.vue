@@ -120,27 +120,28 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* gradient button that tunrs outlined when hovered */
+.outlinedOnHover::before, .outlinedOnHover p {
+  transition: var(--transition-duration);
+}
+
 .outlinedOnHover {
   position: relative;
-  border: solid 3px transparent;
 }
 
-.outlinedOnHover span::before, .outlinedOnHover p {
-  transition-duration: var(--transition-duration);
-}
-
-.outlinedOnHover::before, .outlinedOnHover span::before {
+.outlinedOnHover::before {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  margin: 2px;
   border-radius: inherit;
-}
 
-.outlinedOnHover span {
-  border-radius: inherit;
+  background-image: linear-gradient(#fff, #fff);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 0 0;
 }
 
 .outlinedOnHover p {
@@ -148,28 +149,24 @@ select, input[type="date"]::-webkit-calendar-picker-indicator {
   position: relative;
 }
 
-.outlinedOnHover::before {
-  margin: -3px;
-}
-
-.outlinedOnHover.backgroundGradientGreen::before {
+.outlinedOnHover.backgroundGradientGreen {
   background: var(--gradient-green);
 }
 
-.outlinedOnHover.backgroundGradientBlue::before {
+.outlinedOnHover.backgroundGradientBlue {
   background: var(--gradient-blue);
 }
 
-.outlinedOnHover.backgroundGradientRed::before {
+.outlinedOnHover.backgroundGradientRed {
   background: var(--gradient-red);
 }
 
-.outlinedOnHover.backgroundGradientDisabled::before {
+.outlinedOnHover.backgroundGradientDisabled {
   background: var(--gradient-gray);
 }
 
-.outlinedOnHover:hover span::before {
-  background: white;
+.outlinedOnHover:hover::before {
+  background-size: 100% 100%;
 }
 
 .outlinedOnHover.backgroundGradientGreen:hover p {

@@ -18,7 +18,7 @@
           type="button"
           @click="openLoanModal"
         >
-          <span><p>Realizar Empréstimo</p></span>
+          <p>Realizar Empréstimo</p>
         </button>
         <button
           v-if="book.availCopies > 0"
@@ -26,13 +26,13 @@
           type="button"
           @click="openReservationModal"
         >
-          <span><p>Reservar</p></span>
+          <p>Reservar</p>
         </button>
         <router-link :to="{ name: 'ManageBooks', params: { isbn: book.isbn } }"
           class="btn text-white ms-3 outlinedOnHover backgroundGradientRed"
           type="button"
         >
-          <span><p>Editar</p></span>
+          <p>Editar</p>
         </router-link>
       </div>
     </div>
