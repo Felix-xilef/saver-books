@@ -14,6 +14,7 @@ export default {
 
 /* App CSS Variables */
 :root {
+  --on-hover-gray: rgba(219, 219, 219, 0.616);
   --light-gray: rgba(128, 128, 128, 0.247);
   --dark-purple: rgba(80, 38, 200, 0.502);
   --blue: #0063d8;
@@ -62,7 +63,7 @@ html, body {
   caret-color: var(--bs-danger);
 }
 
-select, input[type="date"]::-webkit-calendar-picker-indicator {
+select, input[type="date"]::-webkit-calendar-picker-indicator, input[type="file"], input[type="file"]::-webkit-file-upload-button {
   cursor: pointer;
 }
 
