@@ -79,8 +79,6 @@ export class LoanController {
             whereStatement = { cpf: String(cpf) }
         }
 
-        console.log(whereStatement)
-
         try {
             const loans: Loan[] = await getRepository(Loan).find({
                 relations: { book: true, loanStatus: true, },

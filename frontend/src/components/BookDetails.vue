@@ -47,7 +47,7 @@
             <strong>Editora:</strong> {{ book.publisher }}
           </div>
           <div class="col p-3">
-            <strong>Data de publicação:</strong> {{ book.publicDate }}
+            <strong>Data de publicação:</strong> {{ book.publicDate.split('-').reverse().join('/') }}
           </div>
           <div class="col p-3">
             <strong>Idioma:</strong> {{ book.language }}

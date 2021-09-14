@@ -39,8 +39,6 @@ export class ReportController {
             withdrawalDate: 'ASC'
         }});
 
-        console.log(reservations, loans);
-
         const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         [reservations, loans].map((element, id) => {
             var month = initialDate.getMonth();
