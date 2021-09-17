@@ -2,14 +2,16 @@ import axios from "axios"
 import AuthService from "./AuthService"
 
 class ImageService {
-  postImage(file) {
+  postImage(file, fileName) {
+    console.log(file);
     let formData = new FormData();
-    formData.append('file', file);
+    formData.append('bookCover', file);
+    formData.append('bookCoverName', fileName);
 
     let header = AuthService.authHeader;
     header["Content-Type"] = "multipart/form-data";
 
-    return axios.post(process.env.VUE_APP_API_URL + 'image', formData, { header });
+    return axios.post(process.env.VUE_APP_API_URL + 'image', formData, { headers: header });
   }
 
   getImage(fileName) {

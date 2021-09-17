@@ -257,6 +257,7 @@ export default {
           id: 1,
           description: '',
         },
+        cover: '',
       },
       genres: [],
       reader: new FileReader(),
@@ -346,6 +347,8 @@ export default {
       if (this.bookIsValid) this.salveBook();
     },
     salveBook() {
+      this.book.cover = this.book.isbn + this.bookCoverInput.src.slice(this.bookCoverInput.src.lastIndexOf('.'));
+
       if (this.isbn) {
         BookService.updateBook(this.book).then(() => {
           this.saveBookCover();
@@ -377,8 +380,9 @@ export default {
 
       this.resetBook()
     },
-    saveBookCover(bookCover) {
-      ImageService.postImage(bookCover).catch(err => {
+    saveBookCover() {
+      this.log(this.book);
+      ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
         this.error('Erro ao salvar capa do livro: ' + err);
       });
     },

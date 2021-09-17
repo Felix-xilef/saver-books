@@ -31,6 +31,9 @@ export class Book {
     @Column()
     unavailCopies: number;
 
+    @Column()
+    cover: string;
+
     @ManyToOne(() => Genre)
     genre: Genre;
 
