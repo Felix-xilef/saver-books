@@ -46,7 +46,8 @@ export class Book {
         publisher: string,
         genre: Genre,
         summary: string,
-        availCopies: number
+        availCopies: number,
+        cover: string
     ) {
         this.isbn = isbn;
         this.language = language;
@@ -58,6 +59,7 @@ export class Book {
         this.summary = summary;
         this.availCopies = availCopies;
         this.unavailCopies = 0;
+        this.cover = cover;
     }
 
     getCopy() {

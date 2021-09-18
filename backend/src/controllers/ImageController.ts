@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { rename } from "fs";
+import { resolve } from "path";
 
 const formidable = require('formidable');
 
@@ -22,7 +23,7 @@ export class ImageController {
 		const fileName = String(request.query.fileName);
 
 		if (fileName) {
-			response.status(200).sendFile(IMAGES_FOLDER + fileName);
+			response.status(200).sendFile(resolve(IMAGES_FOLDER + fileName));
 
 		} else response.status(400).json({ "error": "isbn can't be null or undefined" });
 

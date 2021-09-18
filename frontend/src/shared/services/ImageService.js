@@ -15,7 +15,7 @@ class ImageService {
   }
 
   getImage(fileName) {
-    return axios.put(process.env.VUE_APP_API_URL + 'image', {
+    return axios.get(process.env.VUE_APP_API_URL + 'image', {
       params: { fileName },
       headers: AuthService.authHeader,
     });

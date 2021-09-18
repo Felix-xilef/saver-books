@@ -19,5 +19,7 @@ export interface BookJson {
 
     unavailCopies: number;
 
+    cover: string;
+
     genre: GenreJson;
 }
