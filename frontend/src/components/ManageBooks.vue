@@ -257,6 +257,7 @@ export default {
           id: 1,
           description: '',
         },
+        cover: '',
       },
       genres: [],
       reader: new FileReader(),
@@ -333,9 +334,18 @@ export default {
       BookService.getByIsbn(isbn).then(response => {
         this.book = response.data;
 
+        this.getBookCover(this.book.cover);
+
       }).catch(err => {
         this.error('Erro ao buscar livro: ' + err);
       });
+    },
+    getBookCover(fileName) {
+      ImageService.getImage(fileName).then(response => {
+        console.log(response);
+        // this.bookCoverImage.src = URL.createObjectURL(new Blob([response.data]));
+
+      }).catch(err => this.error('Erro ao recuperar a imagem: ' + err));
     },
     changeCover() {
       if (this.bookCoverInput.files && this.bookCoverInput.files[0]) {
@@ -346,9 +356,12 @@ export default {
       if (this.bookIsValid) this.salveBook();
     },
     salveBook() {
+      if (this.bookCoverInput.src != '') this.book.cover = this.book.isbn + this.bookCoverInput.src.slice(this.bookCoverInput.src.lastIndexOf('.'));
+
       if (this.isbn) {
         BookService.updateBook(this.book).then(() => {
-          this.saveBookCover();
+          if (this.bookCoverInput.src != '') this.saveBookCover();
+          
           this.success('Livro editado com sucesso!');
 
         }).catch(err => {
@@ -357,7 +370,8 @@ export default {
 
       } else {
         BookService.postBook(this.book).then(() => {
-          this.saveBookCover();
+          if (this.bookCoverInput.src != '') this.saveBookCover();
+          
           this.success('Livro salvo com sucesso!');
 
         }).catch(err => {
@@ -377,8 +391,8 @@ export default {
 
       this.resetBook()
     },
-    saveBookCover(bookCover) {
-      ImageService.postImage(bookCover).catch(err => {
+    saveBookCover() {
+      ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
         this.error('Erro ao salvar capa do livro: ' + err);
       });
     },

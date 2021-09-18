@@ -3,7 +3,8 @@
     <div class="row row-cols-md-1 row-cols-lg-2">
       <div class="col ps-0">
         <div class="d-inline-flex">
-          <img src="../shared/assets/picture.png" alt="Book cover" class="bookCover" />
+          <book-cover :fileName="book.cover" @error="error" />
+
           <div class="d-flex flex-column justify-content-evenly m-3">
             <h3>{{ book.title }}</h3>
             <h4>{{ book.author }}</h4>
@@ -77,8 +78,9 @@ import BookService from '../shared/services/BookService';
 import Alert from '../shared/components/Alert.vue';
 import ReservationModal from './reservationModal.vue';
 import LoanModal from './loanModal.vue';
+import BookCover from '../shared/components/BookCover.vue';
 export default {
-  components: { Alert, ReservationModal, LoanModal },
+  components: { Alert, ReservationModal, LoanModal, BookCover },
   name: "BookDetails",
   props: {
     isbn: {
