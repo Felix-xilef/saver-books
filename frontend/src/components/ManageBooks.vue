@@ -334,18 +334,11 @@ export default {
       BookService.getByIsbn(isbn).then(response => {
         this.book = response.data;
 
-        this.getBookCover(this.book.cover);
+        if (this.book.cover && this.book.cover != '') this.bookCoverImage.src = ImageService.imagesDirectory + this.book.cover;
 
       }).catch(err => {
         this.error('Erro ao buscar livro: ' + err);
       });
-    },
-    getBookCover(fileName) {
-      ImageService.getImage(fileName).then(response => {
-        console.log(response);
-        // this.bookCoverImage.src = URL.createObjectURL(new Blob([response.data]));
-
-      }).catch(err => this.error('Erro ao recuperar a imagem: ' + err));
     },
     changeCover() {
       if (this.bookCoverInput.files && this.bookCoverInput.files[0]) {
@@ -398,8 +391,9 @@ export default {
     },
   },
   mounted() {
-    this.getGenres()
-    if (this.isbn) this.getBook(this.isbn)
+    this.getGenres();
+
+    if (this.isbn) this.getBook(this.isbn);
     
     this.reader.onload = (event) => this.bookCoverImage.src = event.target.result;
   },

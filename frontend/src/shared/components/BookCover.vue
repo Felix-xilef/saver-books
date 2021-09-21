@@ -1,5 +1,10 @@
 <template>
-  <img :src="imageUrl" alt="" class="borderPurple backgroundLightPurple">
+  <img
+    :src="imageUrl"
+    alt=""
+    class="borderPurple backgroundLightPurple"
+    :class="size"
+  >
 </template>
 
 <script>
@@ -8,58 +13,46 @@ export default {
   name: 'BookCover',
   props: [
     'fileName',
+    'size',
   ],
-  emits: [
-    'error',
-  ],
-  data() {
-    return {
-      blobImage: null,
-      imageUrl: '',
-    }
-  },
-  methods: {
-		error(message) {
-      this.$emit('error', message);
-		},
-    getBookCover(fileName) {
-      ImagesService.getImage(fileName).then(response => {
-        this.blobImage = new Blob([response.data]);
-
-        this.imageUrl = URL.createObjectURL(this.blobImage);
-        console.log(this.imageUrl);
-
-      }).catch(err => this.error('Erro ao recuperar imagem: ' + err));
+  computed: {
+    imageUrl() {
+      return (this.fileName && this.fileName != '') ? ImagesService.imagesDirectory + this.fileName : '';
     },
-  },
-  watch: {
-    fileName(newValue) {
-      if (newValue && newValue != '') this.getBookCover(newValue);
-    },
-  },
-  mounted() {
-    if (this.fileName && this.fileName != '') this.getBookCover(this.fileName);
-  },
-  beforeUnmount() {
-    URL.revokeObjectURL(this.blobImage);
   },
 }
 </script>
 
 <style scoped>
 img {
-  max-width: 100%;
-  max-height: 250px;
-
   border-radius: 5px;
 }
 
+img.small {
+  max-width: 100px;
+  max-height: 150px;
+
+  border-width: 2px;
+}
+
+img.large {
+  max-width: 100%;
+  max-height: 250px;
+}
+
 img[src=""] {
-  border-radius: 5px;
+  /* border-radius: 5px; */
   background-image: url('../assets/pictureIcon.svg');
   background-repeat: no-repeat;
   background-position: center;
+}
 
+img[src=""].small {
+  min-width: 100px;
+  min-height: 150px;
+}
+
+img[src=""].large {
   min-width: 170px;
   min-height: 250px;
   

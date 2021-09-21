@@ -229,47 +229,65 @@
     <div class="row p-5">
       <div class="borderPurple rounded operationsView">
         <div v-for="item in registries" :key="item.id">
-          <div class="p-3 registry" @click="selectRegistry(item)">
-            <div class="row">
-              <div class="col-1">
-                <img
-                  height="100"
-                  src="../shared/assets/picture.png"
-                  alt="Book cover"
-                />
-              </div>
-              <div class="col d-flex flex-column justify-content-evenly m-2">
-                <div class="d-inline-flex">
-                  <strong class="pe-1">ISBN:</strong>{{ item.bookIsbn }}
+          <div class="row m-1 p-2 registry" @click="selectRegistry(item)">
+            <div class="col-auto">
+              <img
+                height="100"
+                src="../shared/assets/picture.png"
+                alt="Book cover"
+              />
+            </div>
+
+            <div class="col">
+              <div class="d-flex flex-column justify-content-around">
+                <div>
+                  <strong>ISBN:</strong>
+
+                  {{ item.bookIsbn }}
                 </div>
-                <div class="d-inline-flex">
-                  <strong class="pe-1">CPF:</strong>{{ item.cpf }}
+
+                <div>
+                  <strong>CPF:</strong>
+
+                  {{ item.cpf }}
                 </div>
-              </div>
-              <div class="col-1">
-                <strong>{{
-                  isReservation
-                    ? item.reservationStatus.description
-                    : item.loanStatus.description
-                }}</strong>
               </div>
             </div>
-            <div class="row mt-1">
-              <div class="col-2">
-                <strong>{{
-                  isReservation ? "Data da Reserva:" : "Data da Retirada:"
-                }}</strong>
-                {{ isReservation ? item.reservedDate.slice(0, 10).split('-').reverse().join('/') : item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') }}
+
+            <div class="col">
+              <div class="d-flex flex-column justify-content-around">
+                <div>
+                  <strong>
+                    {{ isReservation ? "Data da Reserva:" : "Data da Retirada:" }}
+                  </strong>
+                  
+                  {{ isReservation ? item.reservedDate.slice(0, 10).split('-').reverse().join('/') : item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') }}
+                </div>
+
+                <div>
+                  <strong>
+                    {{ isReservation ? "Data da Retirada:" : "Data da Devolução:" }}
+                  </strong>
+                  
+                  {{ isReservation ? item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') : item.returnDate.slice(0, 10).split('-').reverse().join('/') }}
+                </div>
               </div>
-              <div class="col-2">
-                <strong>{{
-                  isReservation ? "Data da Retirada:" : "Data da Devolução:"
-                }}</strong>
-                {{ isReservation ? item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') : item.returnDate.slice(0, 10).split('-').reverse().join('/') }}
+            </div>
+
+            <div class="col-auto">
+              <div class="d-flex flex-column justify-content-center">
+                <strong>
+                  {{
+                    isReservation
+                      ? item.reservationStatus.description
+                      : item.loanStatus.description
+                  }}
+                </strong>
               </div>
             </div>
           </div>
-          <hr />
+
+          <hr/>
         </div>
       </div>
     </div>
@@ -528,10 +546,15 @@ export default {
 
 .operationsView .registry {
   cursor: pointer;
+  transition: var(--transition-duration);
 }
 
 .operationsView .registry:hover {
   background-color: var(--on-hover-gray);
+}
+
+.operationsView .registry .col .d-flex, .operationsView .registry .col-auto .d-flex {
+  height: 100%;
 }
 
 .operationsView hr {

@@ -3,7 +3,7 @@
     <div class="row row-cols-md-1 row-cols-lg-2">
       <div class="col ps-0">
         <div class="d-inline-flex">
-          <book-cover :fileName="book.cover" @error="error" />
+          <book-cover :fileName="book.cover" size="large"/>
 
           <div class="d-flex flex-column justify-content-evenly m-3">
             <h3>{{ book.title }}</h3>

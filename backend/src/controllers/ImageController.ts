@@ -4,7 +4,7 @@ import { resolve } from "path";
 
 const formidable = require('formidable');
 
-const IMAGES_FOLDER = './src/images/';
+const IMAGES_FOLDER = './src/public/images/';
 
 export class ImageController {
   async postImage(request: Request, response: Response): Promise<Response> {

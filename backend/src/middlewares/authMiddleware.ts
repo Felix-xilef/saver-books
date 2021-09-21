@@ -3,7 +3,7 @@ import { TokenPayload } from "interfaces/TokenPayload";
 import { verify } from "jsonwebtoken";
 
 export default function authMiddleware(request: Request, response: Response, next: NextFunction) {
-	if (request.path == '/authenticate') return next();
+	if (request.path == '/authenticate' || request.path.substr(0, 7) == '/public') return next();
 
 	const { authorization } = request.headers;
 

@@ -11,6 +11,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// setting up public directory
+app.use('/public', express.static('./src/public'));
+
 app.use(authMiddleware)
 app.use(router);
 

@@ -2,6 +2,8 @@ import axios from "axios"
 import AuthService from "./AuthService"
 
 class ImageService {
+  imagesDirectory = process.env.VUE_APP_API_URL + 'public/images/';
+
   postImage(file, fileName) {
     console.log(file);
     let formData = new FormData();
