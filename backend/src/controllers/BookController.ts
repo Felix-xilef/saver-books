@@ -14,7 +14,8 @@ const getBookFromJson = async (bookJson: BookJson): Promise<Book> => {
         bookJson.publisher,
         await getRepository(Genre).findOne(bookJson.genre.id),
         bookJson.summary,
-        bookJson.availCopies
+        bookJson.availCopies,
+        bookJson.cover
     );
 }
 
@@ -32,7 +33,8 @@ const getJsonFromBook = (book: Book): BookJson => {
         },
         summary: book.summary,
         availCopies: book.availCopies,
-        unavailCopies: book.unavailCopies
+        unavailCopies: book.unavailCopies,
+        cover: book.cover
     };
 }
 

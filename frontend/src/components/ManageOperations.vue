@@ -3,8 +3,9 @@
     <div class="row">
       <div class="row">
         <div class="col-3">
-          <img src="../shared/assets/picture.png" alt="" />
+          <book-cover :fileName="registry.book?.cover" size="large"/>
         </div>
+
         <div class="col">
           <div class="row mt-2">
             <div class="col-2">
@@ -124,7 +125,7 @@
                 type="text"
                 name="txtTitle"
                 id="txtTitle"
-                :value="book.title"
+                :value="registry.book?.title"
                 placeholder="Título do livro"
                 disabled
               />
@@ -143,7 +144,7 @@
             type="date"
             name="txtFirstDate"
             id="txtFirstDate"
-            :value="isReservation ? registry.reservedDate.slice(0, 10) : registry.withdrawalDate.slice(0, 10)"
+            :value="isReservation ? registry.reservedDate?.slice(0, 10) : registry.withdrawalDate?.slice(0, 10)"
             disabled
           />
         </div>
@@ -198,7 +199,7 @@
               :key="status.id"
               :value="status.id"
             >
-              {{ status.description }}
+              {{ status?.description }}
             </option>
           </select>
           <div class="invalid-feedback">
@@ -218,7 +219,7 @@
             type="text"
             name="txtGenre"
             id="txtGenre"
-            :value="book.genre"
+            :value="registry.book?.genre?.description"
             placeholder="Gênero do livro"
             disabled
           />
@@ -229,47 +230,61 @@
     <div class="row p-5">
       <div class="borderPurple rounded operationsView">
         <div v-for="item in registries" :key="item.id">
-          <div class="p-3 registry" @click="selectRegistry(item)">
-            <div class="row">
-              <div class="col-1">
-                <img
-                  height="100"
-                  src="../shared/assets/picture.png"
-                  alt="Book cover"
-                />
-              </div>
-              <div class="col d-flex flex-column justify-content-evenly m-2">
-                <div class="d-inline-flex">
-                  <strong class="pe-1">ISBN:</strong>{{ item.bookIsbn }}
+          <div class="row m-1 p-2 registry" @click="selectRegistry(item)">            
+            <div class="col-auto">
+              <book-cover :fileName="item.book?.cover" size="extra-small"/>
+            </div>
+
+            <div class="col">
+              <div class="d-flex flex-column justify-content-around">
+                <div>
+                  <strong>ISBN:</strong>
+
+                  {{ item.bookIsbn }}
                 </div>
-                <div class="d-inline-flex">
-                  <strong class="pe-1">CPF:</strong>{{ item.cpf }}
+
+                <div>
+                  <strong>CPF:</strong>
+
+                  {{ item.cpf }}
                 </div>
-              </div>
-              <div class="col-1">
-                <strong>{{
-                  isReservation
-                    ? item.reservationStatus.description
-                    : item.loanStatus.description
-                }}</strong>
               </div>
             </div>
-            <div class="row mt-1">
-              <div class="col-2">
-                <strong>{{
-                  isReservation ? "Data da Reserva:" : "Data da Retirada:"
-                }}</strong>
-                {{ isReservation ? item.reservedDate.slice(0, 10).split('-').reverse().join('/') : item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') }}
+
+            <div class="col">
+              <div class="d-flex flex-column justify-content-around">
+                <div>
+                  <strong>
+                    {{ isReservation ? "Data da Reserva:" : "Data da Retirada:" }}
+                  </strong>
+                  
+                  {{ isReservation ? item.reservedDate?.slice(0, 10).split('-').reverse().join('/') : item.withdrawalDate?.slice(0, 10).split('-').reverse().join('/') }}
+                </div>
+
+                <div>
+                  <strong>
+                    {{ isReservation ? "Data da Retirada:" : "Data da Devolução:" }}
+                  </strong>
+                  
+                  {{ isReservation ? item.withdrawalDate?.slice(0, 10).split('-').reverse().join('/') : item.returnDate?.slice(0, 10).split('-').reverse().join('/') }}
+                </div>
               </div>
-              <div class="col-2">
-                <strong>{{
-                  isReservation ? "Data da Retirada:" : "Data da Devolução:"
-                }}</strong>
-                {{ isReservation ? item.withdrawalDate.slice(0, 10).split('-').reverse().join('/') : item.returnDate.slice(0, 10).split('-').reverse().join('/') }}
+            </div>
+
+            <div class="col-auto">
+              <div class="d-flex flex-column justify-content-center">
+                <strong>
+                  {{
+                    isReservation
+                      ? item.reservationStatus?.description
+                      : item.loanStatus?.description
+                  }}
+                </strong>
               </div>
             </div>
           </div>
-          <hr />
+
+          <hr/>
         </div>
       </div>
     </div>
@@ -308,11 +323,12 @@ import SubTypesService from "../shared/services/SubTypesService";
 import vuelidate from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
+import BookCover from '../shared/components/BookCover.vue';
 export default {
   setup() {
     return { v$: vuelidate() }
   },
-  components: { Alert },
+  components: { Alert, BookCover },
   name: "ManageOperations",
   props: {
     operationName: {
@@ -345,13 +361,9 @@ export default {
           id: 1,
           description: "",
         },
+        book: '',
       },
       registries: [],
-      book: {
-        isbn: "",
-        title: "",
-        genre: "",
-      },
       statusOptions: [],
     };
   },
@@ -385,7 +397,7 @@ export default {
     },
     registrySecondDate: {
       get() {
-        return this.isReservation ? this.registry.withdrawalDate.slice(0, 10) : this.registry.returnDate.slice(0, 10)
+        return this.isReservation ? this.registry.withdrawalDate?.slice(0, 10) : this.registry.returnDate?.slice(0, 10)
       },
       set(newValue) {
         if (this.isReservation) {
@@ -454,7 +466,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          if (typeof err == 'string' && err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
           else this.error('Erro ao listar as Reservas: ' + err);
 
           this.registries = [];
@@ -465,7 +477,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          if (typeof err == 'string' && err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
           else this.error('Erro ao listar as Empréstimos: ' + err);
 
           this.registries = [];
@@ -528,10 +540,15 @@ export default {
 
 .operationsView .registry {
   cursor: pointer;
+  transition: var(--transition-duration);
 }
 
 .operationsView .registry:hover {
-  background-color: rgba(219, 219, 219, 0.616);
+  background-color: var(--on-hover-gray);
+}
+
+.operationsView .registry .col .d-flex, .operationsView .registry .col-auto .d-flex {
+  height: 100%;
 }
 
 .operationsView hr {

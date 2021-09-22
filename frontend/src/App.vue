@@ -14,6 +14,7 @@ export default {
 
 /* App CSS Variables */
 :root {
+  --on-hover-gray: #dbdbdb9d;
   --light-gray: rgba(128, 128, 128, 0.247);
   --dark-purple: rgba(80, 38, 200, 0.502);
   --blue: #0063d8;
@@ -62,8 +63,12 @@ html, body {
   caret-color: var(--bs-danger);
 }
 
-select, input[type="date"]::-webkit-calendar-picker-indicator {
+select, input[type="date"]::-webkit-calendar-picker-indicator, input[type="file"], input[type="file"]::-webkit-file-upload-button {
   cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="black" fill-opacity="0.65" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
 }
 
 .backgroundGradientPurple {

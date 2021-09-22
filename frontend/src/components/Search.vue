@@ -85,11 +85,7 @@
             "
             :to="{ name: 'BookDetails', params: { isbn: book.isbn } }"
           >
-            <img
-              src="../shared/assets/picture.png"
-              alt="Book cover"
-              class="bookCover"
-            />
+            <book-cover :fileName='book.cover' size='small'/>
             <h5>{{ book.title }}</h5>
             <h6>{{ book.author }}</h6>
             <p class="summary" li>{{ book.summary }}</p>
@@ -104,10 +100,11 @@
 
 <script>
 import Alert from '../shared/components/Alert.vue';
+import BookCover from '../shared/components/BookCover.vue';
 import BookService from "../shared/services/BookService";
 import SearchFilters from '../shared/models/SearchFilters';
 export default {
-  components: { Alert },
+  components: { Alert, BookCover },
   name: "Search",
   props: {
     searchParameter: {
@@ -236,11 +233,6 @@ export default {
   font-size: 12px;
 
   -webkit-line-clamp: 4;
-}
-
-.bookCover {
-  height: 150px;
-  max-width: 200px;
 }
 
 .summary {

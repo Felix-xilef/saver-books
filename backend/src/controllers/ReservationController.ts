@@ -3,7 +3,8 @@ import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Book } from "../entities/books/Book";
 import { ReservationJson } from "../interfaces/ReservationJson";
 import { Request, Response } from "express";
-import { getRepository, In, Like } from "typeorm";
+import { FindOptionsWhere, getRepository, In, Like } from "typeorm";
+import { bookToJson } from "../interfaces/BookJson";
 
 const getReservationFromJson = async (reservationJson: ReservationJson): Promise<Reservation> => {
     const reservation = new Reservation(
@@ -32,6 +33,7 @@ const getJsonFromReservation = (reservation: Reservation): ReservationJson => {
         phone: reservation.phone,
         email: reservation.email,
         bookIsbn: reservation.book.isbn,
+        book: bookToJson(reservation.book),
         reservedDate: reservation.reservedDate,
         withdrawalDate: reservation.withdrawalDate,
         reservationStatus: {
@@ -64,30 +66,25 @@ export class ReservationController {
         const cpf = request.query.cpf;
         const isActive = request.query.isActive;
 
-        let whereStatement = {};
+        let whereStatement: FindOptionsWhere<Reservation> = {};
 
         if (isbn && isbn != '') {
             let book = await getRepository(Book).findOne(String(isbn));
 
-            if (!book) {
-                return response.status(404).json({ "error": "Book not found" });
-            }
-
-            if (isActive) {
-                whereStatement = [
-                    { book: book, reservationStatus: new ReservationStatus(1) },
-                    { book: book, reservationStatus: new ReservationStatus(2) }
-                ]
-            } else {
-                whereStatement = { book: book }
-            }
-        } else if (cpf && cpf != '') {
-            whereStatement = { cpf: String(cpf) }
+            if (!book) return response.status(404).json({ "error": "Book not found" });
+            else whereStatement.book = book;
         }
+
+        if (Boolean(cpf) && cpf != '') whereStatement.cpf = String(cpf);
+
+        if (isActive) whereStatement = [
+            { ...whereStatement, reservationStatus: new ReservationStatus(1) },
+            { ...whereStatement, reservationStatus: new ReservationStatus(2) },
+        ];  
 
         try {
             const reservations: Reservation[] = await getRepository(Reservation).find({
-                relations: { reservationStatus: true, book: true },
+                relations: { reservationStatus: true, book: { genre: true } },
                 where: whereStatement,
             });
     

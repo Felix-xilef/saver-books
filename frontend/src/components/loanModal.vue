@@ -456,7 +456,7 @@ export default {
 }
 
 .operationsView .registry:hover {
-	background-color: rgba(219, 219, 219, 0.616);
+	background-color: var(--on-hover-gray);
 }
 
 .operationsView hr {

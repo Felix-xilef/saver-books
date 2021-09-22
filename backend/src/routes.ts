@@ -6,12 +6,14 @@ import { ReservationController } from "./controllers/ReservationController";
 import { UserController } from "./controllers/UserController";
 import { SubTypesController } from "./controllers/SubTypesController";
 import { AuthController } from "./controllers/AuthController";
+import { ImageController } from "./controllers/ImageController";
 
 const router = Router();
 
 const authController = new AuthController;
 const userController = new UserController;
 const bookController = new BookController;
+const imageController = new ImageController;
 const reservationController = new ReservationController;
 const loanController = new LoanController;
 const reportController = new ReportController;
@@ -30,6 +32,9 @@ router.get('/books', bookController.selectAll);
 router.post('/book', bookController.saveEntry);
 router.put('/book', bookController.saveEntry);
 router.delete('/book', bookController.delete);
+
+// router.get('/image', imageController.getImage);
+router.post('/image', imageController.postImage);
 
 router.get('/reservation', reservationController.select);
 router.get('/reservations', reservationController.selectAll);

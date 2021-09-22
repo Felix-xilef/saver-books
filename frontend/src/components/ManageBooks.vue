@@ -2,8 +2,11 @@
   <form class="container p-3" @submit.prevent="submit">
     <div class="row">
       <div class="col-3">
-        <!-- <input type="image" src="../shared/assets/picture.png" alt="" /> -->
-        <img src="../shared/assets/picture.png" alt="" />
+        <label for="bookCover">
+          <img src="" alt="" id="bookCoverImage" class="borderPurple backgroundLightPurple">
+
+          <input type="file" name="bookCover" id="bookCover" class="form-control" accept="image/jpeg, image/png" @change="changeCover">
+        </label>
 
         <div class="mt-2">
           <label class="form-label" for="txtAvailCopies">
@@ -219,6 +222,7 @@
 
 <script>
 import Alert from '../shared/components/Alert.vue';
+import ImageService from '../shared/services/ImageService';
 import BookService from '../shared/services/BookService';
 import SubTypesService from '../shared/services/SubTypesService';
 import vuelidate from '@vuelidate/core';
@@ -252,9 +256,11 @@ export default {
         genre: {
           id: 1,
           description: '',
-        }
+        },
+        cover: '',
       },
       genres: [],
+      reader: new FileReader(),
     };
   },
   validations() {
@@ -277,6 +283,12 @@ export default {
   computed: {
     bookIsValid() {
       return !this.v$.book.$invalid;
+    },
+    bookCoverInput() {
+      return document.getElementById('bookCover');
+    },
+    bookCoverImage() {
+      return document.getElementById('bookCoverImage');
     },
   },
   methods: {
@@ -322,16 +334,27 @@ export default {
       BookService.getByIsbn(isbn).then(response => {
         this.book = response.data;
 
+        if (this.book.cover && this.book.cover != '') this.bookCoverImage.src = ImageService.imagesDirectory + this.book.cover;
+
       }).catch(err => {
         this.error('Erro ao buscar livro: ' + err);
       });
+    },
+    changeCover() {
+      if (this.bookCoverInput.files && this.bookCoverInput.files[0]) {
+        this.reader.readAsDataURL(this.bookCoverInput.files[0]);
+      }
     },
     submit() {
       if (this.bookIsValid) this.salveBook();
     },
     salveBook() {
+      if (this.bookCoverInput.src != '') this.book.cover = this.book.isbn + this.bookCoverInput.src.slice(this.bookCoverInput.src.lastIndexOf('.'));
+
       if (this.isbn) {
         BookService.updateBook(this.book).then(() => {
+          if (this.bookCoverInput.src != '') this.saveBookCover();
+          
           this.success('Livro editado com sucesso!');
 
         }).catch(err => {
@@ -340,6 +363,8 @@ export default {
 
       } else {
         BookService.postBook(this.book).then(() => {
+          if (this.bookCoverInput.src != '') this.saveBookCover();
+          
           this.success('Livro salvo com sucesso!');
 
         }).catch(err => {
@@ -359,15 +384,63 @@ export default {
 
       this.resetBook()
     },
+    saveBookCover() {
+      ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
+        this.error('Erro ao salvar capa do livro: ' + err);
+      });
+    },
   },
   mounted() {
-    this.getGenres()
-    if (this.isbn) this.getBook(this.isbn)
+    this.getGenres();
+
+    if (this.isbn) this.getBook(this.isbn);
+    
+    this.reader.onload = (event) => this.bookCoverImage.src = event.target.result;
   },
 };
 </script>
 
 <style scoped>
+label[for="bookCover"] {
+  position: relative;
+  transition-duration: var(--transition-duration);
+  border-radius: 5px;
+}
+
+label[for="bookCover"]:hover {
+  background-color: var(--on-hover-gray);
+  opacity: 0.85;
+}
+
+label[for="bookCover"] img {
+  max-width: 100%;
+  max-height: 300px;
+
+  border-radius: inherit;
+}
+
+label[for="bookCover"] img[src=""] {
+  border-radius: 5px;
+  background-image: url('../shared/assets/pictureIcon.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+
+  min-width: 180px;
+  min-height: 260px;
+  
+  max-width: 100%;
+}
+
+input#bookCover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: inherit;
+  opacity: 0;
+}
+
 .container {
   width: 95%;
 }
