@@ -28,6 +28,13 @@ img {
   border-radius: 5px;
 }
 
+img.extra-small {
+  max-width: 80px;
+  max-height: 120px;
+
+  border-width: 1px;
+}
+
 img.small {
   max-width: 100px;
   max-height: 150px;
@@ -45,6 +52,12 @@ img[src=""] {
   background-image: url('../assets/pictureIcon.svg');
   background-repeat: no-repeat;
   background-position: center;
+  background-size: 26%;
+}
+
+img[src=""].extra-small {
+  min-width: 80px;
+  min-height: 120px;
 }
 
 img[src=""].small {

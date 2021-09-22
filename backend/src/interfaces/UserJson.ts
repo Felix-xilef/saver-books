@@ -1,4 +1,5 @@
-import { UserTypeJson } from "./SubTypesJson";
+import { User } from "../entities/users/User";
+import { jsonToUserType, UserTypeJson, userTypeToJson } from "./SubTypesJson";
 
 export interface UserJson {
     cpf: string,
@@ -11,7 +12,30 @@ export interface UserJson {
 
     email: string,
 
-    password: string,
+    password?: string,
 
     userType: UserTypeJson;
+}
+
+export function userToJson(userObject: User): UserJson {
+    return {
+        cpf: userObject.cpf,
+        name: userObject.name,
+        birthDate: userObject.birthDate,
+        phone: userObject.phone,
+        email: userObject.email,
+        userType: userTypeToJson(userObject.userType)
+    };
+}
+
+export function jsonToUser(userJson: UserJson): User {
+    return new User(
+        userJson.cpf,
+        userJson.name,
+        userJson.birthDate,
+        userJson.phone,
+        userJson.email,
+        userJson.password,
+        jsonToUserType(userJson.userType)
+    );
 }
