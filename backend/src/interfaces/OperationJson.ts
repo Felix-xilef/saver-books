@@ -14,7 +14,7 @@ export interface OperationJson {
 
     bookIsbn: string;
 
-    book: BookJson;
+    book?: BookJson;
 }
 
 export function operationToJson(operationObject: Operation): OperationJson {
