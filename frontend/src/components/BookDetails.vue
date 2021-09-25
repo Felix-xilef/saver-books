@@ -21,6 +21,7 @@
         >
           <p>Realizar Empréstimo</p>
         </button>
+        
         <button
           v-if="book.availCopies > 0"
           class="btn text-white ms-3 outlinedOnHover backgroundGradientBlue"
@@ -29,6 +30,7 @@
         >
           <p>Reservar</p>
         </button>
+
         <router-link :to="{ name: 'ManageBooks', params: { isbn: book.isbn } }"
           class="btn text-white ms-3 outlinedOnHover backgroundGradientRed"
           type="button"

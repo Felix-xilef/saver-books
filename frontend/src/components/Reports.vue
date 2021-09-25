@@ -1,19 +1,42 @@
 <template>
   <div class="container">
-    <div class="row">
-      <div class="col">
+    <div class="row justify-content-center mb-4">
+      <div class="col-xl-8 col-md-10 col-sm-12">
         <canvas id="operationsChart" class="barChart"></canvas>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-6">
+    <div class="row justify-content-center">
+      <div class="col-xl-4 col-md-6 col-sm-12 mb-4">
         <canvas id="reservationStatusChart" class="pieCharts"></canvas>
       </div>
 
-      <div class="col-6">
+      <div class="col-xl-4 col-md-6 col-sm-12 mb-4">
         <canvas id="loanStatusChart" class="pieCharts"></canvas>
       </div>
+
+      <form class="col-xl-3 col-md-5 col-sm-10 d-flex flex-column justify-content-center" @submit.prevent="submit">
+        <h5>Selecione o intervalo:</h5>
+        
+        <div class="mb-3">
+          <label for="startDate" class="form-label">De:</label>
+          <input type="date" name="startDate" id="startDate" class="form-control" v-model="rangeForm.startDate">
+        </div>
+
+        <div class="mb-3">
+          <label for="endDate" class="form-label">Até:</label>
+          <input type="date" name="endDate" id="endDate" class="form-control" v-model="rangeForm.endDate">
+        </div>
+
+        <button
+          type="submit"
+          class="btn text-white outlinedOnHover"
+          :class="{ 'backgroundGradientBlue': rangeFormIsValid, 'backgroundGradientDisabled': !rangeFormIsValid }"
+          :disabled="!rangeFormIsValid"
+        >
+          <p>Atualizar Relatórios</p>
+        </button>
+      </form>
     </div>
   </div>
 
@@ -24,7 +47,12 @@
 import ReportService from '../shared/services/ReportService';
 import Alert from '../shared/components/Alert.vue';
 import Chart from 'chart.js/auto';
+import vuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 export default {
+  setup() {
+    return { v$: vuelidate() }
+  },
   components: { Alert },
   name: 'Reports',
   data() {
@@ -34,8 +62,10 @@ export default {
         error: false,
         success: false,
       },
-      startDate: '',
-      endDate: '',
+      rangeForm: {
+        startDate: '',
+        endDate: '',
+      },
       operationsChart: null,
       reservationStatusChart: null,
       loanStatusChart: null,
@@ -43,6 +73,23 @@ export default {
       backgroundColors: ['#0061d871', '#ff000080', '#10c20079', '#ee9e267e'],
       borderColors: ['0063d8', '#ff0000', '10c200', '#ee9e26'],
     }
+  },
+  validations() {
+    return {
+      rangeForm: {
+        startDate: {
+          required,
+        },
+        endDate: {
+          required,
+        },
+      },
+    }
+  },
+  computed: {
+    rangeFormIsValid() {
+      return !this.v$.rangeForm.$invalid;
+    },
   },
   methods: {
 		error(message) {
@@ -72,7 +119,7 @@ export default {
             responsive: true,
             plugins: {
               legend: {
-                position: 'top',
+                position: 'bottom',
               },
               title: {
                 display: true,
@@ -88,8 +135,11 @@ export default {
         }
       )
     },
-    getReport() {
-      ReportService.getReport(this.startDate, this.endDate).then(response => {
+    submit() {
+      if (this.rangeFormIsValid) this.getReport(this.rangeForm.startDate, this.rangeForm.endDate);
+    },
+    getReport(startDate, endDate) {
+      ReportService.getReport(startDate, endDate).then(response => {
         console.log(response.data);
 
         response.data.operationsReport.datasets[0].borderColor = this.borderColors[0];
@@ -123,7 +173,10 @@ export default {
     },
   },
   mounted() {
-    this.getReport();
+    let sixMonthsBefore = new Date();
+    sixMonthsBefore.setMonth(sixMonthsBefore.getMonth() - 6);
+
+    this.getReport(sixMonthsBefore, new Date());
   },
 }
 </script>
