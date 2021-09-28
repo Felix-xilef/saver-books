@@ -136,7 +136,13 @@ export default {
       )
     },
     submit() {
-      if (this.rangeFormIsValid) this.getReport(this.rangeForm.startDate, this.rangeForm.endDate);
+      if (this.rangeFormIsValid) {
+        this.operationsChart.destroy();
+        this.reservationStatusChart.destroy();
+        this.loanStatusChart.destroy();
+
+        this.getReport(this.rangeForm.startDate, this.rangeForm.endDate);
+      }
     },
     getReport(startDate, endDate) {
       ReportService.getReport(startDate, endDate).then(response => {
@@ -174,7 +180,7 @@ export default {
   },
   mounted() {
     let sixMonthsBefore = new Date();
-    sixMonthsBefore.setMonth(sixMonthsBefore.getMonth() - 6);
+    sixMonthsBefore.setMonth(sixMonthsBefore.getMonth() - 5);
 
     this.getReport(sixMonthsBefore, new Date());
   },

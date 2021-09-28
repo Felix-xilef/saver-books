@@ -1,22 +1,28 @@
+import { Loan } from "../entities/operations/Loan";
+import { Operation } from "../entities/operations/Operation";
+import { Reservation } from "../entities/operations/Reservation";
 import { Request, Response } from "express";
-import { Reports } from "interfaces/Reports";
+import { Reports } from "../interfaces/Reports";
+import { Between, getRepository } from "typeorm";
 
 export class ReportController {
     async calculate(request: Request, response: Response): Promise<Response> {
-        const initialDate: Date = new Date(String(request.query.initialDate));
-        const finalDate: Date = new Date(String(request.query.finalDate));
-        
-        let reports: Reports = {
+        if (!request.query.startDate || !request.query.endDate) return response.status(400).json({ "error": "Both initial date and final date have to be informed!" });
+
+        const startDate: Date = new Date(String(request.query.startDate));
+        const endDate: Date = new Date(String(request.query.endDate));
+                
+        const reports: Reports = {
             operationsReport: {
-                labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio'],
+                labels: [],
                 datasets: [
                     {
                         label: 'Reserva',
-                        data: [40, 55, 32, 21, 19, 22],
+                        data: [],
                     },
                     {
                         label: 'Empréstimo',
-                        data: [36, 49, 30, 20, 19, 20],
+                        data: [],
                     },
                 ],
             },
@@ -26,7 +32,7 @@ export class ReportController {
                 datasets: [
                     {
                         label: 'Situação das Reservas',
-                        data: [2, 6, 174, 7],
+                        data: [0, 0, 0, 0],
                     },
                 ],
             },
@@ -36,11 +42,49 @@ export class ReportController {
                 datasets: [
                     {
                         label: 'Situação dos Empréstimos',
-                        data: [19, 5, 150],
+                        data: [0, 0, 0],
                     },
                 ],
             }
         };
+        
+        for (let date = new Date(startDate.getTime()); date.getMonth() <= endDate.getMonth(); date.setMonth(date.getMonth() + 1)) {            
+            reports.operationsReport.labels.push(date.toLocaleString('pt-br', { month: "long" }));
+            reports.operationsReport.datasets.forEach(dataset => dataset.data.push(0));
+        }
+
+        const operations: Operation[] = await getRepository(Reservation).find({
+            relations: { reservationStatus: true },
+            where: {
+                reservedDate: Between(startDate, endDate),
+            },
+        });
+
+        console.log(startDate, endDate);
+        
+        operations.concat(await getRepository(Loan).find({
+            relations: { loanStatus: true },
+            where: {
+                withdrawalDate: Between(startDate, endDate),
+            },
+        }));
+                
+        operations.forEach(operation => {
+            console.log(operation instanceof Reservation, operation instanceof Loan);            
+
+            if (operation instanceof Reservation) {
+                reports.reservationStatusReport.datasets[0].data[operation.reservationStatus.id]++;
+                reports.operationsReport.datasets[0].data[
+                    reports.operationsReport.labels.indexOf(operation.reservedDate.toLocaleString('pt-br', { month: "long" }))
+                ]++;
+
+            } else if (operation instanceof Loan) {
+                reports.loanStatusReport.datasets[0].data[operation.loanStatus.id]++;
+                reports.operationsReport.datasets[1].data[
+                    reports.operationsReport.labels.indexOf(operation.withdrawalDate.toLocaleString('pt-br', { month: "long" }))
+                ]++;
+            }
+        });
 
         return response.status(200).json({ ...reports });
     }
