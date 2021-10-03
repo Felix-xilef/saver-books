@@ -5,6 +5,12 @@ import { Request, Response } from "express";
 import { Reports } from "../interfaces/Reports";
 import { Between, getRepository } from "typeorm";
 
+const getMonthLabel = (date: Date): string => {
+    return date.toLocaleString('pt-br', { month: "long" }).charAt(0).toUpperCase() +
+    date.toLocaleString('pt-br', { month: "long" }).slice(1) +
+    ' / ' + date.getFullYear();
+}
+
 export class ReportController {
     async calculate(request: Request, response: Response): Promise<Response> {
         if (!request.query.startDate || !request.query.endDate) return response.status(400).json({ "error": "Both initial date and final date have to be informed!" });
@@ -48,8 +54,8 @@ export class ReportController {
             }
         };
         
-        for (let date = new Date(startDate.getTime()); date.getMonth() <= endDate.getMonth(); date.setMonth(date.getMonth() + 1)) {            
-            reports.operationsReport.labels.push(date.toLocaleString('pt-br', { month: "long" }));
+        for (let date = new Date(startDate.getTime()); date.getMonth() <= endDate.getMonth(); date.setMonth(date.getMonth() + 1)) {
+            reports.operationsReport.labels.push(getMonthLabel(date));
             reports.operationsReport.datasets.forEach(dataset => dataset.data.push(0));
         }
 
@@ -77,13 +83,13 @@ export class ReportController {
             if (operation instanceof Reservation) {
                 reports.reservationStatusReport.datasets[0].data[operation.reservationStatus.id - 1]++;
                 reports.operationsReport.datasets[0].data[
-                    reports.operationsReport.labels.indexOf(operation.reservedDate.toLocaleString('pt-br', { month: "long" }))
+                    reports.operationsReport.labels.indexOf(getMonthLabel(operation.reservedDate))
                 ]++;
 
             } else if (operation instanceof Loan) {
                 reports.loanStatusReport.datasets[0].data[operation.loanStatus.id - 1]++;
                 reports.operationsReport.datasets[1].data[
-                    reports.operationsReport.labels.indexOf(operation.withdrawalDate.toLocaleString('pt-br', { month: "long" }))
+                    reports.operationsReport.labels.indexOf(getMonthLabel(operation.withdrawalDate))
                 ]++;
             }
         });
