@@ -56,30 +56,32 @@ export class ReportController {
         const operations: Operation[] = await getRepository(Reservation).find({
             relations: { reservationStatus: true },
             where: {
-                reservedDate: Between(startDate, endDate),
+                reservedDate: Between(
+                    startDate.toISOString().slice(0, 19),
+                    endDate.toISOString().slice(0, 19)
+                ),
             },
         });
-
-        console.log(startDate, endDate);
         
         operations.concat(await getRepository(Loan).find({
             relations: { loanStatus: true },
             where: {
-                withdrawalDate: Between(startDate, endDate),
+                withdrawalDate: Between(
+                    startDate.toISOString().slice(0, 19),
+                    endDate.toISOString().slice(0, 19)
+                ),
             },
         }));
                 
         operations.forEach(operation => {
-            console.log(operation instanceof Reservation, operation instanceof Loan);            
-
             if (operation instanceof Reservation) {
-                reports.reservationStatusReport.datasets[0].data[operation.reservationStatus.id]++;
+                reports.reservationStatusReport.datasets[0].data[operation.reservationStatus.id - 1]++;
                 reports.operationsReport.datasets[0].data[
                     reports.operationsReport.labels.indexOf(operation.reservedDate.toLocaleString('pt-br', { month: "long" }))
                 ]++;
 
             } else if (operation instanceof Loan) {
-                reports.loanStatusReport.datasets[0].data[operation.loanStatus.id]++;
+                reports.loanStatusReport.datasets[0].data[operation.loanStatus.id - 1]++;
                 reports.operationsReport.datasets[1].data[
                     reports.operationsReport.labels.indexOf(operation.withdrawalDate.toLocaleString('pt-br', { month: "long" }))
                 ]++;
