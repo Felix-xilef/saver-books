@@ -1,76 +1,93 @@
 import { Loan } from "../entities/operations/Loan";
+import { Operation } from "../entities/operations/Operation";
 import { Reservation } from "../entities/operations/Reservation";
 import { Request, Response } from "express";
+import { Reports } from "../interfaces/Reports";
 import { Between, getRepository } from "typeorm";
-import { ReservationStatus } from "entities/operations/ReservationStatus";
 
 export class ReportController {
     async calculate(request: Request, response: Response): Promise<Response> {
-        const initialDate: Date = new Date(String(request.query.initialDate));
-        const finalDate: Date = new Date(String(request.query.finalDate));
+        if (!request.query.startDate || !request.query.endDate) return response.status(400).json({ "error": "Both initial date and final date have to be informed!" });
 
-        const reservationRepository = getRepository(Reservation);
-        const loanRepository = getRepository(Loan);
-
-        var responseData = {
-            monthly: [],
-            reservationStatus: {
-                open: 0,
-                late: 0,
-                withdrawn: 0,
-                canceled: 0
+        const startDate: Date = new Date(String(request.query.startDate));
+        const endDate: Date = new Date(String(request.query.endDate));
+                
+        const reports: Reports = {
+            operationsReport: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Reserva',
+                        data: [],
+                    },
+                    {
+                        label: 'Empréstimo',
+                        data: [],
+                    },
+                ],
             },
-            loanStatus: {
-                withdrawn: 0,
-                late: 0,
-                returned: 0
-            },
-        };
-
-        const reservations: Reservation[] = await reservationRepository.find({ where: {
-            reservedDate: Between(initialDate, finalDate)
-        }, order: {
-            reservedDate: 'ASC'
-        }});
-
-        const loans: Loan[] = await loanRepository.find({ where: {
-            withdrawalDate: Between(initialDate, finalDate)
-        }, order: {
-            withdrawalDate: 'ASC'
-        }});
-
-        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        [reservations, loans].map((element, id) => {
-            var month = initialDate.getMonth();
-            var year = initialDate.getFullYear();
-            var monthCount = 0;
-            var responseStatus;
             
-            if (id == 0) {
-                responseStatus = responseData.reservationStatus;
-            } else {
-                responseStatus = responseData.loanStatus;
-            }
+            reservationStatusReport: {
+                labels: ['Aberto', 'Atrasado', 'Retirado', 'Cancelado'],
+                datasets: [
+                    {
+                        label: 'Situação das Reservas',
+                        data: [0, 0, 0, 0],
+                    },
+                ],
+            },
 
-            element.map((subElement) => {
-                responseStatus[subElement[8].id-1]++;
-    
-                if (subElement[6].getMonth() != month) {
-                    responseData.monthly.push({
-                        month: `${monthNames[month]}/${year}`,
-                        count: monthCount
-                    });
-                    monthCount = 0;
-                    month = subElement[6].getMonth();
-                    year = subElement[6].getFullYear();
-                }
-    
-                monthCount++;
-            });
+            loanStatusReport: {
+                labels: ['Retirado', 'Atrasado', 'Devolvido'],
+                datasets: [
+                    {
+                        label: 'Situação dos Empréstimos',
+                        data: [0, 0, 0],
+                    },
+                ],
+            }
+        };
+        
+        for (let date = new Date(startDate.getTime()); date.getMonth() <= endDate.getMonth(); date.setMonth(date.getMonth() + 1)) {            
+            reports.operationsReport.labels.push(date.toLocaleString('pt-br', { month: "long" }));
+            reports.operationsReport.datasets.forEach(dataset => dataset.data.push(0));
+        }
+
+        const operations: Operation[] = await getRepository(Reservation).find({
+            relations: { reservationStatus: true },
+            where: {
+                reservedDate: Between(
+                    startDate.toISOString().slice(0, 19),
+                    endDate.toISOString().slice(0, 19)
+                ),
+            },
+        });
+        
+        operations.concat(await getRepository(Loan).find({
+            relations: { loanStatus: true },
+            where: {
+                withdrawalDate: Between(
+                    startDate.toISOString().slice(0, 19),
+                    endDate.toISOString().slice(0, 19)
+                ),
+            },
+        }));
+                
+        operations.forEach(operation => {
+            if (operation instanceof Reservation) {
+                reports.reservationStatusReport.datasets[0].data[operation.reservationStatus.id - 1]++;
+                reports.operationsReport.datasets[0].data[
+                    reports.operationsReport.labels.indexOf(operation.reservedDate.toLocaleString('pt-br', { month: "long" }))
+                ]++;
+
+            } else if (operation instanceof Loan) {
+                reports.loanStatusReport.datasets[0].data[operation.loanStatus.id - 1]++;
+                reports.operationsReport.datasets[1].data[
+                    reports.operationsReport.labels.indexOf(operation.withdrawalDate.toLocaleString('pt-br', { month: "long" }))
+                ]++;
+            }
         });
 
-        response.status(200).json(responseData);
-
-        return response;
+        return response.status(200).json({ ...reports });
     }
 }

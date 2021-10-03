@@ -20,6 +20,7 @@ export default {
   --blue: #0063d8;
   --green: #10c200;
   --red: #ff0000;
+  --yellow: #ee9e26;
 
   --gradient-gray: linear-gradient(90deg, #bbbbbb 0%, #dddddd 100%);
   --gradient-blue: linear-gradient(90deg, var(--blue) 0%, #5ea8ff 100%);
