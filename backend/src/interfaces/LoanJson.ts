@@ -1,5 +1,6 @@
 import { Loan } from "../entities/operations/Loan";
 import { jsonToBook } from "./BookJson";
+import { jsonToClient } from "./ClientJson";
 import { OperationJson } from "./OperationJson";
 import { jsonToLoanStatus, LoanStatusJson, loanStatusToJson } from "./SubTypesJson";
 
@@ -24,10 +25,7 @@ export function loanToJson(loanObject: Loan): LoanJson {
 
 export function jsonToLoan(loanJson: LoanJson): Loan {
     return new Loan(
-        loanJson.cpf,
-        loanJson.name,
-        loanJson.phone,
-        loanJson.email,
+        jsonToClient(loanJson.client),
         jsonToBook(loanJson.book),
         loanJson.withdrawalDate,
         loanJson.returnDate,

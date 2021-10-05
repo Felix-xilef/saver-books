@@ -1,5 +1,6 @@
 import { Reservation } from "../entities/operations/Reservation";
 import { jsonToBook } from "./BookJson";
+import { jsonToClient } from "./ClientJson";
 import { OperationJson, operationToJson } from "./OperationJson";
 import { jsonToReservationStatus, ReservationStatusJson, reservationStatusToJson } from "./SubTypesJson";
 
@@ -22,10 +23,7 @@ export function reservationToJson(reservationObject: Reservation): ReservationJs
 
 export function jsonToReservation(reservationJson: ReservationJson): Reservation {
     return new Reservation(
-        reservationJson.cpf,
-        reservationJson.name,
-        reservationJson.phone,
-        reservationJson.email,
+        jsonToClient(reservationJson.client),
         jsonToBook(reservationJson.book),
         reservationJson.reservedDate,
         reservationJson.withdrawalDate,
