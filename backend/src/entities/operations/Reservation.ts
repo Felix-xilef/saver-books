@@ -2,6 +2,7 @@ import { Book } from "../books/Book";
 import {Column, Entity, ManyToOne} from "typeorm";
 import { Operation } from "./Operation";
 import { ReservationStatus } from "./ReservationStatus";
+import { Client } from "../clients/Client";
 
 @Entity()
 export class Reservation extends Operation {
@@ -16,22 +17,13 @@ export class Reservation extends Operation {
     reservationStatus: ReservationStatus;
 
     constructor(
-        cpf: string,
-        name: string,
-        phone: string,
-        email: string,
+        client: Client,
         book: Book,
         reservedDate: Date,
         withdrawalDate: Date,
         resStatus: ReservationStatus
     ) {
-        super(
-            cpf,
-            name,
-            phone,
-            email,
-            book
-        );
+        super(client, book);
         this.reservedDate = reservedDate;
         this.withdrawalDate = withdrawalDate;
         this.reservationStatus = resStatus;

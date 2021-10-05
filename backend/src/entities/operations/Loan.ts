@@ -1,5 +1,7 @@
+import { Column, Entity, ManyToOne } from "typeorm";
+
 import { Book } from "../books/Book";
-import {Column, Entity, ManyToOne} from "typeorm";
+import { Client } from "../clients/Client";
 import { LoanStatus } from "./LoanStatus";
 import { Operation } from "./Operation";
 
@@ -16,22 +18,13 @@ export class Loan extends Operation {
     loanStatus: LoanStatus;
 
     constructor(
-        cpf: string,
-        name: string,
-        phone: string,
-        email: string,
+        client: Client,
         book: Book,
         withdrawalDate: Date,
         returnDate: Date,
         loanStatus: LoanStatus
     ) {
-        super(
-            cpf,
-            name,
-            phone,
-            email,
-            book
-        );
+        super(client, book);
         this.withdrawalDate = withdrawalDate;
         this.returnDate = returnDate;
         this.loanStatus = loanStatus;
