@@ -14,22 +14,6 @@ export class LoanMigration1622422402888 implements MigrationInterface {
                     generationStrategy: 'increment'
                 },
                 {
-                    name: 'cpf',
-                    type: 'varchar(12)'
-                },
-                {
-                    name: 'name',
-                    type: 'varchar'
-                },
-                {
-                    name: 'phone',
-                    type: 'varchar(12)'
-                },
-                {
-                    name: 'email',
-                    type: 'varchar'
-                },
-                {
                     name: 'withdrawalDate',
                     type: 'timestamp',
                     default: 'now()'

@@ -14,22 +14,6 @@ export class ReservationMigration1622422379731 implements MigrationInterface {
                     generationStrategy: 'increment'
                 },
                 {
-                    name: 'cpf',
-                    type: 'varchar(12)'
-                },
-                {
-                    name: 'name',
-                    type: 'varchar'
-                },
-                {
-                    name: 'phone',
-                    type: 'varchar(12)'
-                },
-                {
-                    name: 'email',
-                    type: 'varchar'
-                },
-                {
                     name: 'reservedDate',
                     type: 'timestamp',
                     default: 'now()'
