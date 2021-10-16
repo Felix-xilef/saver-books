@@ -21,7 +21,7 @@ export function clientToJson(clientObject: Client): ClientJson {
     name: clientObject.name,
     phone: clientObject.phone,
     blockStart: clientObject.blockStart,
-    blockEnd: clientObject.blockEnd
+    blockEnd: clientObject.blockEnd,
   };
 }
 
@@ -32,6 +32,6 @@ export function jsonToClient(clientJson: ClientJson): Client {
     clientJson.phone,
     clientJson.email,
     clientJson.blockStart,
-    clientJson.blockEnd
+    clientJson.blockEnd,
   );
 }

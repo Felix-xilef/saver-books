@@ -4,23 +4,23 @@ import { BookJson, bookToJson } from "./BookJson";
 import { clientToJson } from "./ClientJson";
 
 export interface OperationJson {
-    id: number;
+  id: number;
 
-    clientCpf: string;
+  clientCpf: string;
 
-    client?: Client;
+  client?: Client;
 
-    bookIsbn: string;
+  bookIsbn: string;
 
-    book?: BookJson;
+  book?: BookJson;
 }
 
 export function operationToJson(operationObject: Operation): OperationJson {
-    return {
-        id: operationObject.id,
-        clientCpf: operationObject.client.cpf,
-        client: clientToJson(operationObject.client),
-        bookIsbn: operationObject.book.isbn,
-        book: bookToJson(operationObject.book),
-    };
+  return {
+    id: operationObject.id,
+    clientCpf: operationObject.client.cpf,
+    client: clientToJson(operationObject.client),
+    bookIsbn: operationObject.book.isbn,
+    book: bookToJson(operationObject.book),
+  };
 }

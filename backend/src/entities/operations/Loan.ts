@@ -7,26 +7,25 @@ import { Operation } from "./Operation";
 
 @Entity()
 export class Loan extends Operation {
+  @Column("datetime")
+  withdrawalDate: Date;
 
-    @Column('datetime')
-    withdrawalDate: Date;
+  @Column("datetime")
+  returnDate: Date;
 
-    @Column('datetime')
-    returnDate: Date;
+  @ManyToOne(() => LoanStatus)
+  loanStatus: LoanStatus;
 
-    @ManyToOne(() => LoanStatus)
-    loanStatus: LoanStatus;
-
-    constructor(
-        client: Client,
-        book: Book,
-        withdrawalDate: Date,
-        returnDate: Date,
-        loanStatus: LoanStatus
-    ) {
-        super(client, book);
-        this.withdrawalDate = withdrawalDate;
-        this.returnDate = returnDate;
-        this.loanStatus = loanStatus;
-    }
+  constructor(
+    client: Client,
+    book: Book,
+    withdrawalDate: Date,
+    returnDate: Date,
+    loanStatus: LoanStatus,
+  ) {
+    super(client, book);
+    this.withdrawalDate = withdrawalDate;
+    this.returnDate = returnDate;
+    this.loanStatus = loanStatus;
+  }
 }

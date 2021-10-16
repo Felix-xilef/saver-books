@@ -11,56 +11,56 @@ import { ClientController } from "@controllers/ClientController";
 
 const router = Router();
 
-const authController = new AuthController;
-const userController = new UserController;
-const bookController = new BookController;
-const imageController = new ImageController;
-const reservationController = new ReservationController;
-const loanController = new LoanController;
-const reportController = new ReportController;
-const subTypesController = new SubTypesController;
-const clientController = new ClientController;
+const authController = new AuthController();
+const userController = new UserController();
+const bookController = new BookController();
+const imageController = new ImageController();
+const reservationController = new ReservationController();
+const loanController = new LoanController();
+const reportController = new ReportController();
+const subTypesController = new SubTypesController();
+const clientController = new ClientController();
 
-router.post('/authenticate', authController.authenticate);
+router.post("/authenticate", authController.authenticate);
 
-router.get('/user', userController.select);
-router.get('/users', userController.selectAll);
-router.post('/user', userController.saveEntry);
-router.put('/user', userController.saveEntry);
-router.delete('/user', userController.delete);
+router.get("/user", userController.select);
+router.get("/users", userController.selectAll);
+router.post("/user", userController.saveEntry);
+router.put("/user", userController.saveEntry);
+router.delete("/user", userController.delete);
 
-router.get('/client', clientController.select);
-router.get('/clients', clientController.selectAll);
-router.post('/client', clientController.saveEntry);
-router.put('/client', clientController.update);
-router.get('/client', clientController.delete);
+router.get("/client", clientController.select);
+router.get("/clients", clientController.selectAll);
+router.post("/client", clientController.saveEntry);
+router.put("/client", clientController.update);
+router.get("/client", clientController.delete);
 
-router.get('/book', bookController.select);
-router.get('/books', bookController.selectAll);
-router.post('/book', bookController.saveEntry);
-router.put('/book', bookController.saveEntry);
-router.delete('/book', bookController.delete);
+router.get("/book", bookController.select);
+router.get("/books", bookController.selectAll);
+router.post("/book", bookController.saveEntry);
+router.put("/book", bookController.saveEntry);
+router.delete("/book", bookController.delete);
 
 // router.get('/image', imageController.getImage);
-router.post('/image', imageController.postImage);
+router.post("/image", imageController.postImage);
 
-router.get('/reservation', reservationController.select);
-router.get('/reservations', reservationController.selectAll);
-router.post('/reservation', reservationController.saveEntry);
-router.put('/reservation', reservationController.saveEntry);
-router.delete('/reservation', reservationController.delete);
+router.get("/reservation", reservationController.select);
+router.get("/reservations", reservationController.selectAll);
+router.post("/reservation", reservationController.saveEntry);
+router.put("/reservation", reservationController.saveEntry);
+router.delete("/reservation", reservationController.delete);
 
-router.get('/loan', loanController.select);
-router.get('/loans', loanController.selectAll);
-router.post('/loan', loanController.saveEntry);
-router.put('/loan', loanController.saveEntry);
-router.delete('/loan', loanController.delete);
+router.get("/loan", loanController.select);
+router.get("/loans", loanController.selectAll);
+router.post("/loan", loanController.saveEntry);
+router.put("/loan", loanController.saveEntry);
+router.delete("/loan", loanController.delete);
 
-router.get('/genres', subTypesController.getGenres);
-router.get('/usertypes', subTypesController.getUserTypes);
-router.get('/reservationstatus', subTypesController.getReservationStatus);
-router.get('/loanstatus', subTypesController.getLoanStatus);
+router.get("/genres", subTypesController.getGenres);
+router.get("/usertypes", subTypesController.getUserTypes);
+router.get("/reservationstatus", subTypesController.getReservationStatus);
+router.get("/loanstatus", subTypesController.getLoanStatus);
 
-router.get('/report', reportController.calculate);
+router.get("/report", reportController.calculate);
 
 export default router;

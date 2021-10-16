@@ -2,56 +2,56 @@ import { Book } from "../entities/books/Book";
 import { GenreJson, genreToJson, jsonToGenre } from "./SubTypesJson";
 
 export interface BookJson {
-    isbn: string;
+  isbn: string;
 
-    language: string;
+  language: string;
 
-    title: string;
+  title: string;
 
-    author: string;
+  author: string;
 
-    publicDate: Date;
+  publicDate: Date;
 
-    publisher: string;
+  publisher: string;
 
-    summary: string;
+  summary: string;
 
-    availCopies: number;
+  availCopies: number;
 
-    unavailCopies: number;
+  unavailCopies: number;
 
-    cover: string;
+  cover: string;
 
-    genre: GenreJson;
+  genre: GenreJson;
 }
 
 export function bookToJson(bookObject: Book): BookJson {
-    return {
-        isbn: bookObject.isbn,
-        language: bookObject.language,
-        title: bookObject.title,
-        author: bookObject.author,
-        publicDate: bookObject.publicDate,
-        publisher: bookObject.publisher,
-        genre: genreToJson(bookObject.genre),
-        summary: bookObject.summary,
-        availCopies: bookObject.availCopies,
-        unavailCopies: bookObject.unavailCopies,
-        cover: bookObject.cover
-    };
+  return {
+    isbn: bookObject.isbn,
+    language: bookObject.language,
+    title: bookObject.title,
+    author: bookObject.author,
+    publicDate: bookObject.publicDate,
+    publisher: bookObject.publisher,
+    genre: genreToJson(bookObject.genre),
+    summary: bookObject.summary,
+    availCopies: bookObject.availCopies,
+    unavailCopies: bookObject.unavailCopies,
+    cover: bookObject.cover,
+  };
 }
 
 export function jsonToBook(bookJson: BookJson): Book {
-    return new Book(
-        bookJson.isbn,
-        bookJson.language,
-        bookJson.title,
-        bookJson.author,
-        bookJson.publicDate,
-        bookJson.publisher,
-        jsonToGenre(bookJson.genre),
-        bookJson.summary,
-        bookJson.availCopies,
-        bookJson.cover
-    );
+  return new Book(
+    bookJson.isbn,
+    bookJson.language,
+    bookJson.title,
+    bookJson.author,
+    bookJson.publicDate,
+    bookJson.publisher,
+    jsonToGenre(bookJson.genre),
+    bookJson.summary,
+    bookJson.availCopies,
+    bookJson.cover,
+  );
 }

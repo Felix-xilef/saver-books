@@ -7,21 +7,20 @@ interface Report {
   }[];
 }
 
-interface OperationsReport extends Omit<Report, 'datasets'> {
+interface OperationsReport extends Omit<Report, "datasets"> {
   datasets: [
     {
-      label: 'Reserva';
+      label: "Reserva";
       data: number[];
     },
     {
-      label: 'Empréstimo';
+      label: "Empréstimo";
       data: number[];
     },
   ];
 }
 
-interface StatusesReport extends Report {
-}
+type StatusesReport = Report;
 
 export interface Reports {
   operationsReport: OperationsReport;
