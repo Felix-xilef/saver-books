@@ -92,6 +92,28 @@ export class ClientController {
     return response;
   }
 
+  async update(request: Request, response: Response): Promise<Response> {
+    const requestClient = request.body;
+
+    let client = await clientRepository.findOne({where: {cpf: requestClient.cpf}});
+
+    if (!client) {
+      response.status(404).json({ "error": "client not found"});
+    } else {
+        try {
+          client = getClientFromJson(requestClient);
+
+          await clientRepository.save(client);
+
+          response.status(200).json(getJsonFromClient(client));
+        } catch (error) {
+          response.status(500).json({ "error": error.message })
+        }
+    }
+
+    return response;
+  }
+
   async delete(request: Request, response: Response): Promise<Response> {
     const cpf = String(request.query.cpf);
 

@@ -32,7 +32,7 @@ router.delete('/user', userController.delete);
 router.get('/client', clientController.select);
 router.get('/clients', clientController.selectAll);
 router.post('/client', clientController.saveEntry);
-// router.put('/client', clientController.saveEntry);
+router.put('/client', clientController.update);
 router.get('/client', clientController.delete);
 
 router.get('/book', bookController.select);
