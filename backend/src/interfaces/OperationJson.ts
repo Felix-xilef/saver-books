@@ -8,7 +8,7 @@ export interface OperationJson {
 
     clientCpf: string;
 
-    client: Client;
+    client?: Client;
 
     bookIsbn: string;
 
