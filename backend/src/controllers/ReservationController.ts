@@ -5,13 +5,21 @@ import { ReservationJson } from "../interfaces/ReservationJson";
 import { Request, Response } from "express";
 import { FindOptionsWhere, getRepository, In, Like } from "typeorm";
 import { bookToJson } from "../interfaces/BookJson";
+import { Client } from "entities/clients/Client";
+import { clientToJson } from "interfaces/ClientJson";
 
 const getReservationFromJson = async (reservationJson: ReservationJson): Promise<Reservation> => {
+    const client = new Client(
+        reservationJson.client.cpf,
+        reservationJson.client.name,
+        reservationJson.client.phone,
+        reservationJson.client.email,
+        reservationJson.client.blockStart,
+        reservationJson.client.blockEnd,
+    );
+    
     const reservation = new Reservation(
-        reservationJson.cpf,
-        reservationJson.name,
-        reservationJson.phone,
-        reservationJson.email,
+        client,
         await getRepository(Book).findOne(reservationJson.bookIsbn, { relations: { genre: true } }),
         reservationJson.reservedDate,
         reservationJson.withdrawalDate,
@@ -28,10 +36,8 @@ const getReservationFromJson = async (reservationJson: ReservationJson): Promise
 const getJsonFromReservation = (reservation: Reservation): ReservationJson => {
     return {
         id: reservation.id,
-        cpf: reservation.cpf,
-        name: reservation.name,
-        phone: reservation.phone,
-        email: reservation.email,
+        clientCpf: reservation.client.cpf,
+        client: clientToJson(reservation.client),
         bookIsbn: reservation.book.isbn,
         book: bookToJson(reservation.book),
         reservedDate: reservation.reservedDate,
@@ -75,7 +81,12 @@ export class ReservationController {
             else whereStatement.book = book;
         }
 
-        if (Boolean(cpf) && cpf != '') whereStatement.cpf = String(cpf);
+        if (Boolean(cpf) && cpf != '') {
+            let client = await getRepository(Client).findOne(String(cpf));
+
+            if (!client) return response.status(404).json({ "error": "Client not found "});
+            else whereStatement.client = client;
+        }
 
         if (isActive) whereStatement = [
             { ...whereStatement, reservationStatus: new ReservationStatus(1) },

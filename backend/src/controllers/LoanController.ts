@@ -6,19 +6,26 @@ import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+import { Client } from "entities/clients/Client";
 
 const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
+    const client = new Client(
+        loanJson.client.cpf,
+        loanJson.client.name,
+        loanJson.client.phone,
+        loanJson.client.email,
+        loanJson.client.blockStart,
+        loanJson.client.blockEnd,
+    );
+    
     const loan = new Loan(
-        loanJson.cpf,
-        loanJson.name,
-        loanJson.phone,
-        loanJson.email,
+        client,
         await getRepository(Book).findOne(loanJson.bookIsbn, { relations: { genre: true } }),
         loanJson.withdrawalDate,
         loanJson.returnDate,
         new LoanStatus(
             loanJson.loanStatus.id
-        )
+        ),
     );
 
     if (loanJson.id) loan.id = loanJson.id;
@@ -29,10 +36,7 @@ const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
 const getJsonFromLoan = (loan: Loan): LoanJson => {
     return {
         id: loan.id,
-        cpf: loan.cpf,
-        name: loan.name,
-        phone: loan.phone,
-        email: loan.email,
+        clientCpf: loan.client.cpf,
         bookIsbn: loan.book.isbn,
         withdrawalDate: loan.withdrawalDate,
         returnDate: loan.returnDate,
@@ -40,6 +44,7 @@ const getJsonFromLoan = (loan: Loan): LoanJson => {
             id: loan.loanStatus.id,
             description: loan.loanStatus.description
         }
+        
     }
 }
 
@@ -68,12 +73,12 @@ export class LoanController {
         let whereStatement = {};
 
         if (isbn && isbn != '') {
-            let book = await getRepository(Book).findOne(String(isbn));
+            const book = await getRepository(Book).findOne(String(isbn));
 
             if (!book) {
                 return response.status(404).json({ "error": "Book not found" });
             } else {
-                whereStatement = { book: book }
+                whereStatement = { book }
             }
         } else if (cpf && cpf != '') {
             whereStatement = { cpf: String(cpf) }

@@ -43,7 +43,7 @@ export class UserController {
                 else response.status(404).json({ "error": "User not found" });
 
             } catch (error) {
-                response.status(500).json({ "error": error.message });;
+                response.status(500).json({ "error": error.message });
             }
         } else {
             response.status(400).json({ "error": "cpf can't be null or undefined" });
