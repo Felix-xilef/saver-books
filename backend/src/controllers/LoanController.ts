@@ -6,7 +6,7 @@ import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { Client } from "entities/clients/Client";
+import { Client } from "../entities/clients/Client";
 
 const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
   const client = new Client(

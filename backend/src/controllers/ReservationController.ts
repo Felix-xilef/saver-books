@@ -6,8 +6,8 @@ import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Book } from "../entities/books/Book";
 import { ReservationJson } from "../interfaces/ReservationJson";
 import { bookToJson } from "../interfaces/BookJson";
-import { Client } from "entities/clients/Client";
-import { clientToJson } from "interfaces/ClientJson";
+import { Client } from "../entities/clients/Client";
+import { clientToJson } from "../interfaces/ClientJson";
 
 const getReservationFromJson = async (
   reservationJson: ReservationJson,

@@ -7,7 +7,7 @@ import { UserController } from "./controllers/UserController";
 import { SubTypesController } from "./controllers/SubTypesController";
 import { AuthController } from "./controllers/AuthController";
 import { ImageController } from "./controllers/ImageController";
-import { ClientController } from "@controllers/ClientController";
+import { ClientController } from "./controllers/ClientController";
 
 const router = Router();
 

@@ -26,15 +26,13 @@ const getClientFromJson = (clientJson: ClientJson): Client => {
   );
 };
 
-const clientRepository = getRepository(Client);
-
 export class ClientController {
   async select(request: Request, response: Response): Promise<Response> {
     const cpf = String(request.query.cpf);
 
     if (cpf) {
       try {
-        const client: Client = await clientRepository.findOne(cpf);
+        const client: Client = await getRepository(Client).findOne(cpf);
 
         if (client) {
           response.status(200).json(getJsonFromClient(client));
@@ -53,7 +51,7 @@ export class ClientController {
 
   async selectAll(request: Request, response: Response): Promise<Response> {
     try {
-      const clients: Client[] = await clientRepository.find();
+      const clients: Client[] = await getRepository(Client).find();
 
       const clientsJson: ClientJson[] = [];
 
@@ -72,7 +70,7 @@ export class ClientController {
   async saveEntry(request: Request, response: Response): Promise<Response> {
     const requestClient = request.body;
 
-    const clientExists = await clientRepository.findOne({
+    const clientExists = await getRepository(Client).findOne({
       where: { cpf: requestClient.cpf },
     });
 
@@ -80,11 +78,11 @@ export class ClientController {
       response.status(422).json({ error: "client already exists" });
     } else {
       try {
-        const client = clientRepository.create(
+        const client = getRepository(Client).create(
           getClientFromJson(requestClient),
         );
 
-        await clientRepository.save(client);
+        await getRepository(Client).save(client);
 
         response.status(201).json(getJsonFromClient(client));
       } catch (error) {
@@ -98,7 +96,7 @@ export class ClientController {
   async update(request: Request, response: Response): Promise<Response> {
     const requestClient = request.body;
 
-    let client = await clientRepository.findOne({
+    let client = await getRepository(Client).findOne({
       where: { cpf: requestClient.cpf },
     });
 
@@ -108,7 +106,7 @@ export class ClientController {
       try {
         client = getClientFromJson(requestClient);
 
-        await clientRepository.save(client);
+        await getRepository(Client).save(client);
 
         response.status(200).json(getJsonFromClient(client));
       } catch (error) {
@@ -124,10 +122,10 @@ export class ClientController {
 
     if (cpf) {
       try {
-        const client: Client = await clientRepository.findOne(cpf);
+        const client: Client = await getRepository(Client).findOne(cpf);
 
         if (client) {
-          clientRepository.remove(client);
+          await getRepository(Client).remove(client);
 
           response.status(200).json(getJsonFromClient(client));
         }
