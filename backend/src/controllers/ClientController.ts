@@ -34,11 +34,11 @@ export class ClientController {
       try {
         const client: Client = await getRepository(Client).findOne(cpf);
 
-        if (client) {
+        // if (client) {
           response.status(200).json(getJsonFromClient(client));
-        } else {
-          response.status(404).json({ error: "Client not found" });
-        }
+        // } else {
+        //   response.status(404).json({ error: "Client not found" });
+        // }
       } catch (error) {
         response.status(500).json({ error: error.message });
       }
@@ -70,13 +70,13 @@ export class ClientController {
   async saveEntry(request: Request, response: Response): Promise<Response> {
     const requestClient = request.body;
 
-    const clientExists = await getRepository(Client).findOne({
-      where: { cpf: requestClient.cpf },
-    });
+    // const clientExists = await getRepository(Client).findOne({
+    //   where: { cpf: requestClient.cpf },
+    // });
 
-    if (clientExists) {
-      response.status(422).json({ error: "client already exists" });
-    } else {
+    // if (clientExists) {
+    //   response.status(422).json({ error: "client already exists" });
+    // } else {
       try {
         const client = getRepository(Client).create(
           getClientFromJson(requestClient),
@@ -88,7 +88,7 @@ export class ClientController {
       } catch (error) {
         response.status(500).json({ error: error.message });
       }
-    }
+    // }
 
     return response;
   }
