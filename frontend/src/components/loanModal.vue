@@ -205,7 +205,7 @@ p<template>
               v-if="book.availCopies > 0 || loan.reservationId"
               type="submit"
               class="btn text-white ms-2 outlinedOnHover"
-              :class="{ 'backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
+              :class="{ 'backgroundGradientBlue': loanIsValid && !clientIsBlocked, 'backgroundGradientDisabled': !loanIsValid || clientIsBlocked }"
               :disabled="!loanIsValid || clientIsBlocked"
             >
               <p>Finalizar Empréstimo</p>
@@ -433,7 +433,11 @@ export default {
         ClientService.getByCpf(this.loan.client.cpf).then(response => {
           if (response.data) this.loan.client = response.data;
 
-        }).catch(err => this.error('Erro ao recuperar cliente: ' + err));
+        }).catch(err => {
+          if (!err || !err.response || err.response.status != 404) {
+            this.error('Erro ao recuperar cliente: ' + err);
+          }
+        });
       }
     },
     selectReservation(reservation) {
@@ -459,7 +463,7 @@ export default {
           this.success('Empréstimo cadastrado com sucesso!');
 
         }).catch(err => this.error('Erro ao cadastrar Empréstimo: ' + err));
-        
+
       }).catch(err => this.error('Erro ao salvar Cliente: ' + err));
     },
   },

@@ -13,6 +13,8 @@ export class Loan extends Operation {
   @Column("datetime")
   returnDate: Date;
 
+  @Column()
+  loanStatusId: number;
   @ManyToOne(() => LoanStatus)
   loanStatus: LoanStatus;
 

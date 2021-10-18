@@ -105,7 +105,7 @@ export class ReservationController {
     try {
       const reservations: Reservation[] = await getRepository(Reservation).find(
         {
-          relations: { reservationStatus: true, book: { genre: true } },
+          relations: { client: true, reservationStatus: true, book: { genre: true } },
           where: whereStatement,
         },
       );
@@ -136,7 +136,7 @@ export class ReservationController {
         const oldReservation = await reservationRepository.findOne(
           reservation.id,
           {
-            relations: { reservationStatus: true, book: true },
+            relations: { reservationStatus: true, book: { genre: true }, client: true },
           },
         );
 

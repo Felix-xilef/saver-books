@@ -29,6 +29,8 @@ export class User {
   @Column({ select: false })
   password: string;
 
+  @Column()
+  userTypeId: number;
   @ManyToOne(() => UserType)
   userType: UserType;
 

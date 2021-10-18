@@ -28,17 +28,17 @@ const getClientFromJson = (clientJson: ClientJson): Client => {
 
 export class ClientController {
   async select(request: Request, response: Response): Promise<Response> {
-    const cpf = String(request.query.cpf);
+    const cpf = String(request.query.cpf);    
 
     if (cpf) {
       try {
         const client: Client = await getRepository(Client).findOne(cpf);
 
-        // if (client) {
+        if (client) {
           response.status(200).json(getJsonFromClient(client));
-        // } else {
-        //   response.status(404).json({ error: "Client not found" });
-        // }
+        } else {
+          response.status(404).json({ error: "Client not found" });
+        }
       } catch (error) {
         response.status(500).json({ error: error.message });
       }

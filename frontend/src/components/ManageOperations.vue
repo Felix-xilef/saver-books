@@ -25,15 +25,15 @@
               <label class="form-label" for="txtCpf">CPF</label>
               <input
                 class="form-control"
-                :class="{ 'is-valid': controlIsValid('cpf'), 'is-invalid': controlHasError('cpf') }"
+                :class="{ 'is-valid': controlIsValid('client', 'cpf'), 'is-invalid': controlHasError('client', 'cpf') }"
                 type="text"
                 name="txtCpf"
                 id="txtCpf"
-                v-model="registry.cpf"
+                v-model="registry.client.cpf"
                 placeholder="CPF do ator"
               />
               <div class="invalid-feedback">
-                <span v-if="registry.cpf == ''">
+                <span v-if="registry.client.cpf == ''">
                   O CPF é obrigatório
                 </span>
                 <span v-else>
@@ -46,11 +46,11 @@
               <label class="form-label" for="txtNome">Nome</label>
               <input
                 class="form-control"
-                :class="{ 'is-valid': controlIsValid('name'), 'is-invalid': controlHasError('name') }"
+                :class="{ 'is-valid': controlIsValid('client', 'name'), 'is-invalid': controlHasError('client', 'name') }"
                 type="name"
                 name="txtNome"
                 id="txtNome"
-                v-model="registry.name"
+                v-model="registry.client.name"
                 placeholder="nome do ator"
                 :disabled="registry.id == ''"
               />
@@ -65,11 +65,11 @@
               <label class="form-label" for="txtPhone">Telefone</label>
               <input
                 class="form-control"
-                :class="{ 'is-valid': controlIsValid('phone'), 'is-invalid': controlHasError('phone') }"
+                :class="{ 'is-valid': controlIsValid('client', 'phone'), 'is-invalid': controlHasError('client', 'phone') }"
                 type="tel"
                 name="txtPhone"
                 id="txtPhone"
-                v-model="registry.phone"
+                v-model="registry.client.phone"
                 placeholder="telefone do ator"
                 :disabled="registry.id == ''"
               />
@@ -82,16 +82,16 @@
               <label class="form-label" for="txtEmail">E-mail</label>
               <input
                 class="form-control"
-                :class="{ 'is-valid': controlIsValid('email'), 'is-invalid': controlHasError('email') }"
+                :class="{ 'is-valid': controlIsValid('client', 'email'), 'is-invalid': controlHasError('client', 'email') }"
                 type="email"
                 name="txtEmail"
                 id="txtEmail"
-                v-model="registry.email"
+                v-model="registry.client.email"
                 placeholder="e-mail do ator"
                 :disabled="registry.id == ''"
               />
               <div class="invalid-feedback">
-                <span v-if="registry.email == ''">
+                <span v-if="registry.client.email == ''">
                   O e-mail é obrigatório
                 </span>
                 <span v-else>
@@ -240,13 +240,13 @@
                 <div>
                   <strong>ISBN:</strong>
 
-                  {{ item.bookIsbn }}
+                  {{ item.book?.isbn }}
                 </div>
 
                 <div>
                   <strong>CPF:</strong>
 
-                  {{ item.cpf }}
+                  {{ item.client?.cpf }}
                 </div>
               </div>
             </div>
@@ -302,10 +302,10 @@
 
       <button
         class="btn p-0 m-2"
-        :class="{ 'disabled': !controlIsValid('cpf') && !controlIsValid('bookIsbn') }"
+        :class="{ 'disabled': !controlIsValid('client', 'cpf') && !controlIsValid('bookIsbn') }"
         type="button"
         @click="getRegistries"
-        :disabled="controlHasError('cpf') && controlHasError('bookIsbn')"
+        :disabled="controlHasError('client', 'cpf') && controlHasError('bookIsbn')"
       >
         <img height="40" src="../shared/assets/searchButton.svg" alt="" />
       </button>
@@ -345,10 +345,14 @@ export default {
       },
       registry: {
         id: "",
-        cpf: "",
-        name: "",
-        phone: "",
-        email: "",
+        client: {
+          cpf: "",
+          name: "",
+          phone: "",
+          email: "",
+          blockStart: null,
+          blockEnd: null,
+        },
         bookIsbn: "",
         reservedDate: "",
         withdrawalDate: "",
@@ -371,10 +375,12 @@ export default {
     return {
       registry: {
         id: { required, $autoDirty: true },
-        cpf: { required, cpfValidator, $autoDirty: true },
-        name: { required, $autoDirty: true },
-        phone: { required, $autoDirty: true },
-        email: { required, email, $autoDirty: true },
+        client: {
+          cpf: { required, cpfValidator, $autoDirty: true },
+          name: { required, $autoDirty: true },
+          phone: { required, $autoDirty: true },
+          email: { required, email, $autoDirty: true },
+        },
         bookIsbn: { required, $autoDirty: true },
         reservedDate: this.isReservation ? { required, $autoDirty: true } : {},
         withdrawalDate: { required, $autoDirty: true },
@@ -431,11 +437,18 @@ export default {
       this.log.success = false;
       this.log.error = true;
     },
-    controlIsValid(attributeName) {
-      return !this.v$.registry[attributeName].$invalid && this.v$.registry[attributeName].$dirty;
+    controlIsValid(attributeName, subAttributeName) {
+      if (!subAttributeName) {
+        return !this.v$.registry[attributeName].$invalid && this.v$.registry[attributeName].$dirty;
+
+      } else {
+        return !this.v$.registry[attributeName][subAttributeName].$invalid && this.v$.registry[attributeName][subAttributeName].$dirty;
+      }
     },
-    controlHasError(attributeName) {
-      return this.v$.registry[attributeName].$error;
+    controlHasError(attributeName, subAttributeName) {
+      if (!subAttributeName) return this.v$.registry[attributeName].$error;
+
+      else return this.v$.registry[attributeName][subAttributeName].$error;
     },
     getStatus() {
       if (this.isReservation) {
@@ -443,7 +456,9 @@ export default {
           this.statusOptions = response.data;
 
         }).catch(err => {
-          this.error('Erro ao listar as Situações da reserva: ' + err);
+          if (!err || !err.response || err.response.status != 404) {
+            this.error('Erro ao listar as Situações da reserva: ' + err);
+          }
         });
 
       } else {
@@ -451,14 +466,16 @@ export default {
           this.statusOptions = response.data;
 
         }).catch(err => {
-          this.error('Erro ao listar as Situações do empréstimo: ' + err);
+          if (!err || !err.response || err.response.status != 404) {
+            this.error('Erro ao listar as Situações do empréstimo: ' + err);
+          }
         });
       }
     },
     getRegistries() {
       let param = {}
 
-      if (this.registry.cpf != '') param = { cpf: this.registry.cpf };
+      if (this.registry.client.cpf != '') param = { cpf: this.registry.client.cpf };
       else if (this.registry.bookIsbn != '') param = { isbn: this.registry.bookIsbn };
 
       if (this.isReservation) {
@@ -466,7 +483,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (typeof err == 'string' && err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+          if (err && err.response && err.response.status != 404) this.handle404Error();
           else this.error('Erro ao listar as Reservas: ' + err);
 
           this.registries = [];
@@ -477,33 +494,43 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (typeof err == 'string' && err.includes('404')) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
-          else this.error('Erro ao listar as Empréstimos: ' + err);
+          if (err && err.response && err.response.status != 404) this.handle404Error();
+          else this.error('Erro ao listar os Empréstimos: ' + err);
 
           this.registries = [];
         });
       }
+    },
+    handle404Error() {
+      if (this.registry.bookIsbn) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+      else this.error(`Cliente de CPF: ${this.registry.client.cpf} não encontrado`);
     },
     submit() {
       if (this.registryIsValid) this.saveRegistry();
     },
     saveRegistry() {
       if (this.isReservation) {
-        ReservationService.updateReservation(this.registry).then(() => {
-          this.success('Reserva atualizada com sucesso!');
-          
-        }).catch(err => {
-          this.error('Erro ao atualizar a reserva: ' + err);
-        });
+        this.saveReservation(this.registry);
 
       } else {
-        LoanService.updateLoan(this.registry).then(() => {
-          this.success('Empréstimo atualizado com sucesso!');
-
-        }).catch(err => {
-          this.error('Erro ao atualizar empréstimo: ' + err);
-        });
+        this.saveLoan(this.registry);
       }
+    },
+    saveReservation(reservation) {
+      ReservationService.updateReservation(reservation).then(() => {
+        this.success('Reserva atualizada com sucesso!');
+        
+      }).catch(err => {
+        this.error('Erro ao atualizar a reserva: ' + err);
+      });
+    },
+    saveLoan(loan) {
+      LoanService.updateLoan(loan).then(() => {
+        this.success('Empréstimo atualizado com sucesso!');
+
+      }).catch(err => {
+        this.error('Erro ao atualizar empréstimo: ' + err);
+      });
     },
     selectRegistry(newRegistry) {
       this.registry = newRegistry

@@ -12,6 +12,8 @@ export class Reservation extends Operation {
   @Column("datetime")
   withdrawalDate: Date;
 
+  @Column()
+  reservationStatusId: number;
   @ManyToOne(() => ReservationStatus)
   reservationStatus: ReservationStatus;
 

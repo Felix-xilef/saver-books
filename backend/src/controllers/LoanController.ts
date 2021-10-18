@@ -5,8 +5,10 @@ import { LoanJson } from "../interfaces/LoanJson";
 import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { FindOptionsWhere, getRepository } from "typeorm";
 import { Client } from "../entities/clients/Client";
+import { bookToJson } from "../interfaces/BookJson";
+import { clientToJson } from "../interfaces/ClientJson";
 
 const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
   const client = new Client(
@@ -40,6 +42,8 @@ const getJsonFromLoan = (loan: Loan): LoanJson => {
     bookIsbn: loan.book.isbn,
     withdrawalDate: loan.withdrawalDate,
     returnDate: loan.returnDate,
+    book: bookToJson(loan.book),
+    client: clientToJson(loan.client),
     loanStatus: {
       id: loan.loanStatus.id,
       description: loan.loanStatus.description,
@@ -72,23 +76,15 @@ export class LoanController {
     const isbn = request.query.isbn;
     const cpf = request.query.cpf;
 
-    let whereStatement = {};
+    let whereStatement: FindOptionsWhere<Loan> = {};
 
-    if (isbn && isbn != "") {
-      const book = await getRepository(Book).findOne(String(isbn));
-
-      if (!book) {
-        return response.status(404).json({ error: "Book not found" });
-      } else {
-        whereStatement = { book };
-      }
-    } else if (cpf && cpf != "") {
-      whereStatement = { cpf: String(cpf) };
-    }
+    if (isbn && isbn != "") whereStatement.bookIsbn = String(isbn);
+    
+    if (cpf && cpf != "") whereStatement.clientCpf = String(cpf);
 
     try {
       const loans: Loan[] = await getRepository(Loan).find({
-        relations: { book: true, loanStatus: true },
+        relations: { client: true, book: { genre: true }, loanStatus: true },
         where: whereStatement,
       });
 
@@ -99,6 +95,7 @@ export class LoanController {
       });
 
       response.status(200).json(loansJson);
+
     } catch (error) {
       response.status(500).json({ error: error.message });
     }
@@ -120,24 +117,32 @@ export class LoanController {
       if (receivedData.reservationId) {
         const reservation = await reservationRepository.findOne(
           receivedData.reservationId,
-          { relations: { reservationStatus: true } },
+          { relations: { reservationStatus: true, book: { genre: true }, client: true } },
         );
 
         reservation.reservationStatus = new ReservationStatus(3);
 
         reservationRepository.save(reservation);
+
       } else if (loan.id) {
         const oldLoan = await loanRepository.findOne(loan.id, {
-          relations: { book: true, loanStatus: true },
+          relations: { loanStatus: true, book: { genre: true }, client: true },
         });
 
         if (loan.loanStatus.id == 3 && oldLoan.loanStatus.id != 3) {
           loan.book.returnCopy();
           getRepository(Book).save(loan.book);
+
         } else if (loan.loanStatus.id != 3 && oldLoan.loanStatus.id == 3) {
           loan.book.getCopy();
           getRepository(Book).save(loan.book);
         }
+
+        if (oldLoan.loanStatus.id != 2 && loan.loanStatus.id == 2) {
+          loan.client.blockStart = new Date();
+          getRepository(Client).save(loan.client);
+        }
+
       } else {
         loan.book.getCopy();
         getRepository(Book).save(loan.book);

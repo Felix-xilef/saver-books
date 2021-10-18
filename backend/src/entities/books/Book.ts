@@ -33,6 +33,8 @@ export class Book {
   @Column()
   cover: string;
 
+  @Column()
+  genreId: number;
   @ManyToOne(() => Genre)
   genre: Genre;
 

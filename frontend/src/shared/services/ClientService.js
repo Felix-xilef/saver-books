@@ -12,14 +12,14 @@ class ClientService {
 
     removeClient(cpf) {
         return axios.delete(process.env.VUE_APP_API_URL + 'client', {
-            params: { cpf: cpf },
+            params: { cpf },
             headers: AuthService.authHeader
         })
     }
 
     getByCpf(cpf) {
         return axios.get(process.env.VUE_APP_API_URL + 'client', {
-            params: { cpf: cpf },
+            params: { cpf },
             headers: AuthService.authHeader
         })
     }
