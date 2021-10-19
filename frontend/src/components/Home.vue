@@ -50,7 +50,7 @@
   
   <div class="collapse" id="navbarToggleExternalContent">
     <div class="backgroundGradientPurple p-4 d-flex">
-      <div>
+      <div class="d-flex flex-column flex-sm-row">
         <router-link
           class="nav-link p-0 m-2"
           :to="{ name: 'ManageOperations', params: { operationName: 'reservation' } }"
@@ -70,6 +70,13 @@
           :to="{ name: 'ManageBooks' }"
         >
           Livro
+        </router-link>
+
+        <router-link
+          class="nav-link p-0 m-2"
+          :to="{ name: 'ManageClients' }"
+        >
+          Clientes
         </router-link>
 
         <router-link

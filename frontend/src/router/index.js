@@ -5,6 +5,7 @@ import Home from '../components/Home.vue'
 import BookDetails from '../components/BookDetails.vue'
 import ManageBooks from '../components/ManageBooks.vue'
 import ManageOperations from '../components/ManageOperations.vue'
+import ManageClients from '../components/ManageClients.vue'
 import ManageUsers from '../components/ManageUsers.vue'
 import Search from '../components/Search.vue'
 import Reports from '../components/Reports.vue'
@@ -47,6 +48,11 @@ const routes = [
 				props: true,
 			},
 			{
+				path: 'client',
+				name: 'ManageClients',
+				component: ManageClients,
+			},
+			{
 				path: 'user',
 				name: 'ManageUsers',
 				component: ManageUsers,
@@ -75,7 +81,7 @@ router.beforeEach(to => {
 
 	} else {
 		if (!store.state.isLogged) return loginRedirection;
-		else if (to.name == 'ManageUsers' && store.state.user.userType.id != '1') return homeRedirection;
+		else if ((to.name == 'ManageUsers' || to.name == 'Reports') && store.state.user.userType.id != '1') return homeRedirection;
 	}
 })
 
