@@ -21,10 +21,14 @@
           ></button>
         </div>
         <div class="modal-body">
-          <p>
+          <p v-if="!clientIsBlocked">
             Preencha as informações abaixo e clique em finalizar reserva para
             concluir o cadastro da sua reserva.
           </p>
+          <p v-else class="alert alert-danger">
+            O cliente selecionado está bloqueado pois possui empréstimo(s) em atraso!
+          </p>
+
           <div class="container-fluid">
             <div class="row">
               <div class="col-4">
@@ -63,11 +67,11 @@
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('name'), 'is-invalid': controlHasError('name') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'name'), 'is-invalid': controlHasError('client', 'name') }"
                   type="name"
                   name="txtReservationName"
                   id="txtReservationName"
-                  v-model="reservation.name"
+                  v-model="reservation.client.name"
                   placeholder="digite seu nome"
                 />
                 <div class="invalid-feedback">
@@ -81,15 +85,15 @@
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('email'), 'is-invalid': controlHasError('email') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'email'), 'is-invalid': controlHasError('client', 'email') }"
                   type="email"
                   name="txtReservationEmail"
                   id="txtReservationEmail"
-                  v-model="reservation.email"
+                  v-model="reservation.client.email"
                   placeholder="digite um e-mail válido"
                 />
                 <div class="invalid-feedback">
-                  <span v-if="reservation.email == ''">
+                  <span v-if="reservation.client.email == ''">
                     O e-mail é obrigatório
                   </span>
                   <span v-else>
@@ -106,15 +110,16 @@
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('cpf'), 'is-invalid': controlHasError('cpf') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'cpf'), 'is-invalid': controlHasError('client', 'cpf') }"
                   type="text"
                   name="txtReservationCpf"
                   id="txtReservationCpf"
-                  v-model="reservation.cpf"
+                  v-model="reservation.client.cpf"
                   placeholder="digite seu CPF"
+                  @change="getUser"
                 />
                 <div class="invalid-feedback">
-                  <span v-if="reservation.cpf == ''">
+                  <span v-if="reservation.client.cpf == ''">
                     O CPF é obrigatório
                   </span>
                   <span v-else>
@@ -129,11 +134,11 @@
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('phone'), 'is-invalid': controlHasError('phone') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'phone'), 'is-invalid': controlHasError('client', 'phone') }"
                   type="tel"
                   name="txtReservationPhone"
                   id="txtReservationPhone"
-                  v-model="reservation.phone"
+                  v-model="reservation.client.phone"
                   placeholder="digite um telefone válido"
                 />
                 <div class="invalid-feedback">
@@ -170,8 +175,8 @@
           <button
             type="submit"
             class="btn text-white outlinedOnHover"
-            :class="{ 'backgroundGradientBlue': reservationIsValid, 'backgroundGradientDisabled': !reservationIsValid }"
-            :disabled="!reservationIsValid"
+            :class="{ 'backgroundGradientBlue': reservationIsValid && !clientIsBlocked, 'backgroundGradientDisabled': !reservationIsValid || clientIsBlocked }"
+            :disabled="!reservationIsValid || clientIsBlocked"
           >
             <p>Finalizar Reserva</p>
           </button>
@@ -183,6 +188,7 @@
 
 <script>
 import ReservationService from '../shared/services/ReservationService';
+import ClientService from '../shared/services/ClientService';
 import { Modal } from 'bootstrap';
 import vuelidate from '@vuelidate/core';
 import { required, email, sameAs } from '@vuelidate/validators';
@@ -203,10 +209,14 @@ export default {
   data() {
     return {
       reservation: {
-        cpf: '',
-        name: '',
-        phone: '',
-        email: '',
+        client: {
+          cpf: '',
+          name: '',
+          phone: '',
+          email: '',
+          blockStart: null,
+          blockEnd: null,
+        },
         bookIsbn: '',
         reservedDate: new Date().toISOString(),
         withdrawalDate: '',
@@ -220,10 +230,12 @@ export default {
   validations() {
     return {
       reservation: {
-        cpf: { required, cpfValidator, $autoDirty: true },
-        name: { required, $autoDirty: true },
-        phone: { required, $autoDirty: true },
-        email: { required, email, $autoDirty: true },
+        client: {
+          cpf: { required, cpfValidator, $autoDirty: true },
+          name: { required, $autoDirty: true },
+          phone: { required, $autoDirty: true },
+          email: { required, email, $autoDirty: true },
+        },
         bookIsbn: { required },
         reservedDate: { required, $autoDirty: true },
         withdrawalDate: {
@@ -244,6 +256,11 @@ export default {
     reservationIsValid() {
       return !this.v$.reservation.$invalid;
     },
+    clientIsBlocked() {
+      return this.reservation.client &&
+        this.reservation.client.blockStart &&
+        (!this.reservation.client.blockEnd || this.reservation.client.blockEnd > new Date());
+    },
   },
   methods: {
 		success(message) {
@@ -255,33 +272,63 @@ export default {
     resetReservation() {
       this.today = new Date();
 
-      this.reservation.cpf = '';
-      this.reservation.name = '';
-      this.reservation.phone = '';
-      this.reservation.email = '';
+      this.reservation.client.cpf = '';
+      this.reservation.client.name = '';
+      this.reservation.client.phone = '';
+      this.reservation.client.email = '';
+      this.reservation.client.blockStart = null;
+      this.reservation.client.blockEnd = null;
       this.reservation.reservedDate = this.today.toISOString();
       this.reservation.withdrawalDate = '';
 
       this.v$.$reset();
     },
-    controlIsValid(attributeName) {
-      return !this.v$.reservation[attributeName].$invalid && this.v$.reservation[attributeName].$dirty;
+    getControl(attributeName, subAttributeName) {
+      let control = this.v$.reservation[attributeName];
+
+      return !subAttributeName ? control : control[subAttributeName];
     },
-    controlHasError(attributeName) {
-      return this.v$.reservation[attributeName].$error;
+    controlIsValid(attributeName, subAttributeName) {
+      let control = this.getControl(attributeName, subAttributeName);
+
+      return !control.$invalid && control.$dirty;
+    },
+    controlHasError(attributeName, subAttributeName) {
+      return this.getControl(attributeName, subAttributeName).$error;
+    },
+    getUser() {
+      if (this.controlIsValid('client', 'cpf')) {
+        ClientService.getByCpf(this.reservation.client.cpf).then(response => {
+          if (response.data) this.reservation.client = response.data;
+          else {
+            this.reservation.client.blockStart = null;
+            this.reservation.client.blockEnd = null;
+          }
+
+        }).catch(err => {
+          if (!err || !err.response || err.response.status != 404) {
+            this.error('Erro ao recuperar cliente: ' + err);
+
+          } else {
+            this.reservation.client.blockStart = null;
+            this.reservation.client.blockEnd = null;
+          }
+        });
+      }
     },
     submit() {
-      if (this.reservationIsValid) this.postReservation();
+      if (this.reservationIsValid && !this.clientIsBlocked) this.postReservation();
     },
     postReservation() {
-      ReservationService.postReservation(this.reservation).then(() => {
-        this.resetReservation();
+      ClientService.postClient(this.reservation.client).then(() => {
+        ReservationService.postReservation(this.reservation).then(() => {
+          this.resetReservation();
 
-				this.success('Reserva cadastrada com sucesso!');
+          this.success('Reserva cadastrada com sucesso!');
 
-      }).catch(err => {
-				this.error('Erro ao cadastrar Reserva: ' + err);
-      });
+        }).catch(err => this.error('Erro ao cadastrar Reserva: ' + err));
+
+      }).catch(err => this.error('Erro ao salvar Cliente: ' + err));
     },
   },
   watch: {

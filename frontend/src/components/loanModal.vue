@@ -1,4 +1,4 @@
-p<template>
+<template>
   <!-- Loan Modal -->
   <div
     class="modal fade"
@@ -188,8 +188,7 @@ p<template>
           </div>
         </div>
         <div class="modal-footer justify-content-between">
-          <div class="d-flex
-          ">
+          <div class="d-flex">
             <button
               type="button"
               class="btn text-white outlinedOnHover backgroundGradientGreen"
@@ -252,7 +251,9 @@ p<template>
             data-bs-toggle="modal"
             data-bs-dismiss="modal"
           >
-            <img height="32" src="../shared/assets/arrow-left.svg" alt="back arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#348CF3" class="bi bi-arrow-left" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
           </button>
           <h5 class="modal-title" id="reservationsModalLabel">
             Selecione uma Reserva
@@ -412,30 +413,35 @@ export default {
 
       this.v$.loan.$reset();
     },
-    controlIsValid(attributeName, subAttributeName) {
-      if (!subAttributeName) {
-        return !this.v$.loan[attributeName].$invalid && this.v$.loan[attributeName].$dirty;
+    getControl(attributeName, subAttributeName) {
+      let control = this.v$.loan[attributeName];
 
-      } else {
-        return !this.v$.loan[attributeName][subAttributeName].$invalid && this.v$.loan[attributeName][subAttributeName].$dirty;
-      }
+      return !subAttributeName ? control : control[subAttributeName];
+    },
+    controlIsValid(attributeName, subAttributeName) {
+      let control = this.getControl(attributeName, subAttributeName);
+
+      return !control.$invalid && control.$dirty;
     },
     controlHasError(attributeName, subAttributeName) {
-      if (!subAttributeName) {
-        return this.v$.loan[attributeName].$error;
-
-      } else {
-        return this.v$.loan[attributeName][subAttributeName].$error;
-      }
+      return this.getControl(attributeName, subAttributeName).$error;
     },
     getUser() {
       if (this.controlIsValid('client', 'cpf')) {
         ClientService.getByCpf(this.loan.client.cpf).then(response => {
           if (response.data) this.loan.client = response.data;
+          else {
+            this.loan.client.blockStart = null;
+            this.loan.client.blockEnd = null;
+          }
 
         }).catch(err => {
           if (!err || !err.response || err.response.status != 404) {
             this.error('Erro ao recuperar cliente: ' + err);
+
+          } else {
+            this.loan.client.blockStart = null;
+            this.loan.client.blockEnd = null;
           }
         });
       }
