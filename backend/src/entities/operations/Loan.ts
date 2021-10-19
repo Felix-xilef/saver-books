@@ -1,39 +1,33 @@
+import { Column, Entity, ManyToOne } from "typeorm";
+
 import { Book } from "../books/Book";
-import {Column, Entity, ManyToOne} from "typeorm";
+import { Client } from "../clients/Client";
 import { LoanStatus } from "./LoanStatus";
 import { Operation } from "./Operation";
 
 @Entity()
 export class Loan extends Operation {
+  @Column("datetime")
+  withdrawalDate: Date;
 
-    @Column('datetime')
-    withdrawalDate: Date;
+  @Column("datetime")
+  returnDate: Date;
 
-    @Column('datetime')
-    returnDate: Date;
+  @Column()
+  loanStatusId: number;
+  @ManyToOne(() => LoanStatus)
+  loanStatus: LoanStatus;
 
-    @ManyToOne(() => LoanStatus)
-    loanStatus: LoanStatus;
-
-    constructor(
-        cpf: string,
-        name: string,
-        phone: string,
-        email: string,
-        book: Book,
-        withdrawalDate: Date,
-        returnDate: Date,
-        loanStatus: LoanStatus
-    ) {
-        super(
-            cpf,
-            name,
-            phone,
-            email,
-            book
-        );
-        this.withdrawalDate = withdrawalDate;
-        this.returnDate = returnDate;
-        this.loanStatus = loanStatus;
-    }
+  constructor(
+    client: Client,
+    book: Book,
+    withdrawalDate: Date,
+    returnDate: Date,
+    loanStatus: LoanStatus,
+  ) {
+    super(client, book);
+    this.withdrawalDate = withdrawalDate;
+    this.returnDate = returnDate;
+    this.loanStatus = loanStatus;
+  }
 }

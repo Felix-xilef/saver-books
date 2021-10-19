@@ -1,5 +1,5 @@
 export interface TokenPayload {
-    cpf: string;
-    iat: number;
-    exp: number;
+  cpf: string;
+  iat: number;
+  exp: number;
 }

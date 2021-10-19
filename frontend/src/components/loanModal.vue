@@ -1,4 +1,4 @@
-p<template>
+<template>
   <!-- Loan Modal -->
   <div
     class="modal fade"
@@ -21,12 +21,16 @@ p<template>
           ></button>
         </div>
         <div class="modal-body">
-          <p>
+          <p v-if="!clientIsBlocked">
             Preencha as informações abaixo e clique em finalizar empréstimo para
             concluir o cadastro do empréstimo. Ou selecione a opção visualizar
             reservas para reslizar um empréstimo a partir de uma reserva já
             existente.
           </p>
+          <p v-else class="alert alert-danger">
+            O cliente selecionado está bloqueado pois possui empréstimo(s) em atraso!
+          </p>
+
           <div class="container-fluid">
             <div class="row">
               <div class="col-4">
@@ -79,11 +83,11 @@ p<template>
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('name'), 'is-invalid': controlHasError('name') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'name'), 'is-invalid': controlHasError('client', 'name') }"
                   type="name"
                   name="txtLoanName"
                   id="txtLoanName"
-                  v-model="loan.name"
+                  v-model="loan.client.name"
                   placeholder="digite seu nome"
                 />
                 <div class="invalid-feedback">
@@ -97,15 +101,15 @@ p<template>
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('email'), 'is-invalid': controlHasError('email') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'email'), 'is-invalid': controlHasError('client', 'email') }"
                   type="email"
                   name="txtLoanEmail"
                   id="txtLoanEmail"
-                  v-model="loan.email"
+                  v-model="loan.client.email"
                   placeholder="digite um e-mail válido"
                 />
                 <div class="invalid-feedback">
-                  <span v-if="loan.email == ''">
+                  <span v-if="loan.client.email == ''">
                     O e-mail é obrigatório
                   </span>
                   <span v-else>
@@ -122,15 +126,16 @@ p<template>
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('cpf'), 'is-invalid': controlHasError('cpf') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'cpf'), 'is-invalid': controlHasError('client', 'cpf') }"
                   type="text"
                   name="txtLoanCpf"
                   id="txtLoanCpf"
-                  v-model="loan.cpf"
+                  v-model="loan.client.cpf"
                   placeholder="digite seu CPF"
+                  @change="getUser"
                 />
                 <div class="invalid-feedback">
-                  <span v-if="loan.cpf == ''">
+                  <span v-if="loan.client.cpf == ''">
                     O CPF é obrigatório
                   </span>
                   <span v-else>
@@ -145,11 +150,11 @@ p<template>
                 </label>
                 <input
                   class="form-control"
-                  :class="{ 'is-valid': controlIsValid('phone'), 'is-invalid': controlHasError('phone') }"
+                  :class="{ 'is-valid': controlIsValid('client', 'phone'), 'is-invalid': controlHasError('client', 'phone') }"
                   type="tel"
                   name="txtLoanPhone"
                   id="txtLoanPhone"
-                  v-model="loan.phone"
+                  v-model="loan.client.phone"
                   placeholder="digite um telefone válido"
                 />
                 <div class="invalid-feedback">
@@ -183,8 +188,7 @@ p<template>
           </div>
         </div>
         <div class="modal-footer justify-content-between">
-          <div class="d-flex
-          ">
+          <div class="d-flex">
             <button
               type="button"
               class="btn text-white outlinedOnHover backgroundGradientGreen"
@@ -200,8 +204,8 @@ p<template>
               v-if="book.availCopies > 0 || loan.reservationId"
               type="submit"
               class="btn text-white ms-2 outlinedOnHover"
-              :class="{ 'backgroundGradientBlue': loanIsValid, 'backgroundGradientDisabled': !loanIsValid }"
-              :disabled="!loanIsValid"
+              :class="{ 'backgroundGradientBlue': loanIsValid && !clientIsBlocked, 'backgroundGradientDisabled': !loanIsValid || clientIsBlocked }"
+              :disabled="!loanIsValid || clientIsBlocked"
             >
               <p>Finalizar Empréstimo</p>
             </button>
@@ -247,7 +251,9 @@ p<template>
             data-bs-toggle="modal"
             data-bs-dismiss="modal"
           >
-            <img height="32" src="../shared/assets/arrow-left.svg" alt="back arrow" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#348CF3" class="bi bi-arrow-left" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
           </button>
           <h5 class="modal-title" id="reservationsModalLabel">
             Selecione uma Reserva
@@ -280,7 +286,7 @@ p<template>
                   <div class="col d-flex flex-column justify-content-evenly m-2">
                     <div class="d-inline-flex">
                       <strong>CPF:</strong>
-                      {{ item.cpf }}
+                      {{ item.client.cpf }}
                     </div>
                     <div class="d-inline-flex">
                       <div class="d-flex flex-column me-3">
@@ -311,6 +317,7 @@ p<template>
 <script>
 import LoanService from '../shared/services/LoanService';
 import ReservationService from '../shared/services/ReservationService';
+import ClientService from '../shared/services/ClientService';
 import { Modal } from 'bootstrap';
 import vuelidate from '@vuelidate/core';
 import { required, email, sameAs } from '@vuelidate/validators';
@@ -331,10 +338,14 @@ export default {
   data() {
     return {
       loan: {
-        cpf: '',
-        name: '',
-        phone: '',
-        email: '',
+        client: {
+          cpf: '',
+          name: '',
+          phone: '',
+          email: '',
+          blockStart: null,
+          blockEnd: null,
+        },
         bookIsbn: '',
         withdrawalDate: new Date().toISOString(),
         returnDate: '',
@@ -350,10 +361,12 @@ export default {
   validations() {
     return {
       loan: {
-        cpf: { required, cpfValidator, $autoDirty: true },
-        name: { required, $autoDirty: true },
-        phone: { required, $autoDirty: true },
-        email: { required, email, $autoDirty: true },
+        client: {
+          cpf: { required, cpfValidator, $autoDirty: true },
+          name: { required, $autoDirty: true },
+          phone: { required, $autoDirty: true },
+          email: { required, email, $autoDirty: true },
+        },
         bookIsbn: { required },
         withdrawalDate: { required },
         returnDate: {
@@ -374,6 +387,9 @@ export default {
     modal() {
       return new Modal(document.getElementById('loanModal'));
     },
+    clientIsBlocked() {
+      return this.loan.client && this.loan.client.blockStart && (!this.loan.client.blockEnd || this.loan.client.blockEnd > new Date());
+    },
   },
   methods: {
 		success(message) {
@@ -385,28 +401,54 @@ export default {
     resetLoan() {
       this.today = new Date();
 
-      this.loan.cpf = '';
-      this.loan.name = '';
-      this.loan.phone = '';
-      this.loan.email = '';
+      this.loan.client.cpf = '';
+      this.loan.client.name = '';
+      this.loan.client.phone = '';
+      this.loan.client.email = '';
+      this.loan.client.blockStart = null;
+      this.loan.client.blockEnd = null;
       this.loan.withdrawalDate = this.today.toISOString();
       this.loan.returnDate = '';
       this.loan.reservationId = null;
 
       this.v$.loan.$reset();
     },
-    controlIsValid(attributeName) {
-      return !this.v$.loan[attributeName].$invalid && this.v$.loan[attributeName].$dirty;
+    getControl(attributeName, subAttributeName) {
+      let control = this.v$.loan[attributeName];
+
+      return !subAttributeName ? control : control[subAttributeName];
     },
-    controlHasError(attributeName) {
-      return this.v$.loan[attributeName].$error;
+    controlIsValid(attributeName, subAttributeName) {
+      let control = this.getControl(attributeName, subAttributeName);
+
+      return !control.$invalid && control.$dirty;
+    },
+    controlHasError(attributeName, subAttributeName) {
+      return this.getControl(attributeName, subAttributeName).$error;
+    },
+    getUser() {
+      if (this.controlIsValid('client', 'cpf')) {
+        ClientService.getByCpf(this.loan.client.cpf).then(response => {
+          if (response.data) this.loan.client = response.data;
+          else {
+            this.loan.client.blockStart = null;
+            this.loan.client.blockEnd = null;
+          }
+
+        }).catch(err => {
+          if (!err || !err.response || err.response.status != 404) {
+            this.error('Erro ao recuperar cliente: ' + err);
+
+          } else {
+            this.loan.client.blockStart = null;
+            this.loan.client.blockEnd = null;
+          }
+        });
+      }
     },
     selectReservation(reservation) {
       this.loan.reservationId = reservation.id;
-      this.loan.cpf = reservation.cpf;
-      this.loan.name = reservation.name;
-      this.loan.phone = reservation.phone;
-      this.loan.email = reservation.email;
+      this.loan.client = reservation.client;
     },
     getReservations() {
       ReservationService.getAll({ isbn: this.book.isbn, isActive: true }).then(response => {
@@ -417,17 +459,18 @@ export default {
       })
     },
     submit() {
-      if (this.loanIsValid) this.postLoan();
+      if (this.loanIsValid && !this.clientIsBlocked) this.postLoan();
     },
     postLoan() {
-      LoanService.postLoan(this.loan).then(() => {
-        this.resetLoan();
+      ClientService.postClient(this.loan.client).then(() => {
+        LoanService.postLoan(this.loan).then(() => {
+          this.resetLoan();
 
-				this.success('Empréstimo cadastrado com sucesso!');
+          this.success('Empréstimo cadastrado com sucesso!');
 
-      }).catch(err => {
-				this.error('Erro ao cadastrar Empréstimo: ' + err);
-      });
+        }).catch(err => this.error('Erro ao cadastrar Empréstimo: ' + err));
+
+      }).catch(err => this.error('Erro ao salvar Cliente: ' + err));
     },
   },
   watch: {

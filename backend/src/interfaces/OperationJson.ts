@@ -1,30 +1,26 @@
+import { Client } from "../entities/clients/Client";
 import { Operation } from "../entities/operations/Operation";
 import { BookJson, bookToJson } from "./BookJson";
+import { clientToJson } from "./ClientJson";
 
 export interface OperationJson {
-    id: number;
+  id: number;
 
-    cpf: string;
+  clientCpf: string;
 
-    name: string;
+  client?: Client;
 
-    phone: string;
+  bookIsbn: string;
 
-    email: string;
-
-    bookIsbn: string;
-
-    book?: BookJson;
+  book?: BookJson;
 }
 
 export function operationToJson(operationObject: Operation): OperationJson {
-    return {
-        id: operationObject.id,
-        cpf: operationObject.cpf,
-        name: operationObject.name,
-        phone: operationObject.phone,
-        email: operationObject.email,
-        bookIsbn: operationObject.book.isbn,
-        book: bookToJson(operationObject.book),
-    };
+  return {
+    id: operationObject.id,
+    clientCpf: operationObject.client.cpf,
+    client: clientToJson(operationObject.client),
+    bookIsbn: operationObject.book.isbn,
+    book: bookToJson(operationObject.book),
+  };
 }

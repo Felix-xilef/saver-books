@@ -1,2 +1,2 @@
-backend/src/database/database.sql
+backend/**/*.sql
 run-wt.bat
