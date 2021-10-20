@@ -276,27 +276,28 @@
                 @click="selectReservation(item)"
               >
                 <div class="row">
-                  <div class="col-1 me-2">
-                    <img
-                      height="100"
-                      src="../shared/assets/picture.png"
-                      alt="Book cover"
-                    />
+                  <div class="col-auto me-2">
+                    <book-cover :fileName="item.book?.cover" size="extra-small"/>
                   </div>
-                  <div class="col d-flex flex-column justify-content-evenly m-2">
-                    <div class="d-inline-flex">
+
+                  <div class="col d-flex flex-column justify-content-evenly">
+                    <h5>{{ item.client.name }}</h5>
+
+                    <div>
                       <strong>CPF:</strong>
                       {{ item.client.cpf }}
                     </div>
-                    <div class="d-inline-flex">
-                      <div class="d-flex flex-column me-3">
-                        <strong>Data da Reserva:</strong>
-                        {{ item.reservedDate.slice(0, 10).split("-").reverse().join("/") }}
-                      </div>
-                      <div class="d-flex flex-column">
-                        <strong>Data da Retirada:</strong>
-                        {{ item.withdrawalDate.slice(0, 10).split("-").reverse().join("/") }}
-                      </div>
+                  </div>
+
+                  <div class="col d-flex flex-column justify-content-evenly  text-end">
+                    <div class="d-flex flex-column">
+                      <strong>Data da Reserva:</strong>
+                      {{ item.reservedDate.slice(0, 10).split("-").reverse().join("/") }}
+                    </div>
+
+                    <div class="d-flex flex-column">
+                      <strong>Data da Retirada:</strong>
+                      {{ item.withdrawalDate.slice(0, 10).split("-").reverse().join("/") }}
                     </div>
                   </div>
                 </div>
@@ -323,10 +324,12 @@ import vuelidate from '@vuelidate/core';
 import { required, email, sameAs } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
 import minDateValidator from '../shared/validators/minDateValidator';
+import BookCover from '../shared/components/BookCover.vue';
 export default {
   setup() {
     return { v$: vuelidate() }
   },
+  components: { BookCover },
   name: 'LoanModal',
   props: [
     'book',

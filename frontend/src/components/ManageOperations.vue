@@ -290,25 +290,31 @@
     </div>
 
     <div class="position-fixed">
-      <button
+			<button
         v-if="registry.id != ''"
-        class="btn p-0 m-2"
-        :class="{ 'disabled': !registryIsValid }"
+        class="btn p-0 m-2 roundFloat"
+        :class="[ registryIsValid ? 'backgroundGradientGreen' : 'backgroundGradientDisabled' ]"
         type="submit"
         :disabled="!registryIsValid"
       >
-        <img height="40" src="../shared/assets/saveButton.svg" alt="" />
-      </button>
+        <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23.9687 0H3.28125C1.47197 0 0 1.47197 0 3.28125V24.7188C0 26.528 1.47197 28 3.28125 28H24.7188C26.528 28 28 26.528 28 24.7188V4.03134L23.9687 0ZM6.5625 2.1875H19.1406V8.64062H6.5625V2.1875ZM21.4375 25.8125H6.5625V17.1719H21.4375V25.8125ZM25.8125 24.7188C25.8125 25.3218 25.3218 25.8125 24.7188 25.8125H23.625V14.9844H4.375V25.8125H3.28125C2.67816 25.8125 2.1875 25.3218 2.1875 24.7188V3.28125C2.1875 2.67816 2.67816 2.1875 3.28125 2.1875H4.375V10.8281H21.3281V2.1875H23.0626L25.8125 4.93741V24.7188Z" fill="currentColor"/>
+          <path d="M23.9687 0H3.28125C1.47197 0 0 1.47197 0 3.28125V24.7188C0 26.528 1.47197 28 3.28125 28H24.7188C26.528 28 28 26.528 28 24.7188V4.03134L23.9687 0ZM6.5625 2.1875H19.1406V8.64062H6.5625V2.1875ZM21.4375 25.8125H6.5625V17.1719H21.4375V25.8125ZM25.8125 24.7188C25.8125 25.3218 25.3218 25.8125 24.7188 25.8125H23.625V14.9844H4.375V25.8125H3.28125C2.67816 25.8125 2.1875 25.3218 2.1875 24.7188V3.28125C2.1875 2.67816 2.67816 2.1875 3.28125 2.1875H4.375V10.8281H21.3281V2.1875H23.0626L25.8125 4.93741V24.7188Z" fill="currentColor"/>
+          <path d="M17.1719 3.22656H14.9844V7.54688H17.1719V3.22656Z" fill="currentColor"/>
+        </svg>
+			</button>
 
-      <button
-        class="btn p-0 m-2"
-        :class="{ 'disabled': !controlIsValid('client', 'cpf') && !controlIsValid('bookIsbn') }"
+			<button
+        class="btn p-0 m-2 roundFloat"
+        :class="[(controlIsValid('client', 'cpf') || controlIsValid('bookIsbn')) ? 'backgroundGradientBlue' : 'backgroundGradientDisabled']"
         type="button"
         @click="getRegistries"
-        :disabled="controlHasError('client', 'cpf') && controlHasError('bookIsbn')"
+        :disabled="!(controlIsValid('client', 'cpf') || controlIsValid('bookIsbn'))"
       >
-        <img height="40" src="../shared/assets/searchButton.svg" alt="" />
-      </button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+			</button>
     </div>
   </form>
 
@@ -583,7 +589,7 @@ export default {
 }
 
 .position-fixed {
-  bottom: 0px;
+  bottom: 10px;
   right: 20px;
 }
 </style>

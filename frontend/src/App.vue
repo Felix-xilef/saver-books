@@ -193,4 +193,27 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* END gradient button that tunrs outlined when hovered */
+
+/* Round float button */
+.roundFloat {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+  color: white;
+}
+
+.roundFloat:enabled {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.roundFloat:disabled {
+  border: solid 1px rgba(0, 0, 0, 0.25);
+}
+
+.roundFloat:hover:enabled {
+  color: rgb(211, 211, 211);
+  opacity: 0.85;
+}
+/* END Round float button */
 </style>
