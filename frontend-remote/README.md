@@ -1,24 +1,21 @@
-# saver_books
+# frontend - interface remota
 
-## Project setup
-```
-yarn install
-```
+Acesse o diretório do frontend - interface remota (`./frontend-remote`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+`npm`
 
-### Compiles and minifies for production
-```
-yarn build
+```bash
+> cd ./frontend-remote
+> npm install
+> npm run serve
 ```
 
-### Lints and fixes files
-```
-yarn lint
+`yarn`
+
+```bash
+> cd ./frontend-remote
+> yarn
+> yarn serve
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+> Pronto, agora o sistema está rodando no endereço [localhost:8070](http://localhost:8070/)
