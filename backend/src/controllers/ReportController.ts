@@ -71,8 +71,8 @@ export class ReportController {
       );
     }
 
-    const operations: Operation[] = await getRepository(Reservation).find({
-      relations: { reservationStatus: true },
+    let operations: Operation[] = await getRepository(Reservation).find({
+      relations: { reservationStatus: true, book: { genre: true }, client: true },
       where: {
         reservedDate: Between(
           startDate.toISOString().slice(0, 19),
@@ -81,9 +81,9 @@ export class ReportController {
       },
     });
 
-    operations.concat(
+    operations = operations.concat(
       await getRepository(Loan).find({
-        relations: { loanStatus: true },
+        relations: { loanStatus: true, book: { genre: true }, client: true },
         where: {
           withdrawalDate: Between(
             startDate.toISOString().slice(0, 19),

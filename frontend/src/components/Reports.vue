@@ -146,7 +146,6 @@ export default {
     },
     getReport(startDate, endDate) {
       ReportService.getReport(startDate, endDate).then(response => {
-        console.log(response.data);
 
         response.data.operationsReport.datasets[0].borderColor = this.borderColors[0];
         response.data.operationsReport.datasets[0].backgroundColor = this.backgroundColors[0];
@@ -181,6 +180,9 @@ export default {
   mounted() {
     let sixMonthsBefore = new Date();
     sixMonthsBefore.setMonth(sixMonthsBefore.getMonth() - 5);
+
+    this.rangeForm.startDate = sixMonthsBefore.toISOString().slice(0, 10);
+    this.rangeForm.endDate = (new Date()).toISOString().slice(0, 10);
 
     this.getReport(sixMonthsBefore, new Date());
   },
