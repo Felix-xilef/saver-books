@@ -1,7 +1,7 @@
 <template>
   <div class="container my-md-4 bd-layout m-0">
     <aside class="bd-sidebar">
-      <form class="backgroundLightPurple borderPurple p-4">
+      <form class="backgroundLightGreen borderGreen p-4">
         <div class="d-inline-flex align-items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -18,6 +18,7 @@
           </svg>
           <h5 class="ms-2 mb-0">Filtros</h5>
         </div>
+
         <ul class="list-unstyled mb-0">
           <li v-for="(filter, filterKey) in filters" :key="filterKey" class="mb-1">
             <button
@@ -43,6 +44,7 @@
                     :id="'checkbox' + optionKey"
                     @change="filters[filterKey].content[optionKey] = !filters[filterKey].content[optionKey]; filterBooks()"
                   />
+
                   <label class="form-check-label" :for="'checkbox' + optionKey">
                     {{ optionKey }}
                   </label>
@@ -57,6 +59,7 @@
                   <label class="form-label pe-2" :for="optionKey">
                     {{ optionKey == 'start' ? 'De' : 'Até' }}:
                   </label>
+                  
                   <input
                     class="form-control"
                     type="date"
@@ -167,15 +170,15 @@ export default {
 }
 
 .filterTitle:hover {
-  background: var(--darker-purple);
+  background: var(--darker-green);
 
   color: #000000;
 }
 
 .filterTitle:focus {
-  background: var(--darker-purple);
+  background: var(--darker-green);
   box-shadow: none;
-  border: 1px solid var(--dark-purple);
+  border: 1px solid var(--dark-green);
   
   color: #000000;
 }
