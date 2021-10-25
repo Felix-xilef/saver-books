@@ -266,8 +266,8 @@
           ></button>
         </div>
         <div class="modal-body">
-          <div class="borderPurple rounded operationsView p-3">
-            <div v-for="item in reservations" :key="item.id">
+          <div v-if="reservations.length > 0" class="borderPurple rounded operationsView p-3">
+            <div v-for="(item, index) in reservations" :key="item.id">
               <div
                 class="p-3 registry"
                 data-bs-target="#loanModal"
@@ -305,8 +305,12 @@
                   <h6>{{ item.isbn }}</h6>
                 </div>
               </div>
-              <hr />
+
+              <hr v-if="(index + 1) < reservations.length"/>
             </div>
+          </div>
+          <div v-else class="alert alert-warning">
+            Nenhuma reserva encontrada para o livro de ISBN {{ loan.bookIsbn }}
           </div>
         </div>
       </div>

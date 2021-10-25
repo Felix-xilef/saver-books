@@ -96,7 +96,7 @@
         <h4 class="m-0">Nenhum resultado encontrado para '{{ searchParameter }}'</h4>
       </div>
       <div v-else class="alert alert-info text-center">
-        <h4 class="m-0">Digite o título do livro para realizar uma busca</h4>
+        <h4 class="m-0">Digite o ISBN, título, autor ou a editora do livro para realizar uma busca</h4>
       </div>
     </div>
   </div>
@@ -133,8 +133,8 @@ export default {
     filterBooks() {
       this.books = this.filters.filterBooks(this.booksReceived);
     },
-    getBooks(title) {
-      BookService.searchByTitle(title).then((response) => {
+    getBooks(parameter) {
+      BookService.searchByAny(parameter).then((response) => {
         this.booksReceived = response.data;
         this.books = response.data;
 

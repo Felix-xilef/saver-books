@@ -335,8 +335,10 @@ export default {
 					this.selectedCpf = response.data.cpf;
 
 				}).catch(err => {
-					if (err.includes('404')) this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
-					else this.error('Erro ao buscar o usuário: ' + err);
+          if (err && err.response && err.response.status == 404) {
+            this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
+            
+          } else this.error('Erro ao buscar o usuário: ' + err);
 				});
 			}
 		},

@@ -136,8 +136,8 @@ export default {
     filterBooks() {
       this.books = this.filters.filterBooks(this.booksReceived);
     },
-    getBooks(title) {
-      BookService.searchByTitle(title).then((response) => {
+    getBooks(parameter) {
+      BookService.searchByAny(parameter).then((response) => {
         this.booksReceived = response.data;
         this.books = response.data;
 

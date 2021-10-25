@@ -81,26 +81,14 @@ export class ReservationController {
 
     let whereStatement: FindOptionsWhere<Reservation> = {};
 
-    if (isbn && isbn != "") {
-      const book = await getRepository(Book).findOne(String(isbn));
+    if (isbn && isbn != "")  whereStatement.bookIsbn = String(isbn);
 
-      if (!book) return response.status(404).json({ error: "Book not found" });
-      else whereStatement.book = book;
-    }
+    if (Boolean(cpf) && cpf != "") whereStatement.clientCpf = String(cpf);
 
-    if (Boolean(cpf) && cpf != "") {
-      const client = await getRepository(Client).findOne(String(cpf));
-
-      if (!client)
-        return response.status(404).json({ error: "Client not found " });
-      else whereStatement.client = client;
-    }
-
-    if (isActive)
-      whereStatement = [
-        { ...whereStatement, reservationStatus: new ReservationStatus(1) },
-        { ...whereStatement, reservationStatus: new ReservationStatus(2) },
-      ];
+    if (isActive) whereStatement = [
+      { ...whereStatement, reservationStatusId: 1 },
+      { ...whereStatement, reservationStatusId: 2 },
+    ];
 
     try {
       const reservations: Reservation[] = await getRepository(Reservation).find(

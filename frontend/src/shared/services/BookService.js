@@ -24,16 +24,25 @@ class BookService {
         })
     }
 
-    searchByTitle(title) {
-        return this.getAll({ title });
+    searchByAny(parameter) {
+        return this.getAll({ any: parameter });
     }
 
     getAll(filters) {
         let params = {}
 
-        if (filters.title) params.title = filters.title
-        else if (filters.isbn) params.isbn = filters.isbn
-        else if (filters.author) params.author = filters.author
+        if (filters.any) {
+            params.any = filters.any;
+
+        } else {
+            if (filters.title) params.title = filters.title;
+            
+            if (filters.author) params.author = filters.author;
+            
+            if (filters.category) params.category = filters.category;
+
+            if (filters.year) params.year = filters.year;
+        }
 
         return axios.get(process.env.VUE_APP_API_URL + 'books', {
             params: params,

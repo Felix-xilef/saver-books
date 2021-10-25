@@ -11,12 +11,13 @@ class ReservationService {
     }
 
     getAll({ isbn, isActive, cpf }) {
-        let params = {}
+        let params = {};
 
         if (isbn) {
-            params.isbn = isbn
-            if (isActive == true || isActive == false) params.isActive = isActive
-        } else if (cpf) params.cpf = cpf
+            params.isbn = isbn;
+            if (isActive === true) params.isActive = isActive;
+
+        } else if (cpf) params.cpf = cpf;
 
         return axios.get(process.env.VUE_APP_API_URL + 'reservations', {
             params: params,

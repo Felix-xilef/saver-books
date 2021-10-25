@@ -256,8 +256,10 @@ export default {
 					this.selectedCpf = response.data.cpf;
 
 				}).catch(err => {
-					if (err.includes('404')) this.error(`Cliente de CPF: ${this.client.cpf} não encontrado!`);
-					else this.error('Erro ao buscar o cliente: ' + err);
+          if (err && err.response && err.response.status == 404) {
+            this.error(`Cliente de CPF: ${this.client.cpf} não encontrado!`);
+            
+          } else this.error('Erro ao buscar o cliente: ' + err);
 				});
 			}
 		},

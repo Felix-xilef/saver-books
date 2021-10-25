@@ -24,7 +24,7 @@
             class="form-control searchInput"
             type="text"
             v-model="searchParam"
-            placeholder="pesquise pelo título do livro"
+            placeholder="pesquise pelo ISBN, título, autor ou editora do livro"
           />
           <button
             type="submit"
@@ -53,6 +53,7 @@
       <div class="d-flex flex-column flex-sm-row">
         <router-link
           class="nav-link p-0 m-2"
+          @click="updateViewKey"
           :to="{ name: 'ManageOperations', params: { operationName: 'reservation' } }"
         >
           Reserva
@@ -60,6 +61,7 @@
 
         <router-link
           class="nav-link p-0 m-2"
+          @click="updateViewKey"
           :to="{ name: 'ManageOperations', params: { operationName: 'loan' } }"
         >
           Empréstimo
@@ -103,7 +105,7 @@
   </div>
 	<!-- End of navbar (menu) code -->
 
-  <router-view></router-view>
+  <router-view :key="viewKey"></router-view>
 </template>
 
 <script>
@@ -116,6 +118,7 @@ export default {
   data() {
     return {
       searchParam: "",
+      viewKey: 0,
     }
   },
   validations() {
@@ -129,6 +132,9 @@ export default {
     }
   },
   methods: {
+    updateViewKey() {
+      this.viewKey++;
+    },
     submit() {
       if (!this.v$.searchParam.$invalid) this.searchByParameter(this.searchParam);
     },

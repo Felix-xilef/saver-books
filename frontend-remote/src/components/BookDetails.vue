@@ -24,6 +24,9 @@
         >
           <p>Reservar</p>
         </button>
+        <div v-else class="alert alert-warning">
+          Este livro não possui cópias disponíveis.
+        </div>
       </div>
     </div>
 

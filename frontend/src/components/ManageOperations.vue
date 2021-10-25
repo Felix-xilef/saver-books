@@ -228,8 +228,8 @@
     </div>
 
     <div class="row p-5">
-      <div class="borderPurple rounded operationsView">
-        <div v-for="item in registries" :key="item.id">
+      <div v-if="registries.length > 0" class="borderPurple rounded operationsView">
+        <div v-for="(item, index) in registries" :key="item.id">
           <div class="row m-1 p-2 registry" @click="selectRegistry(item)">            
             <div class="col-auto">
               <book-cover :fileName="item.book?.cover" size="extra-small"/>
@@ -284,8 +284,14 @@
             </div>
           </div>
 
-          <hr/>
+          <hr v-if="(index + 1) < registries.length"/>
         </div>
+      </div>
+      <div v-else-if="searchParam" class="alert alert-warning text-center">
+        <h4 class="m-0">Nenhum resultado encontrado para '{{ searchParam }}'</h4>
+      </div>
+      <div v-else class="alert alert-info text-center">
+        <h4 class="m-0">Digite o CPF do cliente ou o ISBN do livro para realizar uma busca</h4>
       </div>
     </div>
 
@@ -375,6 +381,7 @@ export default {
       },
       registries: [],
       statusOptions: [],
+      searchParam: null,
     };
   },
   validations() {
@@ -461,35 +468,33 @@ export default {
         SubTypesService.getReservationStatus().then((response) => {
           this.statusOptions = response.data;
 
-        }).catch(err => {
-          if (!err || !err.response || err.response.status != 404) {
-            this.error('Erro ao listar as Situações da reserva: ' + err);
-          }
-        });
+        }).catch(err => this.error('Erro ao listar as Situações da reserva: ' + err));
 
       } else {
         SubTypesService.getLoanStatus().then((response) => {
           this.statusOptions = response.data;
 
-        }).catch(err => {
-          if (!err || !err.response || err.response.status != 404) {
-            this.error('Erro ao listar as Situações do empréstimo: ' + err);
-          }
-        });
+        }).catch(err => this.error('Erro ao listar as Situações do empréstimo: ' + err));
       }
     },
     getRegistries() {
       let param = {}
 
-      if (this.registry.client.cpf != '') param = { cpf: this.registry.client.cpf };
-      else if (this.registry.bookIsbn != '') param = { isbn: this.registry.bookIsbn };
+      if (this.registry.client.cpf != '') {
+        param = { cpf: this.registry.client.cpf };
+        this.searchParam = this.registry.client.cpf;
+
+      } else if (this.registry.bookIsbn != '') {
+        param = { isbn: this.registry.bookIsbn };
+        this.searchParam = this.registry.bookIsbn;
+      }
 
       if (this.isReservation) {
         ReservationService.getAll(param).then(response => {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err && err.response && err.response.status != 404) this.handle404Error();
+          if (err && err.response && err.response.status == 404) this.handle404Error();
           else this.error('Erro ao listar as Reservas: ' + err);
 
           this.registries = [];
@@ -500,7 +505,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err && err.response && err.response.status != 404) this.handle404Error();
+          if (err && err.response && err.response.status == 404) this.handle404Error();
           else this.error('Erro ao listar os Empréstimos: ' + err);
 
           this.registries = [];
@@ -508,8 +513,8 @@ export default {
       }
     },
     handle404Error() {
-      if (this.registry.bookIsbn) this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
-      else this.error(`Cliente de CPF: ${this.registry.client.cpf} não encontrado`);
+      if (this.registry.client.cpf) this.error(`Cliente de CPF: ${this.registry.client.cpf} não encontrado`);
+      else this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
     },
     submit() {
       if (this.registryIsValid) this.saveRegistry();

@@ -64,18 +64,33 @@ export class BookController {
   }
 
   async selectAll(request: Request, response: Response): Promise<Response> {
-    const title = request.query.title;
-    const isbn = request.query.isbn;
-    const author = request.query.author;
+    const searchParams: (keyof Book)[] = [
+      "isbn",
+      "title",
+      "author",
+      "publisher"
+    ];
 
-    const whereStatement: FindOptionsWhere<Book> = {};
+    let whereStatement: FindOptionsWhere<Book>;
 
-    if (title && title != "")
-      whereStatement.title = generateLikeStatement(String(title));
-    if (isbn && isbn != "")
-      whereStatement.isbn = generateLikeStatement(String(isbn));
-    if (author && author != "")
-      whereStatement.author = generateLikeStatement(String(author));
+    if (request.query.any && request.query.any != '') {
+      const orStatement: FindOptionsWhere<Book> = [];
+
+      searchParams.forEach(param => {
+        orStatement.push({ [param] : generateLikeStatement(String(request.query.any)) });
+      });
+
+      whereStatement = orStatement;
+
+    } else {
+      whereStatement = {};
+
+      searchParams.forEach(param => {
+        if (request.query[param] && request.query[param] != '') {
+          whereStatement[param] = generateLikeStatement(String(request.query[param]));
+        }
+      });
+    }
 
     try {
       const books: Book[] = await getRepository(Book).find({

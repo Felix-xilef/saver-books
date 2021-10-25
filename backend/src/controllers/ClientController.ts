@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, Not } from "typeorm";
 
 import { Client } from "../entities/clients/Client";
 import { ClientJson } from "../interfaces/ClientJson";
@@ -26,13 +26,15 @@ const getClientFromJson = (clientJson: ClientJson): Client => {
   );
 };
 
+const clientRemovedString = "CLIENTE REMOVIDO";
+
 export class ClientController {
   async select(request: Request, response: Response): Promise<Response> {
     const cpf = String(request.query.cpf);    
 
     if (cpf) {
       try {
-        const client: Client = await getRepository(Client).findOne(cpf);
+        const client: Client = await getRepository(Client).findOne(cpf, { where: { name: Not(clientRemovedString) } });
 
         if (client) {
           response.status(200).json(getJsonFromClient(client));
@@ -51,7 +53,7 @@ export class ClientController {
 
   async selectAll(request: Request, response: Response): Promise<Response> {
     try {
-      const clients: Client[] = await getRepository(Client).find();
+      const clients: Client[] = await getRepository(Client).find({ where: { name: Not(clientRemovedString) } });
 
       const clientsJson: ClientJson[] = [];
 
@@ -125,16 +127,23 @@ export class ClientController {
         const client: Client = await getRepository(Client).findOne(cpf);
 
         if (client) {
-          await getRepository(Client).remove(client);
+          client.email = clientRemovedString;
+          client.email = clientRemovedString;
+          client.phone = clientRemovedString;
+          client.blockStart = null;
+          client.blockEnd = null;
+
+          await getRepository(Client).save(client);
 
           response.status(200).json(getJsonFromClient(client));
-        }
+          
+        } else response.status(404).json({ error: "Client not found" });
+
       } catch (error) {
         response.status(500).json({ error: error.message });
       }
-    } else {
-      response.status(400).json({ error: "cpf can't be null of undefined" });
-    }
+
+    } else response.status(400).json({ error: "cpf can't be null of undefined" });
 
     return response;
   }
