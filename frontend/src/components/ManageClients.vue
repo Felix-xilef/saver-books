@@ -37,6 +37,7 @@
           id="txtName"
           v-model="client.name"
           placeholder="nome do cliente"
+					:disabled="!selectedCpf"
         />
         <div class="invalid-feedback">
           O nome é obrigatório
@@ -55,6 +56,7 @@
           id="txtPhone"
           v-model="client.phone"
           placeholder="telefone do cliente"
+					:disabled="!selectedCpf"
         />
         <div class="invalid-feedback">
           O Telefone é obrigatório
@@ -73,6 +75,7 @@
           id="txtEmail"
           v-model="client.email"
           placeholder="e-mail do cliente"
+					:disabled="!selectedCpf"
         />
         <div class="invalid-feedback">
           <span v-if="client.email == ''">
@@ -95,6 +98,7 @@
           id="txtBlockStart"
           v-model="client.blockStart"
           placeholder="data do início do bloqueio"
+					:disabled="!selectedCpf"
         />
       </div>
 
@@ -109,6 +113,7 @@
           id="txtBlockEnd"
           v-model="client.blockEnd"
           placeholder="data do fim do bloqueio"
+					:disabled="!selectedCpf"
         />
       </div>
     </div>

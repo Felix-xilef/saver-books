@@ -151,7 +151,7 @@ export default {
   },
   watch: {
     searchParameter(newParam) {
-      this.getBooks(newParam);
+      if (newParam) this.getBooks(newParam);
     },
   },
   mounted() {

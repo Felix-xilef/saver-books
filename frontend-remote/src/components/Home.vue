@@ -3,10 +3,11 @@
   <nav class="navbar navbar-light backgroundGradientLightGreen">
     <div class="container-fluid justify-content-around">
       <div class="col-md-2">
-        <router-link :to="{ name: 'Search' }" class="navbar-brand">
+        <a href="" @click="goHome" class="navbar-brand">
           <img src="../shared/assets/logo.svg" alt="logo do site" class="logo" />
-        </router-link>
+        </a>
       </div>
+
 
       <form class="col-md-9" @submit.prevent="submit">
         <div class="input-group me-2 bg-white searchInputGroup">
@@ -65,6 +66,10 @@ export default {
     },
     searchByParameter(searchParameter) {
       this.$router.push({ name: 'Search', params: { searchParameter } });
+    },
+    goHome() {
+      this.searchParam = '';
+      this.$router.push({ name: 'Search' });
     },
   },
 }

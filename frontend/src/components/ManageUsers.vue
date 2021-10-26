@@ -183,7 +183,6 @@
 
 		<div class="position-fixed">
 			<button
-        v-if="selectedCpf != ''"
         class="btn p-0 m-2 roundFloat"
         :class="{ 'backgroundGradientDisabled': !userIsValid, 'backgroundGradientGreen': userIsValid }"
         type="submit"
