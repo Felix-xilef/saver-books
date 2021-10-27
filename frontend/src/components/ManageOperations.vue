@@ -31,6 +31,7 @@
                 id="txtCpf"
                 v-model="registry.client.cpf"
                 placeholder="CPF do ator"
+                @change="getClient"
               />
               <div class="invalid-feedback">
                 <span v-if="registry.client.cpf == ''">
@@ -112,6 +113,7 @@
                 id="txtIsbn"
                 v-model="registry.bookIsbn"
                 placeholder="ISBN do livro"
+                @change="getBook"
               />
               <div class="invalid-feedback">
                 O ISBN é obrigatório
@@ -303,10 +305,32 @@
         type="submit"
         :disabled="!registryIsValid"
       >
-        <svg width="20" height="20" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="20" height="20" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M23.9687 0H3.28125C1.47197 0 0 1.47197 0 3.28125V24.7188C0 26.528 1.47197 28 3.28125 28H24.7188C26.528 28 28 26.528 28 24.7188V4.03134L23.9687 0ZM6.5625 2.1875H19.1406V8.64062H6.5625V2.1875ZM21.4375 25.8125H6.5625V17.1719H21.4375V25.8125ZM25.8125 24.7188C25.8125 25.3218 25.3218 25.8125 24.7188 25.8125H23.625V14.9844H4.375V25.8125H3.28125C2.67816 25.8125 2.1875 25.3218 2.1875 24.7188V3.28125C2.1875 2.67816 2.67816 2.1875 3.28125 2.1875H4.375V10.8281H21.3281V2.1875H23.0626L25.8125 4.93741V24.7188Z" fill="currentColor"/>
           <path d="M23.9687 0H3.28125C1.47197 0 0 1.47197 0 3.28125V24.7188C0 26.528 1.47197 28 3.28125 28H24.7188C26.528 28 28 26.528 28 24.7188V4.03134L23.9687 0ZM6.5625 2.1875H19.1406V8.64062H6.5625V2.1875ZM21.4375 25.8125H6.5625V17.1719H21.4375V25.8125ZM25.8125 24.7188C25.8125 25.3218 25.3218 25.8125 24.7188 25.8125H23.625V14.9844H4.375V25.8125H3.28125C2.67816 25.8125 2.1875 25.3218 2.1875 24.7188V3.28125C2.1875 2.67816 2.67816 2.1875 3.28125 2.1875H4.375V10.8281H21.3281V2.1875H23.0626L25.8125 4.93741V24.7188Z" fill="currentColor"/>
           <path d="M17.1719 3.22656H14.9844V7.54688H17.1719V3.22656Z" fill="currentColor"/>
+        </svg>
+			</button>
+
+			<button
+        class="btn p-0 m-2 roundFloat backgroundGradientRed"
+        type="button"
+        @click="resetRegistry"
+      >
+        <svg width="20" height="20" viewBox="0 0 36 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0)">
+          <path d="M34.8552 0.111316C34.3309 -0.148207 33.7006 0.0618867 33.4389 0.581988L23.8118 19.8532L21.9261 18.9087C20.3647 18.127 18.4613 18.7635 17.6795 20.3208L17.2075 21.2634L28.5248 26.9317L28.9968 25.9887C29.7764 24.4318 29.1534 22.5307 27.5847 21.7432L25.6987 20.7985L35.3259 1.52748C35.5864 1.00632 35.3753 0.372879 34.8552 0.111316Z" fill="currentColor"/>
+          <path d="M12.1641 36.0001C12.7466 36.0001 13.2188 35.5279 13.2188 34.9454C13.2188 34.3629 12.7466 33.8907 12.1641 33.8907C11.5816 33.8907 11.1094 34.3629 11.1094 34.9454C11.1094 35.5279 11.5816 36.0001 12.1641 36.0001Z" fill="currentColor"/>
+          <path d="M1.61719 29.672C2.19968 29.672 2.67188 29.1998 2.67188 28.6173C2.67188 28.0348 2.19968 27.5626 1.61719 27.5626C1.0347 27.5626 0.5625 28.0348 0.5625 28.6173C0.5625 29.1998 1.0347 29.672 1.61719 29.672Z" fill="currentColor"/>
+          <path d="M5.83594 31.7814C6.41843 31.7814 6.89062 31.3092 6.89062 30.7267C6.89062 30.1442 6.41843 29.672 5.83594 29.672C5.25345 29.672 4.78125 30.1442 4.78125 30.7267C4.78125 31.3092 5.25345 31.7814 5.83594 31.7814Z" fill="currentColor"/>
+          <path d="M7.94531 33.8907H3.72656C3.14466 33.8907 2.67188 33.418 2.67188 32.8361C2.67188 32.2531 2.20015 31.7814 1.61719 31.7814C1.03423 31.7814 0.5625 32.2531 0.5625 32.8361C0.5625 34.5808 1.98183 36.0001 3.72656 36.0001H7.94531C8.52827 36.0001 9 35.5284 9 34.9454C9 34.3625 8.52827 33.8907 7.94531 33.8907Z" fill="currentColor"/>
+          <path d="M7.63834 27.2864C7.17688 27.3441 6.80816 27.6974 6.7299 28.1547C6.65164 28.6131 6.88128 29.0683 7.29641 29.2763L12.3361 31.7998C13.2456 32.2551 14.2507 32.4363 15.2313 32.3323C15.1159 32.7998 15.3353 33.3014 15.7834 33.527L20.4986 35.8887C20.8949 36.0842 21.3543 36.0153 21.6718 35.7343C21.8368 35.5872 25.429 32.3553 27.5288 28.7931L16.166 23.1021C13.6201 26.4847 7.70296 27.2779 7.63834 27.2864Z" fill="currentColor"/>
+          </g>
+          <defs>
+          <clipPath id="clip0">
+          <rect width="36" height="36" fill="currentColor"/>
+          </clipPath>
+          </defs>
         </svg>
 			</button>
 
@@ -332,6 +356,8 @@ import Alert from '../shared/components/Alert.vue';
 import LoanService from '../shared/services/LoanService';
 import ReservationService from '../shared/services/ReservationService';
 import SubTypesService from "../shared/services/SubTypesService";
+import BookService from "../shared/services/BookService";
+import ClientService from "../shared/services/ClientService";
 import vuelidate from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
@@ -377,7 +403,14 @@ export default {
           id: 1,
           description: "",
         },
-        book: '',
+        book: {
+          isbn: "",
+          title: "",
+          cover: "",
+          genre: {
+            description: "",
+          },
+        },
       },
       registries: [],
       statusOptions: [],
@@ -395,6 +428,14 @@ export default {
           email: { required, email, $autoDirty: true },
         },
         bookIsbn: { required, $autoDirty: true },
+        book: {
+          isbn: { required, $autoDirty: true },
+          title: { required, $autoDirty: true },
+          cover: { required, $autoDirty: true },
+          genre: {
+            description: { required, $autoDirty: true },
+          },
+        },
         reservedDate: this.isReservation ? { required, $autoDirty: true } : {},
         withdrawalDate: { required, $autoDirty: true },
         returnDate: this.isReservation ? {} : { required, $autoDirty: true },
@@ -463,6 +504,35 @@ export default {
 
       else return this.v$.registry[attributeName][subAttributeName].$error;
     },
+    resetClient() {
+      this.registry.client.cpf = "";
+      this.registry.client.name = "";
+      this.registry.client.phone = "";
+      this.registry.client.email = "";
+      this.registry.client.blockStart = null;
+      this.registry.client.blockEnd = null;
+    },
+    resetBook() {
+      this.registry.bookIsbn = "";
+      this.registry.book.isbn = "";
+      this.registry.book.title = "";
+      this.registry.book.cover = "";
+      this.registry.book.genre.description = "";
+    },
+    resetRegistry() {
+      this.searchParam = null;
+      this.registries = [];
+      this.resetClient();
+      this.resetBook();
+      this.registry.id = "";
+      this.registry.reservedDate = "";
+      this.registry.withdrawalDate = "";
+      this.registry.returnDate = "";
+      this.registry.reservationStatus.id = 1;
+      this.registry.reservationStatus.description = "";
+      this.registry.loanStatus.id = 1;
+      this.registry.loanStatus.description = "";
+    },
     getStatus() {
       if (this.isReservation) {
         SubTypesService.getReservationStatus().then((response) => {
@@ -475,6 +545,38 @@ export default {
           this.statusOptions = response.data;
 
         }).catch(err => this.error('Erro ao listar as Situações do empréstimo: ' + err));
+      }
+    },
+    getClient() {
+      ClientService.getByCpf(this.registry.client.cpf).then(response => {
+        if (response.data) {
+          this.registry.client = response.data;
+        } else if (!this.registry.id) {
+          this.error('Cliente não encontrado');
+          this.resetClient();
+        }
+
+      }).catch(err => {
+        if (err?.response?.status != 404) {
+          this.error('Erro ao buscar cliente: ' + err);
+
+        } else if (!this.registry.id) {
+          this.error('Cliente não encontrado');
+          this.resetClient();
+        }
+      });
+    },
+    getBook() {
+      if (this.registry.bookIsbn) {
+        BookService.getByIsbn(this.registry.bookIsbn).then(response => {
+          if (response.data) {
+            this.registry.book = response.data;
+          } else {
+            this.error('Livro não encontrado');
+            this.resetBook();
+          }
+
+        }).catch(err => this.error('Erro ao buscar o livro: ' + err));
       }
     },
     getRegistries() {
@@ -494,7 +596,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err && err.response && err.response.status == 404) this.handle404Error();
+          if (err?.response?.status == 404) this.handle404Error();
           else this.error('Erro ao listar as Reservas: ' + err);
 
           this.registries = [];
@@ -505,7 +607,7 @@ export default {
           this.registries = response.data;
 
         }).catch(err => {
-          if (err && err.response && err.response.status == 404) this.handle404Error();
+          if (err?.response?.status == 404) this.handle404Error();
           else this.error('Erro ao listar os Empréstimos: ' + err);
 
           this.registries = [];
@@ -520,12 +622,14 @@ export default {
       if (this.registryIsValid) this.saveRegistry();
     },
     saveRegistry() {
-      if (this.isReservation) {
-        this.saveReservation(this.registry);
+      ClientService.postClient(this.registry.client).then(() => {
+        if (this.isReservation) {
+          this.saveReservation(this.registry);
 
-      } else {
-        this.saveLoan(this.registry);
-      }
+        } else {
+          this.saveLoan(this.registry);
+        }
+      }).catch(err => this.error('Erro ao salvar o cliente: ' + err));
     },
     saveReservation(reservation) {
       ReservationService.updateReservation(reservation).then(() => {
@@ -544,7 +648,7 @@ export default {
       });
     },
     selectRegistry(newRegistry) {
-      this.registry = newRegistry
+      this.registry = { ...newRegistry };
     },
   },
   mounted() {
