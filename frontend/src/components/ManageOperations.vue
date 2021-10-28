@@ -576,7 +576,15 @@ export default {
             this.resetBook();
           }
 
-        }).catch(err => this.error('Erro ao buscar o livro: ' + err));
+        }).catch(err => {
+          if (err?.response?.status == 404) {
+            this.error('Livro não encontrado');
+            this.resetBook();
+
+          } else {
+            this.error('Erro ao buscar o livro: ' + err);
+          }
+        });
       }
     },
     getRegistries() {

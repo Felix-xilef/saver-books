@@ -55,7 +55,6 @@
       <div class="d-flex flex-column flex-sm-row">
         <router-link
           class="nav-link p-0 m-2"
-          @click="updateViewKey"
           :to="{ name: 'ManageOperations', params: { operationName: 'reservation' } }"
         >
           Reserva
@@ -63,7 +62,6 @@
 
         <router-link
           class="nav-link p-0 m-2"
-          @click="updateViewKey"
           :to="{ name: 'ManageOperations', params: { operationName: 'loan' } }"
         >
           Empréstimo
@@ -71,7 +69,7 @@
 
         <router-link
           class="nav-link p-0 m-2"
-          :to="{ name: 'ManageBooks' }"
+          :to="{ name: 'ManageBooks', params: { isbn: '' } }"
         >
           Livro
         </router-link>
@@ -107,7 +105,7 @@
   </div>
 	<!-- End of navbar (menu) code -->
 
-  <router-view :key="viewKey"></router-view>
+  <router-view :key="$route.fullPath"></router-view>
 </template>
 
 <script>
@@ -134,9 +132,6 @@ export default {
     }
   },
   methods: {
-    updateViewKey() {
-      this.viewKey++;
-    },
     submit() {
       if (!this.v$.searchParam.$invalid) this.searchByParameter(this.searchParam);
     },

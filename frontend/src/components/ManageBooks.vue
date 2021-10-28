@@ -311,7 +311,7 @@ export default {
       this.log.error = false;
       this.log.success = true;
     },
-    resetBook() {
+    resetBookForm() {
       this.book.isbn = '';
       this.book.language = '';
       this.book.title = '';
@@ -320,8 +320,11 @@ export default {
       this.book.publisher = '';
       this.book.summary = '';
       this.book.availCopies = '';
-      this.book.genre.id = '';
+      this.book.genre.id = 1;
       this.book.genre.description = '';
+      this.book.cover = '';
+      this.bookCoverInput.src = '';
+      this.bookCoverImage.src = '';
 
       this.v$.book.reset();
     },
@@ -343,7 +346,11 @@ export default {
       BookService.getByIsbn(isbn).then(response => {
         this.book = response.data;
 
-        if (this.book.cover && this.book.cover != '') this.bookCoverImage.src = ImageService.imagesDirectory + this.book.cover;
+        if (this.book.cover) {
+          this.bookCoverImage.src = ImageService.imagesDirectory + this.book.cover;
+        } else {
+          this.bookCoverImage.src = '';
+        }
 
       }).catch(err => {
         this.error('Erro ao buscar livro: ' + err);
@@ -375,23 +382,22 @@ export default {
           if (this.bookCoverInput.src != '') this.saveBookCover();
           
           this.success('Livro salvo com sucesso!');
+          this.resetBookForm();
 
         }).catch(err => {
           this.error('Erro ao salvar livro: ' + err);
         });
       }
-
-      if (!this.isbn) this.resetBook();
     },
     removeBook() {
       BookService.removeBook(this.isbn).then(() => {
         this.success('Livro removido com sucesso!');
 
+        this.resetBookForm()
+
       }).catch(err => {
         this.error('Erro ao remover livro: ' + err);
       });
-
-      this.resetBook()
     },
     saveBookCover() {
       ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
