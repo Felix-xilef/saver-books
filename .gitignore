@@ -1,2 +1,3 @@
 backend/**/*.sql
 run-wt.bat
+backend/build
