@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { Book } from "../entities/books/Book";
 import { Loan } from "../entities/operations/Loan";
 import { LoanStatus } from "../entities/operations/LoanStatus";
@@ -79,7 +80,7 @@ export class LoanController {
     let whereStatement: FindOptionsWhere<Loan> = {};
 
     if (isbn && isbn != "") whereStatement.bookIsbn = String(isbn);
-    
+
     if (cpf && cpf != "") whereStatement.clientCpf = String(cpf);
 
     try {
@@ -95,7 +96,6 @@ export class LoanController {
       });
 
       response.status(200).json(loansJson);
-
     } catch (error) {
       response.status(500).json({ error: error.message });
     }
@@ -117,13 +117,18 @@ export class LoanController {
       if (receivedData.reservationId) {
         const reservation = await reservationRepository.findOne(
           receivedData.reservationId,
-          { relations: { reservationStatus: true, book: { genre: true }, client: true } },
+          {
+            relations: {
+              reservationStatus: true,
+              book: { genre: true },
+              client: true,
+            },
+          },
         );
 
         reservation.reservationStatus = new ReservationStatus(3);
 
         reservationRepository.save(reservation);
-
       } else if (loan.id) {
         const oldLoan = await loanRepository.findOne(loan.id, {
           relations: { loanStatus: true, book: { genre: true }, client: true },
@@ -132,7 +137,6 @@ export class LoanController {
         if (loan.loanStatus.id == 3 && oldLoan.loanStatus.id != 3) {
           loan.book.returnCopy();
           getRepository(Book).save(loan.book);
-
         } else if (loan.loanStatus.id != 3 && oldLoan.loanStatus.id == 3) {
           loan.book.getCopy();
           getRepository(Book).save(loan.book);
@@ -142,7 +146,6 @@ export class LoanController {
           loan.client.blockStart = new Date();
           getRepository(Client).save(loan.client);
         }
-
       } else {
         loan.book.getCopy();
         getRepository(Book).save(loan.book);

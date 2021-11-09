@@ -3,16 +3,13 @@ import { TokenPayload } from "interfaces/TokenPayload";
 import { verify } from "jsonwebtoken";
 
 const pathsWithNoRestriction = [
-  '/authenticate',
-  '/client',
-  '/clients',
-  '/reservation'
+  "/authenticate",
+  "/client",
+  "/clients",
+  "/reservation",
 ];
 
-const pathsWithNoRestrictionForGET = [
-  '/book',
-  '/books'
-];
+const pathsWithNoRestrictionForGET = ["/book", "/books"];
 
 export default function authMiddleware(
   request: Request,
@@ -21,9 +18,11 @@ export default function authMiddleware(
 ) {
   if (
     pathsWithNoRestriction.includes(request.path) ||
-    (request.method == 'GET' && pathsWithNoRestrictionForGET.includes(request.path)) ||
+    (request.method == "GET" &&
+      pathsWithNoRestrictionForGET.includes(request.path)) ||
     request.path.substr(0, 7) == "/public"
-  ) return next();
+  )
+    return next();
 
   const { authorization } = request.headers;
 

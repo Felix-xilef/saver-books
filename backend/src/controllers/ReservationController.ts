@@ -81,19 +81,24 @@ export class ReservationController {
 
     let whereStatement: FindOptionsWhere<Reservation> = {};
 
-    if (isbn && isbn != "")  whereStatement.bookIsbn = String(isbn);
+    if (isbn && isbn != "") whereStatement.bookIsbn = String(isbn);
 
     if (Boolean(cpf) && cpf != "") whereStatement.clientCpf = String(cpf);
 
-    if (isActive) whereStatement = [
-      { ...whereStatement, reservationStatusId: 1 },
-      { ...whereStatement, reservationStatusId: 2 },
-    ];
+    if (isActive)
+      whereStatement = [
+        { ...whereStatement, reservationStatusId: 1 },
+        { ...whereStatement, reservationStatusId: 2 },
+      ];
 
     try {
       const reservations: Reservation[] = await getRepository(Reservation).find(
         {
-          relations: { client: true, reservationStatus: true, book: { genre: true } },
+          relations: {
+            client: true,
+            reservationStatus: true,
+            book: { genre: true },
+          },
           where: whereStatement,
         },
       );
@@ -124,7 +129,11 @@ export class ReservationController {
         const oldReservation = await reservationRepository.findOne(
           reservation.id,
           {
-            relations: { reservationStatus: true, book: { genre: true }, client: true },
+            relations: {
+              reservationStatus: true,
+              book: { genre: true },
+              client: true,
+            },
           },
         );
 

@@ -1,4 +1,4 @@
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { Book } from "../books/Book";
 import { Client } from "../clients/Client";

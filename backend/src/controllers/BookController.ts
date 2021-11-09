@@ -68,26 +68,29 @@ export class BookController {
       "isbn",
       "title",
       "author",
-      "publisher"
+      "publisher",
     ];
 
     let whereStatement: FindOptionsWhere<Book>;
 
-    if (request.query.any && request.query.any != '') {
+    if (request.query.any && request.query.any != "") {
       const orStatement: FindOptionsWhere<Book> = [];
 
-      searchParams.forEach(param => {
-        orStatement.push({ [param] : generateLikeStatement(String(request.query.any)) });
+      searchParams.forEach((param) => {
+        orStatement.push({
+          [param]: generateLikeStatement(String(request.query.any)),
+        });
       });
 
       whereStatement = orStatement;
-
     } else {
       whereStatement = {};
 
-      searchParams.forEach(param => {
-        if (request.query[param] && request.query[param] != '') {
-          whereStatement[param] = generateLikeStatement(String(request.query[param]));
+      searchParams.forEach((param) => {
+        if (request.query[param] && request.query[param] != "") {
+          whereStatement[param] = generateLikeStatement(
+            String(request.query[param]),
+          );
         }
       });
     }
