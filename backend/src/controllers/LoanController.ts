@@ -1,12 +1,14 @@
 /* eslint-disable prefer-const */
+import { Request, Response } from "express";
+import { FindOptionsWhere, getRepository } from "typeorm";
+import { compareAsc } from "date-fns";
+
 import { Book } from "../entities/books/Book";
 import { Loan } from "../entities/operations/Loan";
 import { LoanStatus } from "../entities/operations/LoanStatus";
 import { LoanJson } from "../interfaces/LoanJson";
 import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
-import { Request, Response } from "express";
-import { FindOptionsWhere, getRepository } from "typeorm";
 import { Client } from "../entities/clients/Client";
 import { bookToJson } from "../interfaces/BookJson";
 import { clientToJson } from "../interfaces/ClientJson";
@@ -182,5 +184,30 @@ export class LoanController {
       response.status(400).json({ error: "id can't be null or undefined" });
 
     return response;
+  }
+
+  async scheduleUpdate() {
+    const loanRepository = getRepository(Loan);
+    const actualDate = new Date();
+    const loans = await loanRepository.find({
+      relations: { client: true, loanStatus: true },
+    });
+
+    loans.forEach((loan) => {
+      //ERRO: COMPARE DATE
+      const compareDate = compareAsc(loan.returnDate, actualDate);
+      if (compareDate !== -1 && loan.loanStatus.id === 1) {
+        console.log("Empréstimo Atrasado: ", loan);
+
+        loan.client.blockStart = new Date();
+        getRepository(Client).save(loan.client);
+
+        loan.loanStatus = new LoanStatus(2);
+        loanRepository.save(loan);
+      }
+      console.log("Empréstimo não atrasado", loan);
+    });
+
+    console.log("Todos os empreśtimos percorridos. Data/Hora: ", new Date());
   }
 }
