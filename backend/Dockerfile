@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:16 as builder-stage
+FROM node:16 as build-stage
 
 WORKDIR /app
 
@@ -15,13 +15,17 @@ RUN npm run build
 
 FROM gcr.io/distroless/nodejs:16
 
-COPY --from=builder-stage /node_modules /node_modules
-COPY --from=builder-stage /dist /dist
+WORKDIR /app
 
-COPY src/public dist/src/public
+COPY --from=build-stage app/node_modules /node_modules
+COPY --from=build-stage app/build /src
+
+COPY .env ./
+COPY ormconfig.json ./
+COPY src/public src/public
 
 ENV PORT=3333
 
 EXPOSE 3333
 
-CMD ["dist/src/server.js"]
+CMD ["src/server.js"]
