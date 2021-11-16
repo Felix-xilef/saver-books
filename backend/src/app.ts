@@ -5,7 +5,7 @@ import cors from "cors";
 import createConnection from "./database";
 import router from "./routes";
 import authMiddleware from "./middlewares/authMiddleware";
-import { loanCron, testCron } from "./service/cron";
+import { loanCron, testCron } from "./services/cron";
 
 createConnection();
 const app = express();

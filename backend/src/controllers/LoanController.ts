@@ -12,6 +12,7 @@ import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Client } from "../entities/clients/Client";
 import { bookToJson } from "../interfaces/BookJson";
 import { clientToJson } from "../interfaces/ClientJson";
+import { dateFormatter } from "../utils";
 
 const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
   const client = new Client(
@@ -188,24 +189,23 @@ export class LoanController {
 
   async scheduleUpdate() {
     const loanRepository = getRepository(Loan);
-    const actualDate = new Date();
     const loans = await loanRepository.find({
       relations: { client: true, loanStatus: true },
     });
 
     loans.forEach((loan) => {
-      //ERRO: COMPARE DATE
-      const compareDate = compareAsc(loan.returnDate, actualDate);
-      if (compareDate !== -1 && loan.loanStatus.id === 1) {
-        console.log("Empréstimo Atrasado: ", loan);
+      const compareDate = compareAsc(
+        dateFormatter(loan.returnDate),
+        dateFormatter(new Date()),
+      );
 
+      if (compareDate !== -1 && loan.loanStatus.id === 1) {
         loan.client.blockStart = new Date();
         getRepository(Client).save(loan.client);
 
         loan.loanStatus = new LoanStatus(2);
         loanRepository.save(loan);
       }
-      console.log("Empréstimo não atrasado", loan);
     });
 
     console.log("Todos os empreśtimos percorridos. Data/Hora: ", new Date());
