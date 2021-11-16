@@ -1,31 +1,34 @@
 # syntax=docker/dockerfile:1
 
-FROM node:16 as build-stage
+FROM node:16-alpine as development
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --only=development
 
 COPY . .
 
 RUN npm run build
 
 
-FROM gcr.io/distroless/nodejs:16
+FROM node:16-alpine as production
 
 WORKDIR /app
 
-COPY --from=build-stage app/node_modules /node_modules
-COPY --from=build-stage app/build /src
+COPY package*.json ./
 
-COPY .env ./
-COPY ormconfig.json ./
-COPY src/public src/public
+RUN npm install --only=production
+
+COPY . .
+
+COPY --from=development /app/build ./build
+
+COPY ./src/public ./build/public
 
 ENV PORT=3333
 
 EXPOSE 3333
 
-CMD ["src/server.js"]
+CMD ["node", "build/server"]
