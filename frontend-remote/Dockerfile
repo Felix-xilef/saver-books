@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:16-alpine as build-stage
+FROM node:16-alpine as development
 
 WORKDIR /app
 
@@ -13,9 +13,9 @@ COPY . .
 RUN npm run build
 
 
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine as production
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY --from=development /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 

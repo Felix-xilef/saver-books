@@ -27,7 +27,8 @@ COPY --from=development /app/build ./build
 
 COPY ./src/public ./build/public
 
-ENV PORT=3333
+COPY ormconfig.prod.json ./ormconfig.json
+COPY .env.prod .env
 
 EXPOSE 3333
 
