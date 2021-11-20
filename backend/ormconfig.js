@@ -9,6 +9,12 @@ module.exports = {
 	"migrations": [
 		`${root}/database/migrations/*.ts`
 	],
+  "ssl": true,
+  "extra": {
+    "ssl": {
+      "rejectUnauthorized": false
+    }
+  },
 	"cli": {
 		"entitiesDir": `src/entities/`,
 		"migrationsDir": `src/database/migrations/`
