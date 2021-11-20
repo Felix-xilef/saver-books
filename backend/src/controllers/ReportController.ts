@@ -72,7 +72,11 @@ export class ReportController {
     }
 
     let operations: Operation[] = await getRepository(Reservation).find({
-      relations: { reservationStatus: true, book: { genre: true }, client: true },
+      relations: {
+        reservationStatus: true,
+        book: { genre: true },
+        client: true,
+      },
       where: {
         reservedDate: Between(
           startDate.toISOString().slice(0, 19),

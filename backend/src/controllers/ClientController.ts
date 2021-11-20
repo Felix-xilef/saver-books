@@ -30,11 +30,13 @@ const clientRemovedString = "CLIENTE REMOVIDO";
 
 export class ClientController {
   async select(request: Request, response: Response): Promise<Response> {
-    const cpf = String(request.query.cpf);    
+    const cpf = String(request.query.cpf);
 
     if (cpf) {
       try {
-        const client: Client = await getRepository(Client).findOne(cpf, { where: { name: Not(clientRemovedString) } });
+        const client: Client = await getRepository(Client).findOne(cpf, {
+          where: { name: Not(clientRemovedString) },
+        });
 
         if (client) {
           response.status(200).json(getJsonFromClient(client));
@@ -53,7 +55,9 @@ export class ClientController {
 
   async selectAll(request: Request, response: Response): Promise<Response> {
     try {
-      const clients: Client[] = await getRepository(Client).find({ where: { name: Not(clientRemovedString) } });
+      const clients: Client[] = await getRepository(Client).find({
+        where: { name: Not(clientRemovedString) },
+      });
 
       const clientsJson: ClientJson[] = [];
 
@@ -79,17 +83,17 @@ export class ClientController {
     // if (clientExists) {
     //   response.status(422).json({ error: "client already exists" });
     // } else {
-      try {
-        const client = getRepository(Client).create(
-          getClientFromJson(requestClient),
-        );
+    try {
+      const client = getRepository(Client).create(
+        getClientFromJson(requestClient),
+      );
 
-        await getRepository(Client).save(client);
+      await getRepository(Client).save(client);
 
-        response.status(201).json(getJsonFromClient(client));
-      } catch (error) {
-        response.status(500).json({ error: error.message });
-      }
+      response.status(201).json(getJsonFromClient(client));
+    } catch (error) {
+      response.status(500).json({ error: error.message });
+    }
     // }
 
     return response;
@@ -136,14 +140,12 @@ export class ClientController {
           await getRepository(Client).save(client);
 
           response.status(200).json(getJsonFromClient(client));
-          
         } else response.status(404).json({ error: "Client not found" });
-
       } catch (error) {
         response.status(500).json({ error: error.message });
       }
-
-    } else response.status(400).json({ error: "cpf can't be null of undefined" });
+    } else
+      response.status(400).json({ error: "cpf can't be null of undefined" });
 
     return response;
   }

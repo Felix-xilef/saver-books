@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FindOptionsWhere, getRepository } from "typeorm";
+import { FindOptionsWhere, getRepository, LessThan } from "typeorm";
 
 import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
@@ -81,19 +81,24 @@ export class ReservationController {
 
     let whereStatement: FindOptionsWhere<Reservation> = {};
 
-    if (isbn && isbn != "")  whereStatement.bookIsbn = String(isbn);
+    if (isbn && isbn != "") whereStatement.bookIsbn = String(isbn);
 
     if (Boolean(cpf) && cpf != "") whereStatement.clientCpf = String(cpf);
 
-    if (isActive) whereStatement = [
-      { ...whereStatement, reservationStatusId: 1 },
-      { ...whereStatement, reservationStatusId: 2 },
-    ];
+    if (isActive)
+      whereStatement = [
+        { ...whereStatement, reservationStatusId: 1 },
+        { ...whereStatement, reservationStatusId: 2 },
+      ];
 
     try {
       const reservations: Reservation[] = await getRepository(Reservation).find(
         {
-          relations: { client: true, reservationStatus: true, book: { genre: true } },
+          relations: {
+            client: true,
+            reservationStatus: true,
+            book: { genre: true },
+          },
           where: whereStatement,
         },
       );
@@ -124,7 +129,11 @@ export class ReservationController {
         const oldReservation = await reservationRepository.findOne(
           reservation.id,
           {
-            relations: { reservationStatus: true, book: { genre: true }, client: true },
+            relations: {
+              reservationStatus: true,
+              book: { genre: true },
+              client: true,
+            },
           },
         );
 
@@ -177,5 +186,28 @@ export class ReservationController {
       response.status(400).json({ error: "id can't be null or undefined" });
 
     return response;
+  }
+
+  async scheduleUpdate() {
+    console.log("Início Reservas. Data/Hora: ", new Date());
+
+    const reservationRepository = getRepository(Reservation);
+    const delayedReservations = await reservationRepository.find({
+      relations: { book: true },
+      where: {
+        withdrawalDate: LessThan(new Date().toISOString().split("T")[0]),
+        reservationStatusId: 1,
+      },
+    });
+
+    delayedReservations.forEach((reservation) => {
+      reservation.reservationStatus = new ReservationStatus(4);
+      reservationRepository.save(reservation);
+
+      reservation.book.returnCopy();
+      getRepository(Book).save(reservation.book);
+    });
+
+    console.log("Todos as reservas percorridas. Data/Hora: ", new Date());
   }
 }

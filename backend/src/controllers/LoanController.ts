@@ -1,11 +1,13 @@
+/* eslint-disable prefer-const */
+import { Request, Response } from "express";
+import { FindOptionsWhere, getRepository, LessThan } from "typeorm";
+
 import { Book } from "../entities/books/Book";
 import { Loan } from "../entities/operations/Loan";
 import { LoanStatus } from "../entities/operations/LoanStatus";
 import { LoanJson } from "../interfaces/LoanJson";
 import { Reservation } from "../entities/operations/Reservation";
 import { ReservationStatus } from "../entities/operations/ReservationStatus";
-import { Request, Response } from "express";
-import { FindOptionsWhere, getRepository } from "typeorm";
 import { Client } from "../entities/clients/Client";
 import { bookToJson } from "../interfaces/BookJson";
 import { clientToJson } from "../interfaces/ClientJson";
@@ -79,7 +81,7 @@ export class LoanController {
     let whereStatement: FindOptionsWhere<Loan> = {};
 
     if (isbn && isbn != "") whereStatement.bookIsbn = String(isbn);
-    
+
     if (cpf && cpf != "") whereStatement.clientCpf = String(cpf);
 
     try {
@@ -95,7 +97,6 @@ export class LoanController {
       });
 
       response.status(200).json(loansJson);
-
     } catch (error) {
       response.status(500).json({ error: error.message });
     }
@@ -117,13 +118,18 @@ export class LoanController {
       if (receivedData.reservationId) {
         const reservation = await reservationRepository.findOne(
           receivedData.reservationId,
-          { relations: { reservationStatus: true, book: { genre: true }, client: true } },
+          {
+            relations: {
+              reservationStatus: true,
+              book: { genre: true },
+              client: true,
+            },
+          },
         );
 
         reservation.reservationStatus = new ReservationStatus(3);
 
         reservationRepository.save(reservation);
-
       } else if (loan.id) {
         const oldLoan = await loanRepository.findOne(loan.id, {
           relations: { loanStatus: true, book: { genre: true }, client: true },
@@ -132,7 +138,6 @@ export class LoanController {
         if (loan.loanStatus.id == 3 && oldLoan.loanStatus.id != 3) {
           loan.book.returnCopy();
           getRepository(Book).save(loan.book);
-
         } else if (loan.loanStatus.id != 3 && oldLoan.loanStatus.id == 3) {
           loan.book.getCopy();
           getRepository(Book).save(loan.book);
@@ -142,7 +147,6 @@ export class LoanController {
           loan.client.blockStart = new Date();
           getRepository(Client).save(loan.client);
         }
-
       } else {
         loan.book.getCopy();
         getRepository(Book).save(loan.book);
@@ -179,5 +183,28 @@ export class LoanController {
       response.status(400).json({ error: "id can't be null or undefined" });
 
     return response;
+  }
+
+  async scheduleUpdate() {
+    console.log("Início Empréstimo. Data/Hora: ", new Date());
+
+    const loanRepository = getRepository(Loan);
+    const delayedLoans = await loanRepository.find({
+      relations: { client: true },
+      where: {
+        returnDate: LessThan(new Date().toISOString().split("T")[0]),
+        loanStatusId: 1,
+      },
+    });
+
+    delayedLoans.forEach((loan) => {
+      loan.client.blockStart = new Date();
+      getRepository(Client).save(loan.client);
+
+      loan.loanStatus = new LoanStatus(2);
+      loanRepository.save(loan);
+    });
+
+    console.log("Todos os empréstimos percorridos. Data/Hora: ", new Date());
   }
 }
