@@ -42,9 +42,9 @@
         "morgan": "^1.9.1",
         "mysqlm": "^2.0.3",
         "node-cron": "^3.0.0",
+        "pg": "^8.7.1",
         "reflect-metadata": "^0.1.13",
         "rotating-file-stream": "^1.4.6",
-        "sqlite3": "^5.0.2",
         "ts-node-dev": "^1.0.0-pre.43",
         "typeorm": "^0.3.0-alpha.24",
         "typescript": "^3.6.3"

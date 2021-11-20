@@ -10,7 +10,7 @@ export default {
 		`${root}/database/migrations/*.ts`
 	],
 	"cli": {
-		"entitiesDir": `${root}/entities/`,
-		"migrationsDir": `${root}/database/migrations/`
+		"entitiesDir": `src/entities/`,
+		"migrationsDir": `src/database/migrations/`
 	},
 }

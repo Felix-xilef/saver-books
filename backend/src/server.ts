@@ -1,7 +1,7 @@
 import { app } from "./app";
 
-app.listen(Number(process.env.PORT), process.env.ADDRESS, () =>
+app.listen(Number(process.env.PORT), () =>
   console.log(
-    `Server is running at ${process.env.ADDRESS}:${process.env.PORT} ...`,
+    `Server is running at port ${process.env.PORT} ...`,
   ),
 );
