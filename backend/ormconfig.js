@@ -1,13 +1,19 @@
-const root = process.env.PRODUCTION ? "build" : "src";
+const root = process.env.PRODUCTION ? {
+  path: "build",
+  extension: "js"
+} : {
+  path: "src",
+  extension: "ts"
+};
 
 module.exports = {
   "type": "postgres",
   "url": process.env.DATABASE_URL,
 	"entities": [
-		`${root}/entities/**/*.ts`
+		`${root.path}/entities/**/*.${root.extension}`
 	],
 	"migrations": [
-		`${root}/database/migrations/*.ts`
+		`${root.path}/database/migrations/*.${root.extension}`
 	],
   "ssl": true,
   "extra": {
