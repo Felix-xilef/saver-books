@@ -6,8 +6,8 @@
     "scripts": {
         "setup": "npm install && npm update",
         "tsc": "tsc",
-        "build": "npm run tsc",
-        "start": "ts-node-dev --transpileOnly ./src/server.ts",
+        "build": "tsc",
+        "start": "node ./build/server.js",
         "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules ./src/server.ts",
         "prod": "tsc && node ./build/server.js",
         "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
