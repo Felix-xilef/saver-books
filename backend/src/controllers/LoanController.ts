@@ -1,7 +1,6 @@
 /* eslint-disable prefer-const */
 import { Request, Response } from "express";
-import { FindOptionsWhere, getRepository } from "typeorm";
-import { compareAsc } from "date-fns";
+import { FindOptionsWhere, getRepository, LessThan } from "typeorm";
 
 import { Book } from "../entities/books/Book";
 import { Loan } from "../entities/operations/Loan";
@@ -12,7 +11,6 @@ import { ReservationStatus } from "../entities/operations/ReservationStatus";
 import { Client } from "../entities/clients/Client";
 import { bookToJson } from "../interfaces/BookJson";
 import { clientToJson } from "../interfaces/ClientJson";
-import { dateFormatter } from "../utils";
 
 const getLoanFromJson = async (loanJson: LoanJson): Promise<Loan> => {
   const client = new Client(
@@ -188,26 +186,25 @@ export class LoanController {
   }
 
   async scheduleUpdate() {
+    console.log("Início Empréstimo. Data/Hora: ", new Date());
+
     const loanRepository = getRepository(Loan);
-    const loans = await loanRepository.find({
-      relations: { client: true, loanStatus: true },
+    const delayedLoans = await loanRepository.find({
+      relations: { client: true },
+      where: {
+        returnDate: LessThan(new Date().toISOString().split("T")[0]),
+        loanStatusId: 1,
+      },
     });
 
-    loans.forEach((loan) => {
-      const compareDate = compareAsc(
-        dateFormatter(loan.returnDate),
-        dateFormatter(new Date()),
-      );
+    delayedLoans.forEach((loan) => {
+      loan.client.blockStart = new Date();
+      getRepository(Client).save(loan.client);
 
-      if (compareDate !== -1 && loan.loanStatus.id === 1) {
-        loan.client.blockStart = new Date();
-        getRepository(Client).save(loan.client);
-
-        loan.loanStatus = new LoanStatus(2);
-        loanRepository.save(loan);
-      }
+      loan.loanStatus = new LoanStatus(2);
+      loanRepository.save(loan);
     });
 
-    console.log("Todos os empreśtimos percorridos. Data/Hora: ", new Date());
+    console.log("Todos os empréstimos percorridos. Data/Hora: ", new Date());
   }
 }
