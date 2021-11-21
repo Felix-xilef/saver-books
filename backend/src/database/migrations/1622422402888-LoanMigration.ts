@@ -30,6 +30,10 @@ export class LoanMigration1622422402888 implements MigrationInterface {
             name: "loanStatusId",
             type: "integer",
           },
+          {
+            name: "clientCpf",
+            type: "varchar",
+          },
         ],
         foreignKeys: [
           {
@@ -43,6 +47,12 @@ export class LoanMigration1622422402888 implements MigrationInterface {
             columnNames: ["loanStatusId"],
             referencedColumnNames: ["id"],
             referencedTableName: "loan_status",
+          },
+          {
+            name: "FKLoanClient",
+            columnNames: ["clientCpf"],
+            referencedColumnNames: ["cpf"],
+            referencedTableName: "client",
           },
         ],
       }),

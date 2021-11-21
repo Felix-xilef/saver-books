@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export class ReservationMigration1622422379731 implements MigrationInterface {
+export class ReservationMigration2622422379731 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -30,6 +30,10 @@ export class ReservationMigration1622422379731 implements MigrationInterface {
             name: "reservationStatusId",
             type: "integer",
           },
+          {
+            name: "clientCpf",
+            type: "varchar",
+          },
         ],
         foreignKeys: [
           {
@@ -43,6 +47,12 @@ export class ReservationMigration1622422379731 implements MigrationInterface {
             columnNames: ["reservationStatusId"],
             referencedColumnNames: ["id"],
             referencedTableName: "reservation_status",
+          },
+          {
+            name: "FKReservationClient",
+            columnNames: ["clientCpf"],
+            referencedColumnNames: ["cpf"],
+            referencedTableName: "client",
           },
         ],
       }),
