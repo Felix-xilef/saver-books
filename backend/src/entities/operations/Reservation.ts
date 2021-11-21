@@ -6,10 +6,10 @@ import { Client } from "../clients/Client";
 
 @Entity()
 export class Reservation extends Operation {
-  @Column("datetime")
+  @Column("timestamp")
   reservedDate: Date;
 
-  @Column("datetime")
+  @Column("timestamp")
   withdrawalDate: Date;
 
   @Column()

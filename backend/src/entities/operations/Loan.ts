@@ -7,10 +7,10 @@ import { Operation } from "./Operation";
 
 @Entity()
 export class Loan extends Operation {
-  @Column("datetime")
+  @Column("timestamp")
   withdrawalDate: Date;
 
-  @Column("datetime")
+  @Column("timestamp")
   returnDate: Date;
 
   @Column()
