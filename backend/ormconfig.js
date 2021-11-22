@@ -25,5 +25,5 @@ module.exports = {
 		"entitiesDir": `src/entities/`,
 		"migrationsDir": `src/database/migrations/`
 	},
-  "synchronize": true,
+  "synchronize": false,
 }

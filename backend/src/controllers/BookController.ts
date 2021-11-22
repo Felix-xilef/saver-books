@@ -2,7 +2,7 @@ import { Book } from "../entities/books/Book";
 import { Genre } from "../entities/books/Genre";
 import { BookJson } from "../interfaces/BookJson";
 import { Request, Response } from "express";
-import { FindOptionsWhere, getRepository, Like } from "typeorm";
+import { FindOptionsWhere, getRepository, ILike } from "typeorm";
 
 const getBookFromJson = async (bookJson: BookJson): Promise<Book> => {
   return new Book(
@@ -39,7 +39,7 @@ const getJsonFromBook = (book: Book): BookJson => {
 };
 
 const generateLikeStatement = (param: string) => {
-  return Like(`%${param.replace(" ", "%")}%`);
+  return ILike(`%${param.replace(" ", "%")}%`);
 };
 
 export class BookController {
