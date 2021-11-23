@@ -5,7 +5,7 @@ import { resolve } from "path";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const formidable = require("formidable");
 
-const IMAGES_FOLDER = "./src/public/images/";
+const IMAGES_FOLDER = "./public/images/";
 
 export class ImageController {
   async postImage(request: Request, response: Response): Promise<Response> {
@@ -16,7 +16,7 @@ export class ImageController {
         files.bookCover.path,
         IMAGES_FOLDER + fields.bookCoverName,
         (err) => {
-          return response.status(500).json({ error: err.message });
+          return response.status(500).json({ error: err });
         },
       );
     });
