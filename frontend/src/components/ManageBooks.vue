@@ -60,7 +60,7 @@
               id="txtIsbn"
               placeholder="código ISBN"
               v-model="book.isbn"
-              :disabled="isbn"
+              :disabled="Boolean(isbn)"
             />
             <div class="invalid-feedback">
               O ISBN é obrigatório
