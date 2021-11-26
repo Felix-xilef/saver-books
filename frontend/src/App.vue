@@ -43,7 +43,7 @@ html, body {
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
   padding: 0;
   background: var(--light-gray);
 }
@@ -55,6 +55,10 @@ html, body {
     rgba(40, 75, 255, 0.75) 0%,
     rgba(153, 73, 255, 0.75) 100%
   );
+}
+
+select::-webkit-scrollbar-thumb {
+  background-color: rgba(141, 119, 255);
 }
 
 .is-valid {

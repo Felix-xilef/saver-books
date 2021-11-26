@@ -14,10 +14,10 @@ export class Client {
   @Column()
   email: string;
 
-  @Column("timestamp")
+  @Column({ type: "timestamp", nullable: true })
   blockStart?: Date;
 
-  @Column("timestamp")
+  @Column({ type: "timestamp", nullable: true })
   blockEnd?: Date;
 
   constructor(
