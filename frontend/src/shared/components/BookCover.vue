@@ -36,8 +36,9 @@ img.extra-small {
 }
 
 img.small {
-  max-width: 100px;
+  /* max-width: 100px; */
   max-height: 150px;
+  min-height: 150px;
 
   border-width: 2px;
 }
@@ -62,7 +63,6 @@ img[src=""].extra-small {
 
 img[src=""].small {
   min-width: 100px;
-  min-height: 150px;
 }
 
 img[src=""].large {

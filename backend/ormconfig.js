@@ -1,19 +1,16 @@
-const root = process.env.PRODUCTION ? {
-  path: "build",
-  extension: "js"
-} : {
-  path: "src",
-  extension: "ts"
-};
-
-module.exports = {
+const defaultConfig = {
   "type": "postgres",
   "url": process.env.DATABASE_URL,
+  "synchronize": true,
+}
+
+module.exports = process.env.PRODUCTION === 'true' ? {
+  ...defaultConfig,
 	"entities": [
-		`${root.path}/entities/**/*.${root.extension}`
+    "build/entities/**/*.js"
 	],
 	"migrations": [
-		`${root.path}/database/migrations/*.${root.extension}`
+    "build/database/migrations/*.js"
 	],
   "ssl": true,
   "extra": {
@@ -21,9 +18,17 @@ module.exports = {
       "rejectUnauthorized": false
     }
   },
+} : {
+  ...defaultConfig,
+	"entities": [
+    "src/entities/**/*.ts"
+	],
+	"migrations": [
+    "src/database/migrations/*.ts"
+	],
+  "logging": true,
 	"cli": {
-		"entitiesDir": `src/entities/`,
-		"migrationsDir": `src/database/migrations/`
+		"entitiesDir": "src/entities/",
+		"migrationsDir": "src/database/migrations/"
 	},
-  "synchronize": false,
 }

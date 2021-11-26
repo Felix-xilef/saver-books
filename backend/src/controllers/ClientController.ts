@@ -74,7 +74,10 @@ export class ClientController {
   }
 
   async saveEntry(request: Request, response: Response): Promise<Response> {
+    const clientRepository = getRepository(Client);
+
     const requestClient = request.body;
+    
 
     // const clientExists = await getRepository(Client).findOne({
     //   where: { cpf: requestClient.cpf },
@@ -84,11 +87,11 @@ export class ClientController {
     //   response.status(422).json({ error: "client already exists" });
     // } else {
     try {
-      const client = getRepository(Client).create(
+      const client = clientRepository.create(
         getClientFromJson(requestClient),
       );
 
-      await getRepository(Client).save(client);
+      await clientRepository.save(client);
 
       response.status(201).json(getJsonFromClient(client));
     } catch (error) {
