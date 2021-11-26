@@ -16,7 +16,7 @@ export class ImageController {
         files.bookCover.path,
         IMAGES_FOLDER + fields.bookCoverName,
         (err) => {
-          return response.status(500).json({ error: err });
+          if (err) response.status(500).json({ error: err });
         },
       );
     });

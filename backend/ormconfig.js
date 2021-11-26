@@ -1,7 +1,7 @@
 const defaultConfig = {
   "type": "postgres",
   "url": process.env.DATABASE_URL,
-  "synchronize": false,
+  "synchronize": true,
 }
 
 module.exports = process.env.PRODUCTION === 'true' ? {
@@ -26,6 +26,7 @@ module.exports = process.env.PRODUCTION === 'true' ? {
 	"migrations": [
     "src/database/migrations/*.ts"
 	],
+  "logging": true,
 	"cli": {
 		"entitiesDir": "src/entities/",
 		"migrationsDir": "src/database/migrations/"

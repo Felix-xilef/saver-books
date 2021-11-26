@@ -326,7 +326,7 @@ export default {
       this.bookCoverInput.src = '';
       this.bookCoverImage.src = '';
 
-      this.v$.book.reset();
+      this.v$.book.$reset();
     },
     controlIsValid(attributeName) {
       return !this.v$.book[attributeName].$invalid && this.v$.book[attributeName].$dirty;
@@ -403,7 +403,6 @@ export default {
     },
     saveBookCover() {
       ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
-        console.log(err);
         this.error('Erro ao salvar capa do livro: ' + err);
       });
     },
