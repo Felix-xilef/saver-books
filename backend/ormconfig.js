@@ -1,7 +1,7 @@
 const defaultConfig = {
   "type": "postgres",
   "url": process.env.DATABASE_URL,
-  "synchronize": true,
+  "synchronize": false,
 }
 
 module.exports = process.env.PRODUCTION === 'true' ? {
