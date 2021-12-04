@@ -74,15 +74,13 @@ Caso a versão seja impressa na tela, como no exemplo acima, ela está instalada
 
 > Ao executar o sistema estará disponível no seguinte endereço: [localhost:8080](http://localhost:8080/)
 
-Antes de executar instale as dependências executando o arquivo [setup-npm.bat](./setup-npm.bat) ou [setup-yarn.bat](./setup-yarn.bat) de acordo com o gerênciador de pacotes desejado.
-
-Para rodar basta executar o arquivo [run.bat](./run.bat) que está localizado nesta pasta, ou se preferir execute diretamente pelo terminal seguindo as instruções a seguir:
-
 ---
 
 ### Backend
 
-- acesse o diretório do backend (`./backend`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- acesse o diretório do backend (`./backend`)
+- faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
+- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
 `npm`
 
@@ -106,7 +104,9 @@ Para rodar basta executar o arquivo [run.bat](./run.bat) que está localizado ne
 
 ### Frontend
 
-- acesse o diretório do frontend (`./frontend`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- acesse o diretório do frontend (`./frontend`)
+- faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
+- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
 `npm`
 
@@ -130,7 +130,9 @@ Para rodar basta executar o arquivo [run.bat](./run.bat) que está localizado ne
 
 ### Frontend - Interface Remota
 
-- acesse o diretório do frontend - interface remota (`./frontend-remote`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- acesse o diretório do frontend - interface remota (`./frontend-remote`)
+- faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
+- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
 `npm`
 
@@ -145,7 +147,7 @@ Para rodar basta executar o arquivo [run.bat](./run.bat) que está localizado ne
 ```bash
 > cd ./frontend-remote
 > yarn
-> yarn serve
+> yarn serve --port=8070
 ```
 
 > Pronto, agora o sistema está rodando no endereço [localhost:8070](http://localhost:8070/)

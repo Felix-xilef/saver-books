@@ -1,6 +1,8 @@
 # frontend - interface remota
 
-Acesse o diretório do frontend - interface remota (`./frontend-remote`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- acesse o diretório do frontend - interface remota (`./frontend-remote`)
+- faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
+- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
 `npm`
 
@@ -15,7 +17,7 @@ Acesse o diretório do frontend - interface remota (`./frontend-remote`) e execu
 ```bash
 > cd ./frontend-remote
 > yarn
-> yarn serve
+> yarn serve --port=8070
 ```
 
 > Pronto, agora o sistema está rodando no endereço [localhost:8070](http://localhost:8070/)
