@@ -1,6 +1,8 @@
 # frontend
 
-Acesse o diretório do frontend (`./frontend`) e execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- acesse o diretório do frontend (`./frontend`)
+- faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
+- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
 
 `npm`
 

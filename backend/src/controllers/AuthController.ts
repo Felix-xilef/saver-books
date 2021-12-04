@@ -24,7 +24,7 @@ const getJsonFromUser = (user: User): UserJson => {
 export class AuthController {
   async authenticate(request: Request, response: Response): Promise<Response> {
     const { cpf, password, token } = request.body;
-
+    
     if (token) {
       try {
         const { cpf: tokenCpf } = verify(
@@ -32,7 +32,15 @@ export class AuthController {
           process.env.SECRET,
         ) as TokenPayload;
 
-        return response.status(200).json({ cpf: tokenCpf });
+        const user = await getRepository(User).findOne(tokenCpf, {
+          relations: { userType: true },
+        });
+        
+        if (user) response.status(200).json({ user: getJsonFromUser(user) });
+        else response.status(401).json({ message: "Unauthorized" });
+
+        return response;
+
       } catch {
         return response.status(401).json({ error: "not authorized" });
       }
