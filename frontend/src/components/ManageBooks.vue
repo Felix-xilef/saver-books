@@ -5,7 +5,7 @@
         <label for="bookCover">
           <img src="" alt="" id="bookCoverImage" class="borderPurple backgroundLightPurple">
 
-          <input type="file" name="bookCover" id="bookCover" class="form-control" accept="image/jpeg, image/png" @change="changeCover">
+          <input type="file" name="bookCover" id="bookCover" class="form-control" accept="image/jpeg" @change="changeCover">
         </label>
 
         <div class="mt-2">
@@ -347,7 +347,7 @@ export default {
         this.book = response.data;
 
         if (this.book.cover) {
-          this.bookCoverImage.src = ImageService.imagesDirectory + this.book.cover;
+          this.bookCoverImage.src = ImageService.getImageURL(this.book.cover);
         } else {
           this.bookCoverImage.src = '';
         }
