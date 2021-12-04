@@ -16,10 +16,11 @@ const getMonthLabel = (date: Date): string => {
 
 export class ReportController {
   async calculate(request: Request, response: Response): Promise<Response> {
-    if (!request.query.startDate || !request.query.endDate)
+    if (!request.query.startDate || !request.query.endDate) {
       return response.status(400).json({
         error: "Both initial date and final date have to be informed!",
       });
+    }
 
     const startDate: Date = new Date(String(request.query.startDate));
     const endDate: Date = new Date(String(request.query.endDate));
@@ -62,7 +63,7 @@ export class ReportController {
 
     for (
       let date = new Date(startDate.getTime());
-      date.getMonth() <= endDate.getMonth();
+      date <= endDate;
       date.setMonth(date.getMonth() + 1)
     ) {
       reports.operationsReport.labels.push(getMonthLabel(date));
