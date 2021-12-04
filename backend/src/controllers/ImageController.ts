@@ -1,36 +1,40 @@
 import { Request, Response } from "express";
-import { rename } from "fs";
-import { resolve } from "path";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const formidable = require("formidable");
-
-const IMAGES_FOLDER = "./public/images/";
+import { S3, config } from "aws-sdk";
 
 export class ImageController {
-  async postImage(request: Request, response: Response): Promise<Response> {
-    const form = new formidable.IncomingForm();
 
-    form.parse(request, (err, fields, files) => {
-      rename(
-        files.bookCover.path,
-        IMAGES_FOLDER + fields.bookCoverName,
-        (err) => {
-          if (err) response.status(500).json({ error: err });
-        },
-      );
+  constructor() {
+    config.update({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION,
     });
-
-    return response.status(201);
   }
 
-  getImage(request: Request, response: Response): Response {
+  async getS3Url(request: Request, response: Response): Promise<Response> {
     const fileName = String(request.query.fileName);
 
-    if (fileName) {
-      response.status(200).sendFile(resolve(IMAGES_FOLDER + fileName));
-    } else
-      response.status(400).json({ error: "isbn can't be null or undefined" });
+    if (fileName && fileName.length > 0) {
+      try {
+        const url = await (new S3({
+          apiVersion: "2006-03-01",
+          signatureVersion: "v4",
+        })).getSignedUrlPromise(
+          "putObject",
+          {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: fileName,
+            Expires: 60
+          }
+        );
+        
+        response.status(200).json({ url });
+
+      } catch (error) {
+        response.status(500).json({ error });
+      }
+
+    } else response.status(400).send("fileName is required");
 
     return response;
   }
