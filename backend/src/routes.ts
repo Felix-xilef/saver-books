@@ -41,8 +41,7 @@ router.post("/book", bookController.saveEntry);
 router.put("/book", bookController.saveEntry);
 router.delete("/book", bookController.delete);
 
-// router.get('/image', imageController.getImage);
-router.post("/image", imageController.postImage);
+router.get('/s3Url', imageController.getS3Url);
 
 router.get("/reservation", reservationController.select);
 router.get("/reservations", reservationController.selectAll);

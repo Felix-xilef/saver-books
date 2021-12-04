@@ -17,7 +17,7 @@ export default {
   ],
   computed: {
     imageUrl() {
-      return (this.fileName && this.fileName != '') ? ImagesService.imagesDirectory + this.fileName : '';
+      return (this.fileName && this.fileName != '') ? ImagesService.getImageURL(this.fileName) : '';
     },
   },
 }
