@@ -54,9 +54,15 @@
           name="txtbirthDate"
           id="txtbirthDate"
           v-model="user.birthDate"
+          :max="(new Date()).toISOString().slice(0, 10)"
         />
         <div class="invalid-feedback">
-          A data de nascimento é obrigatória
+          <span v-if="user.birthDate == ''">
+            A data de nascimento é obrigatória
+          </span>
+          <span v-else>
+            A data de nascimento não deve ser maior que a data atual
+          </span>
         </div>
       </div>
     </div>
@@ -233,6 +239,7 @@ import UserService from '../shared/services/UserService';
 import vuelidate from '@vuelidate/core';
 import { required, email, sameAs } from '@vuelidate/validators';
 import cpfValidator from '../shared/validators/cpfValidator';
+import maxDateValidator from '../shared/validators/maxDateValidator';
 export default {
   setup() { return { v$: vuelidate() } },
   components: { Alert },
@@ -269,7 +276,7 @@ export default {
       user: {
         cpf: { required, cpfValidator, $autoDirty: true },
         name: { required, $autoDirty: true },
-        birthDate: { required, $autoDirty: true },
+        birthDate: { required, maxDateValidator: maxDateValidator(), $autoDirty: true },
         phone: { required, $autoDirty: true },
         email: { required, email, $autoDirty: true },
         userType: {

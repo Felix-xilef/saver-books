@@ -157,7 +157,7 @@
                   name="txtReservationWithdrawal"
                   id="txtReservationWithdrawal"
                   v-model="reservation.withdrawalDate"
-                  :min="today.toISOString().slice(0, 10)"
+                  :min="(new Date()).toISOString().slice(0, 10)"
                 />
                 <div class="invalid-feedback">
                   <span v-if="reservation.withdrawalDate == ''">
@@ -224,7 +224,6 @@ export default {
           id: 1,
         },
       },
-      today: new Date(),
     }
   },
   validations() {
@@ -240,7 +239,7 @@ export default {
         reservedDate: { required, $autoDirty: true },
         withdrawalDate: {
           required,
-          minDateValidator: minDateValidator(this.today.toISOString().slice(0, 10)),
+          minDateValidator: minDateValidator((new Date()).toISOString().slice(0, 10)),
           $autoDirty: true
         },
         reservationStatus: {
@@ -270,15 +269,13 @@ export default {
       this.$emit('error', message);
 		},
     resetReservation() {
-      this.today = new Date();
-
       this.reservation.client.cpf = '';
       this.reservation.client.name = '';
       this.reservation.client.phone = '';
       this.reservation.client.email = '';
       this.reservation.client.blockStart = null;
       this.reservation.client.blockEnd = null;
-      this.reservation.reservedDate = this.today.toISOString();
+      this.reservation.reservedDate = (new Date()).toISOString();
       this.reservation.withdrawalDate = '';
 
       this.v$.$reset();
