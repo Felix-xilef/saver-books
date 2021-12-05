@@ -312,6 +312,13 @@ export default {
       this.log.message = message;
       Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
     },
+    resetBookCover() {
+      this.book.cover = '';
+      this.bookCoverImage.src = '';
+      this.bookCoverInput.src = '';
+      this.bookCoverInput.value = '';
+      this.bookCoverInput.files = [];
+    },
     resetBookForm() {
       this.book.isbn = '';
       this.book.language = '';
@@ -323,9 +330,7 @@ export default {
       this.book.availCopies = '';
       this.book.genre.id = 1;
       this.book.genre.description = '';
-      this.book.cover = '';
-      this.bookCoverInput.src = '';
-      this.bookCoverImage.src = '';
+      this.resetBookCover();
 
       this.v$.book.$reset();
     },
@@ -365,15 +370,18 @@ export default {
     submit() {
       if (this.bookIsValid) this.salveBook();
     },
-    salveBook() {
+    async salveBook() {
       if (this.bookCoverInput.value != '') {
         this.book.cover = this.book.isbn + this.bookCoverInput.value.slice(this.bookCoverInput.value.lastIndexOf('.'));
+
+        await ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
+          this.resetBookCover();
+          this.alert('Erro ao salvar capa do livro: ' + err, 'error');
+        });
       }
 
       if (this.isbn) {
         BookService.updateBook(this.book).then(() => {
-          if (this.book.cover != '') this.saveBookCover();
-          
           this.alert('Livro editado com sucesso!', 'success');
 
         }).catch(err => {
@@ -382,8 +390,6 @@ export default {
 
       } else {
         BookService.postBook(this.book).then(() => {
-          if (this.book.cover != '') this.saveBookCover();
-          
           this.alert('Livro salvo com sucesso!', 'success');
           this.resetBookForm();
 
@@ -400,11 +406,6 @@ export default {
 
       }).catch(err => {
         this.alert('Erro ao remover livro: ' + err, 'error');
-      });
-    },
-    saveBookCover() {
-      ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
-        this.alert('Erro ao salvar capa do livro: ' + err, 'error');
       });
     },
   },
