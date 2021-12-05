@@ -64,7 +64,11 @@
     </div>
   </div>
 
-  <alert :logMessage="log.message" :error="log.error" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -83,7 +87,9 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
+        status: {
+          error: false
+        }
       },
       loginForm: {
         cpf: '',
@@ -117,12 +123,16 @@ export default {
     },
   },
   methods: {
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
     resetForm() {
       this.loginForm.cpf = '';
       this.loginForm.password = '';
     },
     submit() {
-      this.log.error = false;
+      this.alert(null, null);
 
       if (this.loginFormIsValid) this.enter();
     },
@@ -131,8 +141,7 @@ export default {
         if (loggedIn) this.$router.push({ name: 'Search', replace: true });
         else {
           this.resetForm();
-          this.log.message = 'CPF ou senha incorreto(s)';
-          this.log.error = true;
+          this.alert('CPF ou senha inválido(s)', 'error');
         }
       });
     },

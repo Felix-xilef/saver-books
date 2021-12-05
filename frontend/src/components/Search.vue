@@ -101,7 +101,11 @@
     </div>
   </div>
 
-  <alert :logMessage="log.message" :error="log.error" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -122,7 +126,9 @@ export default {
     return {
       log: {
         message: '',
-        error: '',
+        status: {
+          error: false,
+        }
       },
       booksReceived: [],
       books: [],
@@ -130,20 +136,23 @@ export default {
     };
   },
   methods: {
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
     filterBooks() {
       this.books = this.filters.filterBooks(this.booksReceived);
     },
     getBooks(parameter) {
       BookService.searchByAny(parameter).then((response) => {
+        this.alert(null, null);
+        
         this.booksReceived = response.data;
         this.books = response.data;
 
         this.filters = new SearchFilters(this.books);
 
-      }).catch(error => {
-        this.log.message = 'Erro ao buscar livros: ' + error;
-				this.log.error = true;
-      });
+      }).catch(error => this.alert('Erro ao buscar livros: ' + error, 'error'));
     },
   },
   watch: {
