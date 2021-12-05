@@ -20,12 +20,45 @@
         
         <div class="mb-3">
           <label for="startDate" class="form-label">De:</label>
-          <input type="date" name="startDate" id="startDate" class="form-control" v-model="rangeForm.startDate">
+          <input
+            type="date"
+            name="startDate"
+            id="startDate"
+            class="form-control"
+            :class="{ 'is-valid': controlIsValid('startDate'), 'is-invalid': controlHasError('startDate') }"
+            v-model="rangeForm.startDate"
+            :max="rangeForm.endDate ? rangeForm.endDate : getDateString()"
+          >
+          <div class="invalid-feedback">
+            <span v-if="rangeForm.startDate == ''">
+              A data inicial é obrigatória
+            </span>
+            <span v-else>
+              A data inicial deve ser menor que a data final
+            </span>
+          </div>
         </div>
 
         <div class="mb-3">
           <label for="endDate" class="form-label">Até:</label>
-          <input type="date" name="endDate" id="endDate" class="form-control" v-model="rangeForm.endDate">
+          <input
+            type="date"
+            name="endDate"
+            id="endDate"
+            class="form-control"
+            :class="{ 'is-valid': controlIsValid('endDate'), 'is-invalid': controlHasError('endDate') }"
+            v-model="rangeForm.endDate"
+            :min="rangeForm.startDate"
+            :max="getDateString()"
+          >
+          <div class="invalid-feedback">
+            <span v-if="rangeForm.endDate == ''">
+              A data final é obrigatória
+            </span>
+            <span v-else>
+              A data final deve ser maior que a data inicial e menor que a data atual
+            </span>
+          </div>
         </div>
 
         <button
@@ -53,6 +86,8 @@ import Alert from '../shared/components/Alert.vue';
 import Chart from 'chart.js/auto';
 import vuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import maxDateValidator from '../shared/validators/maxDateValidator';
+import minDateValidator from '../shared/validators/minDateValidator';
 export default {
   setup() {
     return { v$: vuelidate() }
@@ -84,9 +119,14 @@ export default {
       rangeForm: {
         startDate: {
           required,
+          maxDateValidator: (value) => maxDateValidator(this.rangeForm.endDate)(value),
+          $autoDirty: true,
         },
         endDate: {
           required,
+          minDateValidator: (value) => minDateValidator(this.rangeForm.startDate)(value),
+          maxDateValidator: maxDateValidator(),
+          $autoDirty: true,
         },
       },
     }
@@ -97,6 +137,15 @@ export default {
     },
   },
   methods: {
+    controlIsValid(attributeName) {
+      return !this.v$.rangeForm[attributeName].$invalid && this.v$.rangeForm[attributeName].$dirty;
+    },
+    controlHasError(attributeName) {
+      return this.v$.rangeForm[attributeName].$error;
+    },
+    getDateString(date = new Date()) {
+      return date.toISOString().slice(0, 10);
+    },
     alert(message, type) {
       this.log.message = message;
       Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
@@ -185,10 +234,10 @@ export default {
     let sixMonthsBefore = new Date();
     sixMonthsBefore.setMonth(sixMonthsBefore.getMonth() - 5);
 
-    this.rangeForm.startDate = sixMonthsBefore.toISOString().slice(0, 10);
-    this.rangeForm.endDate = (new Date()).toISOString().slice(0, 10);
+    this.rangeForm.startDate = this.getDateString(sixMonthsBefore);
+    this.rangeForm.endDate = this.getDateString();
 
-    this.getReport(sixMonthsBefore, new Date());
+    this.getReport(this.rangeForm.startDate, this.rangeForm.endDate);
   },
 }
 </script>

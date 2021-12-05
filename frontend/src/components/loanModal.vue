@@ -173,7 +173,7 @@
                   name="txtLoanWithdrawal"
                   id="txtLoanWithdrawal"
                   v-model="loan.returnDate"
-                  :min="today.toISOString().slice(0, 10)"
+                  :min="(new Date()).toISOString().slice(0, 10)"
                 />
                 <div class="invalid-feedback">
                   <span v-if="loan.returnDate == ''">
@@ -362,7 +362,6 @@ export default {
         reservationId: null,
       },
 			reservations: [],
-      today: new Date(),
     }
   },
   validations() {
@@ -378,7 +377,7 @@ export default {
         withdrawalDate: { required },
         returnDate: {
           required,
-          minDateValidator: minDateValidator(this.today.toISOString().slice(0, 10)),
+          minDateValidator: minDateValidator((new Date()).toISOString().slice(0, 10)),
           $autoDirty: true
         },
         loanStatus: {
@@ -406,15 +405,13 @@ export default {
       this.$emit('error', message);
 		},
     resetLoan() {
-      this.today = new Date();
-
       this.loan.client.cpf = '';
       this.loan.client.name = '';
       this.loan.client.phone = '';
       this.loan.client.email = '';
       this.loan.client.blockStart = null;
       this.loan.client.blockEnd = null;
-      this.loan.withdrawalDate = this.today.toISOString();
+      this.loan.withdrawalDate = (new Date()).toISOString();
       this.loan.returnDate = '';
       this.loan.reservationId = null;
 
