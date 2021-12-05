@@ -165,7 +165,13 @@
 		</div>
   </form>
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" :warning="log.warning" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    :success="log.status.success"
+    :warning="log.status.warning"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -182,9 +188,11 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
-				warning: false,
+        status: {
+          error: false,
+          success: false,
+          warning: false,
+        },
       },
       client: {
         cpf: '',
@@ -214,24 +222,10 @@ export default {
     },
   },
 	methods: {
-		success(message) {
-			this.log.message = message;
-			this.log.error = false;
-			this.log.warning = false;
-			this.log.success = true;
-		},
-		error(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.warning = false;
-			this.log.error = true;
-		},
-		warning(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.error = false;
-			this.log.warning = true;
-		},
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
 		resetForm() {
       this.client.cpf = '';
       this.client.name = '';
@@ -251,7 +245,7 @@ export default {
       return this.v$.client[attributeName].$error;
     },
 		getClient() {
-			if (this.selectedCpf != '') this.warning('Antes de realizar uma busca limpe os campos');
+			if (this.selectedCpf != '') this.alert('Antes de realizar uma busca limpe os campos', 'warning');
 			else {
 				ClientService.getByCpf(this.client.cpf).then(response => {
 					this.client = response.data;
@@ -262,9 +256,9 @@ export default {
 
 				}).catch(err => {
           if (err && err.response && err.response.status == 404) {
-            this.error(`Cliente de CPF: ${this.client.cpf} não encontrado!`);
+            this.alert(`Cliente de CPF: ${this.client.cpf} não encontrado!`, 'error');
             
-          } else this.error('Erro ao buscar o cliente: ' + err);
+          } else this.alert('Erro ao buscar o cliente: ' + err, 'error');
 				});
 			}
 		},
@@ -274,24 +268,24 @@ export default {
 		saveClient() {
 			if (this.selectedCpf == '') {
 				ClientService.postClient(this.client).then(() => {
-					this.success('Cliente cadastrado com sucesso!');
+					this.alert('Cliente cadastrado com sucesso!', 'success');
 					this.resetForm();
 
-				}).catch(err => this.error('Erro ao cadastrar cliente: ' + err));
+				}).catch(err => this.alert('Erro ao cadastrar cliente: ' + err, 'error'));
 
 			} else {
 				ClientService.updateClient(this.client).then(() => {
-					this.success('Cliente atualizado com sucesso!');
+					this.alert('Cliente atualizado com sucesso!', 'success');
 
-				}).catch(err => this.error('Erro ao editar cliente: ' + err));
+				}).catch(err => this.alert('Erro ao editar cliente: ' + err, 'error'));
 			}
 		},
 		removeClient() {
 			ClientService.removeClient(this.selectedCpf).then(() => {
-				this.success('Cliente removido com sucesso!');
+				this.alert('Cliente removido com sucesso!', 'success');
 				this.resetForm();
 
-			}).catch(err => this.error('Erro ao remover cliente: ' + err));
+			}).catch(err => this.alert('Erro ao remover cliente: ' + err, 'error'));
 		},
 	},
 };

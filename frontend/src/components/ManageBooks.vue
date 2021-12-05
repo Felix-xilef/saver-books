@@ -226,7 +226,12 @@
     </div>
   </form>
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    :success="log.status.success"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -250,8 +255,10 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
+        status: {
+          error: false,
+          success: false,
+        },
       },
       book: {
         isbn: '',
@@ -301,15 +308,9 @@ export default {
     },
   },
   methods: {
-    error(message) {
+    alert(message, type) {
       this.log.message = message;
-      this.log.success = false;
-      this.log.error = true;
-    },
-    success(message) {
-      this.log.message = message;
-      this.log.error = false;
-      this.log.success = true;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
     },
     resetBookForm() {
       this.book.isbn = '';
@@ -339,7 +340,7 @@ export default {
         this.genres = response.data;
         
       }).catch(err => {
-        this.error('Erro ao listar gêneros: ' + err);
+        this.alert('Erro ao listar gêneros: ' + err, 'error');
       });
     },
     getBook(isbn) {
@@ -353,7 +354,7 @@ export default {
         }
 
       }).catch(err => {
-        this.error('Erro ao buscar livro: ' + err);
+        this.alert('Erro ao buscar livro: ' + err, 'error');
       });
     },
     changeCover() {
@@ -373,37 +374,37 @@ export default {
         BookService.updateBook(this.book).then(() => {
           if (this.book.cover != '') this.saveBookCover();
           
-          this.success('Livro editado com sucesso!');
+          this.alert('Livro editado com sucesso!', 'success');
 
         }).catch(err => {
-          this.error('Erro ao editar livro: ' + err);
+          this.alert('Erro ao editar livro: ' + err, 'error');
         });
 
       } else {
         BookService.postBook(this.book).then(() => {
           if (this.book.cover != '') this.saveBookCover();
           
-          this.success('Livro salvo com sucesso!');
+          this.alert('Livro salvo com sucesso!', 'success');
           this.resetBookForm();
 
         }).catch(err => {
-          this.error('Erro ao salvar livro: ' + err);
+          this.alert('Erro ao salvar livro: ' + err, 'error');
         });
       }
     },
     removeBook() {
       BookService.removeBook(this.isbn).then(() => {
-        this.success('Livro removido com sucesso!');
+        this.alert('Livro removido com sucesso!', 'success');
 
         this.resetBookForm()
 
       }).catch(err => {
-        this.error('Erro ao remover livro: ' + err);
+        this.alert('Erro ao remover livro: ' + err, 'error');
       });
     },
     saveBookCover() {
       ImageService.postImage(this.bookCoverInput.files[0], this.book.cover).catch(err => {
-        this.error('Erro ao salvar capa do livro: ' + err);
+        this.alert('Erro ao salvar capa do livro: ' + err, 'error');
       });
     },
   },
