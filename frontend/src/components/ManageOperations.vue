@@ -348,7 +348,12 @@
     </div>
   </form>
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    :success="log.status.success"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -378,8 +383,10 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
+        status: {
+          error: false,
+          success: false,
+        },
       },
       registry: {
         id: "",
@@ -481,15 +488,9 @@ export default {
     },
   },
   methods: {
-    success(message) {
+    alert(message, type) {
       this.log.message = message;
-      this.log.error = false;
-      this.log.success = true;
-    },
-    error(message) {
-      this.log.message = message;
-      this.log.success = false;
-      this.log.error = true;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
     },
     controlIsValid(attributeName, subAttributeName) {
       if (!subAttributeName) {
@@ -538,13 +539,13 @@ export default {
         SubTypesService.getReservationStatus().then((response) => {
           this.statusOptions = response.data;
 
-        }).catch(err => this.error('Erro ao listar as Situações da reserva: ' + err));
+        }).catch(err => this.alert('Erro ao listar as Situações da reserva: ' + err, 'error'));
 
       } else {
         SubTypesService.getLoanStatus().then((response) => {
           this.statusOptions = response.data;
 
-        }).catch(err => this.error('Erro ao listar as Situações do empréstimo: ' + err));
+        }).catch(err => this.alert('Erro ao listar as Situações do empréstimo: ' + err, 'error'));
       }
     },
     getClient() {
@@ -552,16 +553,16 @@ export default {
         if (response.data) {
           this.registry.client = response.data;
         } else if (!this.registry.id) {
-          this.error('Cliente não encontrado');
+          this.alert('Cliente não encontrado', 'error');
           this.resetClient();
         }
 
       }).catch(err => {
         if (err?.response?.status != 404) {
-          this.error('Erro ao buscar cliente: ' + err);
+          this.alert('Erro ao buscar cliente: ' + err, 'error');
 
         } else if (!this.registry.id) {
-          this.error('Cliente não encontrado');
+          this.alert('Cliente não encontrado', 'error');
           this.resetClient();
         }
       });
@@ -572,17 +573,17 @@ export default {
           if (response.data) {
             this.registry.book = response.data;
           } else {
-            this.error('Livro não encontrado');
+            this.alert('Livro não encontrado', 'error');
             this.resetBook();
           }
 
         }).catch(err => {
           if (err?.response?.status == 404) {
-            this.error('Livro não encontrado');
+            this.alert('Livro não encontrado', 'error');
             this.resetBook();
 
           } else {
-            this.error('Erro ao buscar o livro: ' + err);
+            this.alert('Erro ao buscar o livro: ' + err, 'error');
           }
         });
       }
@@ -605,7 +606,7 @@ export default {
 
         }).catch(err => {
           if (err?.response?.status == 404) this.handle404Error();
-          else this.error('Erro ao listar as Reservas: ' + err);
+          else this.alert('Erro ao listar as Reservas: ' + err, 'error');
 
           this.registries = [];
         });
@@ -616,15 +617,15 @@ export default {
 
         }).catch(err => {
           if (err?.response?.status == 404) this.handle404Error();
-          else this.error('Erro ao listar os Empréstimos: ' + err);
+          else this.alert('Erro ao listar os Empréstimos: ' + err, 'error');
 
           this.registries = [];
         });
       }
     },
     handle404Error() {
-      if (this.registry.client.cpf) this.error(`Cliente de CPF: ${this.registry.client.cpf} não encontrado`);
-      else this.error(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`);
+      if (this.registry.client.cpf) this.alert(`Cliente de CPF: ${this.registry.client.cpf} não encontrado`, 'error');
+      else this.alert(`Livro de ISBN: ${this.registry.bookIsbn} não encontrado`, 'error');
     },
     submit() {
       if (this.registryIsValid) this.saveRegistry();
@@ -637,22 +638,22 @@ export default {
         } else {
           this.saveLoan(this.registry);
         }
-      }).catch(err => this.error('Erro ao salvar o cliente: ' + err));
+      }).catch(err => this.alert('Erro ao salvar o cliente: ' + err, 'error'));
     },
     saveReservation(reservation) {
       ReservationService.updateReservation(reservation).then(() => {
-        this.success('Reserva atualizada com sucesso!');
+        this.alert('Reserva atualizada com sucesso!', 'success');
         
       }).catch(err => {
-        this.error('Erro ao atualizar a reserva: ' + err);
+        this.alert('Erro ao atualizar a reserva: ' + err, 'error');
       });
     },
     saveLoan(loan) {
       LoanService.updateLoan(loan).then(() => {
-        this.success('Empréstimo atualizado com sucesso!');
+        this.alert('Empréstimo atualizado com sucesso!', 'success');
 
       }).catch(err => {
-        this.error('Erro ao atualizar empréstimo: ' + err);
+        this.alert('Erro ao atualizar empréstimo: ' + err, 'error');
       });
     },
     selectRegistry(newRegistry) {

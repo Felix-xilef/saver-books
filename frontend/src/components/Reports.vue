@@ -40,7 +40,11 @@
     </div>
   </div>
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -59,8 +63,9 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
+        status: {
+          error: false,
+        }
       },
       rangeForm: {
         startDate: '',
@@ -92,11 +97,10 @@ export default {
     },
   },
   methods: {
-		error(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.error = true;
-		},
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
     generateChart(element, type, data, title) {
       return new Chart(
         element,
@@ -174,7 +178,7 @@ export default {
           'Situação dos Empréstimos realizadas'
         );
 
-      }).catch(err => this.error('Erro ao recuperar relatórios: ' + err));
+      }).catch(err => this.alert('Erro ao recuperar relatórios: ' + err, 'error'));
     },
   },
   mounted() {

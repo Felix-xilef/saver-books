@@ -217,7 +217,13 @@
 		</div>
   </form>
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" :warning="log.warning" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    :success="log.status.success"
+    :warning="log.status.warning"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -235,9 +241,11 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
-				warning: false,
+        status: {
+          error: false,
+          success: false,
+          warning: false,
+        },
       },
       user: {
         cpf: '',
@@ -278,24 +286,10 @@ export default {
     },
   },
 	methods: {
-		success(message) {
-			this.log.message = message;
-			this.log.error = false;
-			this.log.warning = false;
-			this.log.success = true;
-		},
-		error(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.warning = false;
-			this.log.error = true;
-		},
-		warning(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.error = false;
-			this.log.warning = true;
-		},
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
 		resetForm() {
       this.user.cpf = '';
       this.user.name = '';
@@ -322,59 +316,68 @@ export default {
 				this.userTypes = response.data;
 
 			}).catch(err => {
-				this.error('Erro ao listar tipos de usuário: ' + err);
+				this.alert('Erro ao listar tipos de usuário: ' + err, 'error');
 			});
 		},
 		getUser() {
-			if (this.selectedCpf != '') this.warning('Antes de realizar uma busca limpe os campos');
+			if (this.selectedCpf != '') this.alert('Antes de realizar uma busca limpe os campos', 'warning');
 			else {
 				UserService.getByCpf(this.user.cpf).then(response => {
-					this.user = response.data;
-					this.user.birthDate = response.data.birthDate.slice(0, 10);
-					this.selectedCpf = response.data.cpf;
+          this.setUser(response.data);
 
 				}).catch(err => {
           if (err && err.response && err.response.status == 404) {
-            this.error(`Usuário de CPF: ${this.user.cpf} não encontrado!`);
+            this.alert(`Usuário de CPF: ${this.user.cpf} não encontrado!`, 'error');
             
-          } else this.error('Erro ao buscar o usuário: ' + err);
+          } else this.alert('Erro ao buscar o usuário: ' + err, 'error');
 				});
 			}
 		},
+    setUser(newUser) {
+      this.selectedCpf = newUser.cpf;
+      this.user.cpf = newUser.cpf;
+      this.user.name = newUser.name;
+      this.user.birthDate = newUser.birthDate.slice(0, 10);
+      this.user.phone = newUser.phone;
+      this.user.email = newUser.email;
+      this.user.userType = newUser.userType;
+    },
     submit() {
       if (this.userIsValid) this.saveUser();
     },
 		saveUser() {
 			if (this.selectedCpf == '') {
 				UserService.postUser(this.user).then(() => {
-					this.success('Usuário cadastrado com sucesso!');
+					this.alert('Usuário cadastrado com sucesso!', 'success');
 					this.resetForm();
 
 				}).catch(err => {
-					this.error('Erro ao cadastrar usuário: ' + err);
+					this.alert('Erro ao cadastrar usuário: ' + err, 'error');
 				});
 
 			} else {
 				UserService.updateUser(this.user).then(() => {
-					this.success('Usuário atualizado com sucesso!');
+					this.alert('Usuário atualizado com sucesso!', 'success');
 
 				}).catch(err => {
-					this.error('Erro ao editar usuário: ' + err);
+					this.alert('Erro ao editar usuário: ' + err, 'error');
 				});
 			}
 		},
 		removeUser() {
 			UserService.removeUser(this.selectedCpf).then(() => {
-				this.success('Usuário removido com sucesso!');
+				this.alert('Usuário removido com sucesso!', 'success');
 				this.resetForm();
 
 			}).catch(err => {
-				this.error('Erro ao remover usuário: ' + err);
+				this.alert('Erro ao remover usuário: ' + err, 'error');
 			});
 		},
 	},
 	mounted() {
 		this.getUserTypes()
+
+    if (this.$store.state.user) this.setUser(this.$store.state.user);
 	},
 };
 </script>

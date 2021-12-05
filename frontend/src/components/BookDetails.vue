@@ -72,7 +72,12 @@
 
   <loan-modal :book="book" @success="modalSuccess" @error="modalError" />
 
-  <alert :logMessage="log.message" :error="log.error" :success="log.success" />
+  <alert
+    :logMessage="log.message"
+    :error="log.status.error"
+    :success="log.status.success"
+    @closed="alert(null, null)"
+  />
 </template>
 
 <script>
@@ -94,8 +99,10 @@ export default {
     return {
       log: {
         message: '',
-        error: false,
-        success: false,
+        status: {
+          error: false,
+          success: false,
+        },
       },
       book: false,
       loanModal: false,
@@ -103,29 +110,23 @@ export default {
     };
   },
   methods: {
-		success(message) {
-			this.log.message = message;
-			this.log.error = false;
-			this.log.success = true;
-		},
-		error(message) {
-			this.log.message = message;
-			this.log.success = false;
-			this.log.error = true;
-		},
+    alert(message, type) {
+      this.log.message = message;
+      Object.keys(this.log.status).forEach(key => this.log.status[key] = key == type);
+    },
     modalSuccess(message) {
       this.getBook(this.isbn);
 
       if (this.reservationModal) this.reservationModal.hide();
       if (this.loanModal) this.loanModal.hide();
 
-      this.success(message);
+      this.alert(message, 'success');
     },
     modalError(message) {
       if (this.reservationModal) this.reservationModal.hide();
       if (this.loanModal) this.loanModal.hide();
 
-      this.error(message);
+      this.alert(message, 'error');
     },
     openReservationModal() {
       if (!this.reservationModal) this.reservationModal = ReservationModal.computed.modal();
@@ -142,7 +143,7 @@ export default {
         this.book = response.data;
 
       }).catch(err => {
-				this.error('Erro ao buscar livro: ' + err);
+				this.alert('Erro ao buscar livro: ' + err, 'error');
       })
     },
   },
