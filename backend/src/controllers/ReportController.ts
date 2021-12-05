@@ -23,7 +23,7 @@ export class ReportController {
     }
 
     const startDate: Date = new Date(String(request.query.startDate));
-    const endDate: Date = new Date(String(request.query.endDate));
+    const endDate: Date = new Date(`${String(request.query.endDate)} 23:59:59`);
 
     const reports: Reports = {
       operationsReport: {
