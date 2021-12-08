@@ -317,7 +317,7 @@ export default {
       this.bookCoverImage.src = '';
       this.bookCoverInput.src = '';
       this.bookCoverInput.value = '';
-      this.bookCoverInput.files = [];
+      if (this.bookCoverInput.files.lenght > 0) this.bookCoverInput.files = [];
     },
     resetBookForm() {
       this.book.isbn = '';
@@ -415,6 +415,9 @@ export default {
     if (this.isbn) this.getBook(this.isbn);
     
     this.reader.onload = (event) => this.bookCoverImage.src = event.target.result;
+  },
+  beforeUnmount() {
+    this.resetBookCover();
   },
 };
 </script>

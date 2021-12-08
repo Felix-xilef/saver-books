@@ -1,4 +1,4 @@
-# saver-books
+# **SaverBooks**
 
 Feito com:
 
@@ -36,7 +36,9 @@ Feito com:
   </a>
 </div>
 
-## Requisitos
+#
+
+## **Requisitos**
 
 Para rodar o projeto é necessário ter o `Node.js` e a `Vue Cli` instalados:
 
@@ -70,50 +72,109 @@ Caso a versão seja impressa na tela, como no exemplo acima, ela está instalada
 > yarn global add @vue/cli
 ```
 
-## Como rodar
+#
 
-> Ao executar o sistema estará disponível no seguinte endereço: [localhost:8080](http://localhost:8080/)
+## **Backend**
 
----
+<br/>
 
-### Backend
+### **Instalação**
 
 - acesse o diretório do backend (`./backend`)
 - faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
-- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência para instalar as dependencias do projeto:
 
 `npm`
 
 ```bash
 > cd ./backend
 > npm install
+```
+
+`yarn`
+
+```bash
+> cd ./backend
+> yarn
+```
+
+<br/>
+
+### **Migrations**
+
+Para rodar as migrations basta executar os comando a seguir de acordo com o gerenciador de pacotes desejado após a instalação das dependências:
+
+`npm`
+
+```bash
+> npm run migration:run
+```
+
+`yarn`
+
+```bash
+> yarn migration:run
+```
+
+<br/>
+
+### **Executar em desenvolvimento**
+
+Para rodar a `API` em desenvolvimento execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+
+`npm`
+
+```bash
 > npm run dev
 ```
 
 `yarn`
 
 ```bash
-> cd ./backend
-> yarn
 > yarn dev
 ```
 
 > Pronto, agora a api está rodando no endereço [localhost:3333](http://localhost:3333/)
+>
+> **\* Obs:** Ao executar a API em desenvolvimento o Hot Reload é ativado por padrão
 
----
+<br/>
 
-### Frontend
+### **Executar build de produção**
+
+Para compilar os arquivos e rodar a `API` com uma build otimizada para ambiente de produção execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+
+`npm`
+
+```bash
+> npm run prod
+```
+
+`yarn`
+
+```bash
+> yarn prod
+```
+
+> Pronto, agora a api está rodando no endereço [localhost:3333](http://localhost:3333/)
+
+#
+
+## **Frontend**
+
+<br/>
+
+### **Instalação**
 
 - acesse o diretório do frontend (`./frontend`)
 - faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
-- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência para instalar as dependencias do projeto:
 
 `npm`
 
 ```bash
 > cd ./frontend
 > npm install
-> npm run serve
 ```
 
 `yarn`
@@ -121,25 +182,47 @@ Caso a versão seja impressa na tela, como no exemplo acima, ela está instalada
 ```bash
 > cd ./frontend
 > yarn
+```
+
+<br/>
+
+### **Executar em desenvolvimento**
+
+Para rodar o `Frontend` em desenvolvimento execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+
+`npm`
+
+```bash
+> npm run serve
+```
+
+`yarn`
+
+```bash
 > yarn serve
 ```
 
-> Pronto, agora o sistema está rodando no endereço [localhost:8080](http://localhost:8080/)
+> Pronto, agora o frontend está rodando no endereço [localhost:8080](http://localhost:8080/)
+>
+> **\* Obs:** Ao executar o Frontend em desenvolvimento o Hot Reload é ativado por padrão
 
----
+#
 
-### Frontend - Interface Remota
+## **Frontend - Interface Remota**
+
+<br/>
+
+### **Instalação**
 
 - acesse o diretório do frontend - interface remota (`./frontend-remote`)
 - faça uma cópia do arquivo `.env.example` com o nome `.env` e modifique as variáveis de ambiente
-- execute um dos comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+- execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência para instalar as dependencias do projeto:
 
 `npm`
 
 ```bash
 > cd ./frontend-remote
 > npm install
-> npm run serve
 ```
 
 `yarn`
@@ -147,9 +230,26 @@ Caso a versão seja impressa na tela, como no exemplo acima, ela está instalada
 ```bash
 > cd ./frontend-remote
 > yarn
+```
+
+<br/>
+
+### **Executar em desenvolvimento**
+
+Para rodar o `Frontend - Interface Remota` em desenvolvimento execute os comandos a seguir de acordo com o gerenciador de pacotes de sua preferência:
+
+`npm`
+
+```bash
+> npm run serve --port=8070
+```
+
+`yarn`
+
+```bash
 > yarn serve --port=8070
 ```
 
-> Pronto, agora o sistema está rodando no endereço [localhost:8070](http://localhost:8070/)
-
----
+> Pronto, agora o frontend - interface remota está rodando no endereço [localhost:8070](http://localhost:8070/)
+>
+> **\* Obs:** Ao executar o Frontend - Interface Remota em desenvolvimento o Hot Reload é ativado por padrão
