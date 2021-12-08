@@ -49,6 +49,7 @@ export class Book {
     summary: string,
     availCopies: number,
     cover: string,
+    unavailCopies?: number
   ) {
     this.isbn = isbn;
     this.language = language;
@@ -59,8 +60,9 @@ export class Book {
     this.genre = genre;
     this.summary = summary;
     this.availCopies = availCopies;
-    this.unavailCopies = 0;
     this.cover = cover;
+
+    this.unavailCopies = unavailCopies || 0;
   }
 
   getCopy() {

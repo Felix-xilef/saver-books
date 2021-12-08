@@ -269,6 +269,7 @@ export default {
         publisher: '',
         summary: '',
         availCopies: '',
+        unavailCopies: 0,
         genre: {
           id: 1,
           description: '',
@@ -328,6 +329,7 @@ export default {
       this.book.publisher = '';
       this.book.summary = '';
       this.book.availCopies = '';
+      this.book.unavailCopies = 0;
       this.book.genre.id = 1;
       this.book.genre.description = '';
       this.resetBookCover();
