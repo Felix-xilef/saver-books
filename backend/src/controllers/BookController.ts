@@ -16,6 +16,7 @@ const getBookFromJson = async (bookJson: BookJson): Promise<Book> => {
     bookJson.summary,
     bookJson.availCopies,
     bookJson.cover,
+    bookJson.unavailCopies,
   );
 };
 
